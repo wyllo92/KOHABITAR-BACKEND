@@ -1,0 +1,415 @@
+{
+  "info": {
+    "name": "Conjunto Residencial API",
+    "description": "API para gestión de conjunto residencial",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api_v1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Status",
+      "item": [
+        {
+          "name": "Obtener todos los estados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["status"]
+            }
+          }
+        },
+        {
+          "name": "Obtener estado por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/status/1",
+              "host": ["{{base_url}}"],
+              "path": ["status", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear nuevo estado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status_name\": \"Nuevo Estado\",\n  \"status_description\": \"Descripción del nuevo estado\",\n  \"status_entity\": \"General\",\n  \"status_is_active\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["status"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar estado",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status_name\": \"Estado Actualizado\",\n  \"status_description\": \"Descripción actualizada\",\n  \"status_entity\": \"General\",\n  \"status_is_active\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/status/1",
+              "host": ["{{base_url}}"],
+              "path": ["status", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar estado",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/status/1",
+              "host": ["{{base_url}}"],
+              "path": ["status", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Properties",
+      "item": [
+        {
+          "name": "Obtener todas las propiedades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/properties",
+              "host": ["{{base_url}}"],
+              "path": ["properties"]
+            }
+          }
+        },
+        {
+          "name": "Obtener propiedad por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/properties/1",
+              "host": ["{{base_url}}"],
+              "path": ["properties", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear nueva propiedad",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"property_name\": \"Apto 102\",\n  \"property_description\": \"Apartamento en segundo piso\",\n  \"property_type\": \"Apartamento\",\n  \"property_createAt\": \"2025-01-15\",\n  \"property_updateAt\": \"2025-01-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/properties",
+              "host": ["{{base_url}}"],
+              "path": ["properties"]
+            }
+          }
+        },
+        {
+          "name": "Buscar propiedad por nombre",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/properties/search?name=Apto 101",
+              "host": ["{{base_url}}"],
+              "path": ["properties", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Apto 101"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener propiedades por tipo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/properties/type/Apartamento",
+              "host": ["{{base_url}}"],
+              "path": ["properties", "type", "Apartamento"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vehicles",
+      "item": [
+        {
+          "name": "Obtener todos los vehículos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles"]
+            }
+          }
+        },
+        {
+          "name": "Obtener vehículo por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles/1",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear nuevo vehículo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"Toyota Corolla\",\n  \"type\": \"Carro\",\n  \"color\": \"Blanco\",\n  \"user_id\": 2,\n  \"property_id\": 1,\n  \"parkingZone_id\": null,\n  \"status_id\": 1,\n  \"vehicle_createAt\": \"2025-01-15\",\n  \"vehicle_updateAt\": \"2025-01-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vehicles",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles"]
+            }
+          }
+        },
+        {
+          "name": "Obtener vehículos por usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles/user/2",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles", "user", "2"]
+            }
+          }
+        },
+        {
+          "name": "Obtener vehículos por propiedad",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles/property/1",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles", "property", "1"]
+            }
+          }
+        },
+        {
+          "name": "Obtener vehículos por tipo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles/type/Carro",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles", "type", "Carro"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Obtener todos los usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": ["{{base_url}}"],
+              "path": ["user"]
+            }
+          }
+        },
+        {
+          "name": "Obtener usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user/1",
+              "host": ["{{base_url}}"],
+              "path": ["user", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear nuevo usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_name\": \"nuevo_usuario\",\n  \"user_password\": \"password123\",\n  \"role_id\": 2,\n  \"status_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": ["{{base_url}}"],
+              "path": ["user"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profiles",
+      "item": [
+        {
+          "name": "Obtener todos los perfiles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/profile",
+              "host": ["{{base_url}}"],
+              "path": ["profile"]
+            }
+          }
+        },
+        {
+          "name": "Obtener perfil por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/profile/1",
+              "host": ["{{base_url}}"],
+              "path": ["profile", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear nuevo perfil",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 1,\n  \"profile_fullName\": \"Juan Pérez\",\n  \"profile_phone\": \"3001234567\",\n  \"profile_email\": \"juan@example.com\",\n  \"profile_photo\": null,\n  \"profile_address\": \"Apto 101\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/profile",
+              "host": ["{{base_url}}"],
+              "path": ["profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Roles",
+      "item": [
+        {
+          "name": "Obtener todos los roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/role",
+              "host": ["{{base_url}}"],
+              "path": ["role"]
+            }
+          }
+        },
+        {
+          "name": "Obtener rol por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/role/1",
+              "host": ["{{base_url}}"],
+              "path": ["role", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear nuevo rol",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role_name\": \"Nuevo Rol\",\n  \"role_description\": \"Descripción del nuevo rol\",\n  \"status_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/role",
+              "host": ["{{base_url}}"],
+              "path": ["role"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+} 

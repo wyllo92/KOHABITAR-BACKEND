@@ -71,6 +71,60 @@ class PropertyModel {
       return [];
     }
   }
+
+  static async getResidents(propertyId) {
+    try {
+      let sqlQuery = 'CALL sp_get_property_residents(?)';
+      const [result] = await connect.query(sqlQuery, [propertyId]);
+      return result[0];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  static async getWithParkingZones() {
+    try {
+      let sqlQuery = `SELECT p.*, 
+                             COUNT(pz.parkingZone_id) as parking_zones_count,
+                             GROUP_CONCAT(DISTINCT CONCAT(pz.type, ':', pz.capacity) SEPARATOR ', ') as parking_info
+                      FROM property p
+                      LEFT JOIN parkingzone pz ON p.property_id = pz.property_id AND pz.status_id = 1
+                      GROUP BY p.property_id
+                      ORDER BY p.property_name`;
+      const [result] = await connect.query(sqlQuery);
+      return result;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  static async getStatistics() {
+    try {
+      let sqlQuery = `SELECT 
+                        COUNT(*) as total_properties,
+                        COUNT(CASE WHEN property_type = 'Apartamento' THEN 1 END) as apartments,
+                        COUNT(CASE WHEN property_type = 'Casa' THEN 1 END) as houses,
+                        (SELECT COUNT(DISTINCT user_id) FROM user_property WHERE status_id = 1) as total_residents
+                      FROM property`;
+      const [result] = await connect.query(sqlQuery);
+      return result[0];
+    } catch (error) {
+      return null;
+    }
+  }
+
+  static async showActive() {
+    try {
+      let sqlQuery = `SELECT p.* FROM property p 
+                      WHERE p.property_id IN (
+                        SELECT DISTINCT property_id FROM user_property WHERE status_id = 1
+                      ) ORDER BY p.property_id`;
+      const [result] = await connect.query(sqlQuery);
+      return result;
+    } catch (error) {
+      return [];
+    }
+  }
 }
 
-export default PropertyModel; 
+export default PropertyModel;

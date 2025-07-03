@@ -22,6 +22,16 @@ class RoleModel {
     }
   }
 
+  static async showActive() {
+    try {
+      let sqlQuery = "SELECT r.*, s.status_name FROM role r LEFT JOIN status s ON r.status_id = s.status_id WHERE r.status_id = 1 ORDER BY r.role_id";
+      const [result] = await connect.query(sqlQuery);
+      return result;
+    } catch (error) {
+      return [];
+    }
+  }
+
   static async update(id, { role_name, role_description, status_id }) {
     try {
       let sqlQuery = "UPDATE role SET role_name = ?, role_description = ?, status_id = ? WHERE role_id = ?;";
@@ -45,6 +55,16 @@ class RoleModel {
   static async findById(id) {
     try {
       let sqlQuery = 'SELECT r.*, s.status_name FROM role r LEFT JOIN status s ON r.status_id = s.status_id WHERE r.role_id = ?';
+      const [result] = await connect.query(sqlQuery, [id]);
+      return result[0];
+    } catch (error) {
+      return null;
+    }
+  }
+
+  static async findByIdActive(id) {
+    try {
+      let sqlQuery = 'SELECT r.*, s.status_name FROM role r LEFT JOIN status s ON r.status_id = s.status_id WHERE r.role_id = ? AND r.status_id = 1';
       const [result] = await connect.query(sqlQuery, [id]);
       return result[0];
     } catch (error) {

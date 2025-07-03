@@ -1,146 +1,119 @@
 import AmenityModel from '../models/amenity.model.js';
 
 class AmenityController {
-  
-  static async getAllAmenities(req, res) {
+
+  async register(req, res) {
     try {
-      const amenities = await AmenityModel.show();
-      res.json({
-        success: true,
-        data: amenities,
-        message: 'Amenidades obtenidas exitosamente'
+      const { name, capacity, description, time_unit, total, status_id, tariff_id, property_id, amenity_type_id } = req.body;
+      // Basic validation
+      if (!name || !status_id) {
+        return res.status(400).json({ error: 'Required fields are missing' });
+      }
+      
+      const amenityId = await AmenityModel.create({
+        name,
+        capacity,
+        description,
+        time_unit,
+        total,
+        status_id,
+        tariff_id,
+        property_id,
+        amenity_type_id
+      });
+      res.status(201).json({
+        message: 'Amenity created successfully',
+        id: amenityId
       });
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener las amenidades',
-        error: error.message
-      });
+      console.error('Registration error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
-  static async getAmenityById(req, res) {
+  async show(req, res) {
     try {
-      const { id } = req.params;
-      const amenity = await AmenityModel.findById(id);
-      
-      if (!amenity) {
-        return res.status(404).json({
-          success: false,
-          message: 'Amenidad no encontrada'
-        });
+      // Verify if the Amenity already exists
+      const amenityModel = await AmenityModel.showActive();
+      if (!amenityModel) {
+        return res.status(409).json({ error: 'The Amenity no already exists' });
       }
-
-      res.json({
-        success: true,
-        data: amenity,
-        message: 'Amenidad obtenida exitosamente'
+      res.status(201).json({
+        message: 'Amenity successfully',
+        data: amenityModel
       });
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener la amenidad',
-        error: error.message
-      });
+      console.error('Error in registration:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
-  static async createAmenity(req, res) {
+  async update(req, res) {
     try {
-      const amenityData = req.body;
-      const amenityId = await AmenityModel.create(amenityData);
-      
-      if (amenityId) {
-        const newAmenity = await AmenityModel.findById(amenityId);
-        res.status(201).json({
-          success: true,
-          data: newAmenity,
-          message: 'Amenidad creada exitosamente'
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Error al crear la amenidad'
-        });
+      const { name, capacity, description, time_unit, total, status_id, tariff_id, property_id, amenity_type_id } = req.body;
+      const id = req.params.id;
+      // Basic validation
+      if (!name || !status_id || !id) {
+        return res.status(400).json({ error: 'Required fields are missing' });
       }
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al crear la amenidad',
-        error: error.message
+      // Verify if the Amenity already exists  
+      const existingAmenity = await AmenityModel.findByIdActive(id);
+      if (existingAmenity.length === 0) {
+        return res.status(409).json({ data: '', error: 'The Amenity no already exists' });
+      }   
+
+      const updateAmenityModel = await AmenityModel.update(id, { 
+        name, capacity, description, time_unit, total, status_id, tariff_id, property_id, amenity_type_id 
       });
+      res.status(201).json({
+        message: 'Amenity update successfully',
+        data: updateAmenityModel
+      });
+    } catch (error) {
+      console.error('Error in registration:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
-  static async updateAmenity(req, res) {
+  async delete(req, res) {
     try {
-      const { id } = req.params;
-      const updateData = req.body;
-
-      const existingAmenity = await AmenityModel.findById(id);
-      if (!existingAmenity) {
-        return res.status(404).json({
-          success: false,
-          message: 'Amenidad no encontrada'
-        });
+      const id = req.params.id;
+      // Basic validate
+      if (!id) {
+        return res.status(400).json({ error: 'Required fields are missing' });
       }
-
-      const updatedAmenity = await AmenityModel.update(id, updateData);
-      
-      if (updatedAmenity) {
-        res.json({
-          success: true,
-          data: updatedAmenity,
-          message: 'Amenidad actualizada exitosamente'
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Error al actualizar la amenidad'
-        });
-      }
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al actualizar la amenidad',
-        error: error.message
+      // Verify if the Amenity already exists
+      const deleteAmenityModel = await AmenityModel.delete(id);
+      res.status(201).json({
+        message: 'Amenity delete successfully',
+        data: deleteAmenityModel
       });
+    } catch (error) {
+      console.error('Error in registration:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
-  static async deleteAmenity(req, res) {
+  async findById(req, res) {
     try {
-      const { id } = req.params;
-
-      const existingAmenity = await AmenityModel.findById(id);
-      if (!existingAmenity) {
-        return res.status(404).json({
-          success: false,
-          message: 'Amenidad no encontrada'
-        });
+      const id = req.params.id;
+      // Basic validate
+      if (!id) {
+        return res.status(400).json({ error: 'Required fields are missing' });
       }
-
-      const deleted = await AmenityModel.delete(id);
-      
-      if (deleted) {
-        res.json({
-          success: true,
-          message: 'Amenidad eliminada exitosamente'
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Error al eliminar la amenidad'
-        });
+      // Verify if the Amenity already exists
+      const existingAmenityModel = await AmenityModel.findByIdActive(id);
+      if (!existingAmenityModel) {
+        return res.status(409).json({ error: 'The Amenity No already exists' });
       }
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al eliminar la amenidad',
-        error: error.message
+      res.status(201).json({
+        message: 'Amenity successfully',
+        data: existingAmenityModel
       });
-    }
+    } catch (error) {
+      console.error('Error in registration:', error);
+      res.status(500).json({ error: 'Internal Server Error' });    }
   }
 }
 
-export default AmenityController; 
+export default new AmenityController();

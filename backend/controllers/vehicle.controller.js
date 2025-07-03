@@ -1,53 +1,118 @@
 import VehicleModel from '../models/vehicle.model.js';
 
 class VehicleController {
-  
-  // Obtener todos los vehículos
-  async getAllVehicles(req, res) {
-    try {
-      const vehicles = await VehicleModel.show();
-      res.json({
-        success: true,
-        data: vehicles,
-        message: 'Vehículos obtenidos exitosamente'
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener los vehículos',
-        error: error.message
-      });
-    }
-  }
 
-  // Obtener un vehículo por ID
-  async getVehicleById(req, res) {
+  async register(req, res) {
     try {
-      const { id } = req.params;
-      const vehicle = await VehicleModel.findById(id);
-      
-      if (!vehicle) {
-        return res.status(404).json({
-          success: false,
-          message: 'Vehículo no encontrado'
-        });
+      const { license_plate, brand, model, color, vehicle_type, status_id, user_id } = req.body;
+      // Basic validation
+      if (!license_plate || !vehicle_type || !status_id) {
+        return res.status(400).json({ error: 'Required fields are missing' });
       }
-
-      res.json({
-        success: true,
-        data: vehicle,
-        message: 'Vehículo obtenido exitosamente'
+      
+      const vehicleId = await VehicleModel.create({
+        license_plate,
+        brand,
+        model,
+        color,
+        vehicle_type,
+        status_id,
+        user_id
+      });
+      res.status(201).json({
+        message: 'Vehicle created successfully',
+        id: vehicleId
       });
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener el vehículo',
-        error: error.message
-      });
+      console.error('Registration error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
-  // Crear un nuevo vehículo
+  async show(req, res) {
+    try {
+      // Verify if the Vehicle already exists
+      const vehicleModel = await VehicleModel.showActive();
+      if (!vehicleModel) {
+        return res.status(409).json({ error: 'The Vehicle no already exists' });
+      }
+      res.status(201).json({
+        message: 'Vehicle successfully',
+        data: vehicleModel
+      });
+    } catch (error) {
+      console.error('Error in registration:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async update(req, res) {
+    try {
+      const { license_plate, brand, model, color, vehicle_type, status_id, user_id } = req.body;
+      const id = req.params.id;
+      // Basic validation
+      if (!license_plate || !vehicle_type || !status_id || !id) {
+        return res.status(400).json({ error: 'Required fields are missing' });
+      }
+      // Verify if the Vehicle already exists  
+      const existingVehicle = await VehicleModel.findByIdActive(id);
+      if (!existingVehicle) {
+        return res.status(409).json({ data: '', error: 'The Vehicle no already exists' });
+      }   
+
+      const updateVehicleModel = await VehicleModel.update(id, { 
+        license_plate, brand, model, color, vehicle_type, status_id, user_id 
+      });
+      res.status(201).json({
+        message: 'Vehicle update successfully',
+        data: updateVehicleModel
+      });
+    } catch (error) {
+      console.error('Error in registration:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async delete(req, res) {
+    try {
+      const id = req.params.id;
+      // Basic validate
+      if (!id) {
+        return res.status(400).json({ error: 'Required fields are missing' });
+      }
+      // Verify if the Vehicle already exists
+      const deleteVehicleModel = await VehicleModel.delete(id);
+      res.status(201).json({
+        message: 'Vehicle delete successfully',
+        data: deleteVehicleModel
+      });
+    } catch (error) {
+      console.error('Error in registration:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async findById(req, res) {
+    try {
+      const id = req.params.id;
+      // Basic validate
+      if (!id) {
+        return res.status(400).json({ error: 'Required fields are missing' });
+      }
+      // Verify if the Vehicle already exists
+      const existingVehicleModel = await VehicleModel.findByIdActive(id);
+      if (!existingVehicleModel) {
+        return res.status(409).json({ error: 'The Vehicle No already exists' });
+      }
+      res.status(201).json({
+        message: 'Vehicle successfully',
+        data: existingVehicleModel
+      });
+    } catch (error) {
+      console.error('Error in registration:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
   async createVehicle(req, res) {
     try {
       const {

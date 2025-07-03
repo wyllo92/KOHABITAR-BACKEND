@@ -4,9 +4,10 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha test/**/*.test.js --timeout 10000 --exit",
+    "test:watch": "mocha test/**/*.test.js --timeout 10000 --watch",
     "start": "node server.js",
-    "migrate": "node migrations/migrate_conjunto_residencial.js"
+    "migrate": "node migrations/migrate.js"
   },
   "keywords": [],
   "author": "Diego Casallas",
@@ -19,6 +20,12 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.1",
     "mysql2": "^3.14.1"
+  },
+  "devDependencies": {
+    "chai": "^4.5.0",
+    "mocha": "^10.8.2",
+    "sinon": "^17.0.1",
+    "supertest": "^6.3.4"
   },
   "description": ""
 }

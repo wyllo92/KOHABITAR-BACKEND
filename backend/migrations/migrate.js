@@ -1,5 +1,5 @@
 // migrate.js
-import { runMigration } from './migration_v3.js';
+import { runMigration } from './migration_conjunto_residencial.js';
 
 runMigration()
   .then((result) => {

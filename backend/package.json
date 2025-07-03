@@ -6,8 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "migrate": "node migrations/migrate.js",
-    "migrate:conjunto": "node migrations/migration_conjunto_residencial.js"
+    "migrate": "node migrations/migrate_conjunto_residencial.js"
   },
   "keywords": [],
   "author": "Diego Casallas",

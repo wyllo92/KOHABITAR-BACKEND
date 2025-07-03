@@ -7,30 +7,30 @@ class UserController {
 
   async register(req, res) {
     try {
-      const { username, email, password_hash, status_id} = req.body;
-      // Basic validation
-      if (!username || !email || !password_hash || !status_id) {
+      const { user_name, user_password, role_id, status_id } = req.body;
+      // Validación básica
+      if (!user_name || !user_password || !role_id || !status_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Additional validation
-      if (password_hash.length < 8) {
+      // Validación adicional
+      if (user_password.length < 8) {
         return res.status(400).json({
           error: 'The password must be at least 8 characters long.'
         });
       }
-      // Verify if the User already exists
-      const existingUser = await UserModel.findByName(username);
+      // Verificar si el usuario ya existe
+      const existingUser = await UserModel.findByName(user_name);
       if (existingUser) {
         return res.status(409).json({
           error: 'The username is already in use'
         });
       }
-      const passwordHash = await encryptPassword(password_hash);
+      const passwordHash = await encryptPassword(user_password);
       const userId = await UserModel.create({
-        username,
-        email,
-        passwordHash,
-        statusId: status_id
+        user_name,
+        user_password: passwordHash,
+        role_id,
+        status_id
       });
       res.status(201).json({
         message: 'User created successfully',
@@ -38,7 +38,7 @@ class UserController {
       });
     } catch (error) {
       console.error('Registration error:', error);
-      res.status(500).json({ error: 'Internal Server Errorr' });
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
@@ -136,7 +136,7 @@ class UserController {
       // Check if the user already exists
       const existingUser = await UserModel.findByName(user);
       if (existingUser) {
-        const passwordHash = await comparePassword(password, existingUser.password_hash);
+        const passwordHash = await comparePassword(password, existingUser.user_password);
         if (!passwordHash) {
           return res.status(401).json({ error: 'Invalid password' });
         } else {
@@ -152,9 +152,9 @@ class UserController {
             message: 'Login successful',
             user: {
               id: existingUser.id,
-              username: existingUser.username,
+              username: existingUser.user_name,
               email: existingUser.email,
-              statusId: existingUser.statusId,
+              statusId: existingUser.status_id,
               token: token
             }
           });

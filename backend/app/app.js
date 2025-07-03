@@ -52,19 +52,19 @@ app.use('/api_v1',moduleRouter);
 app.use('/api_v1',tokenRouter);
 
 // Nuevas rutas para conjunto residencial
-app.use('/api_v1/properties', propertyRouter);
-app.use('/api_v1/vehicles', vehicleRouter);
+app.use('/api_v1/property', propertyRouter);
+app.use('/api_v1', vehicleRouter);
 app.use('/api_v1/status', statusRouter);
-app.use('/api_v1/parkingslots', parkingslotRouter);
-app.use('/api_v1/parkingzones', parkingzoneRouter);
-app.use('/api_v1/amenities', amenityRouter);
-app.use('/api_v1/reservations', reservationRouter);
-app.use('/api_v1/visitors', visitorRouter);
-app.use('/api_v1/invoices', invoiceRouter);
-app.use('/api_v1/payments', paymentRouter);
-app.use('/api_v1/tariffs', tariffRouter);
-app.use('/api_v1/notifications', notificationRouter);
-app.use('/api_v1/reports', reportRouter);	
+app.use('/api_v1/parkingslot', parkingslotRouter);
+app.use('/api_v1/parkingzone', parkingzoneRouter);
+app.use('/api_v1/amenitie', amenityRouter);
+app.use('/api_v1/reservation', reservationRouter);
+app.use('/api_v1/visitor', visitorRouter);
+app.use('/api_v1/invoice', invoiceRouter);
+app.use('/api_v1/payment', paymentRouter);
+app.use('/api_v1/tariff', tariffRouter);
+app.use('/api_v1/notification', notificationRouter);
+app.use('/api_v1/report', reportRouter);	
 
 
 

@@ -1,16 +1,25 @@
-import express from 'express';
+import { Router } from "express";
 import VehicleController from '../controllers/vehicle.controller.js';
+const router = Router();
+const name = '/vehicle';
 
-const router = express.Router();
+// Rutas agrupadas para vehículos
+router.route(name)
+  .get(VehicleController.getAllVehicles)
+  .post(VehicleController.createVehicle);
 
-// Rutas para vehículos
-router.get('/', VehicleController.getAllVehicles);
-router.get('/user/:user_id', VehicleController.getVehiclesByUserId);
-router.get('/property/:property_id', VehicleController.getVehiclesByPropertyId);
-router.get('/type/:type', VehicleController.getVehiclesByType);
-router.get('/:id', VehicleController.getVehicleById);
-router.post('/', VehicleController.createVehicle);
-router.put('/:id', VehicleController.updateVehicle);
-router.delete('/:id', VehicleController.deleteVehicle);
+router.route(`${name}/user/:user_id`)
+  .get(VehicleController.getVehiclesByUserId);
+
+router.route(`${name}/property/:property_id`)
+  .get(VehicleController.getVehiclesByPropertyId);
+
+router.route(`${name}/type/:type`)
+  .get(VehicleController.getVehiclesByType);
+
+router.route(`${name}/:id`)
+  .get(VehicleController.getVehicleById)
+  .put(VehicleController.updateVehicle)
+  .delete(VehicleController.deleteVehicle);
 
 export default router; 

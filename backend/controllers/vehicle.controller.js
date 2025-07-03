@@ -3,7 +3,7 @@ import VehicleModel from '../models/vehicle.model.js';
 class VehicleController {
   
   // Obtener todos los vehículos
-  static async getAllVehicles(req, res) {
+  async getAllVehicles(req, res) {
     try {
       const vehicles = await VehicleModel.show();
       res.json({
@@ -21,7 +21,7 @@ class VehicleController {
   }
 
   // Obtener un vehículo por ID
-  static async getVehicleById(req, res) {
+  async getVehicleById(req, res) {
     try {
       const { id } = req.params;
       const vehicle = await VehicleModel.findById(id);
@@ -48,7 +48,7 @@ class VehicleController {
   }
 
   // Crear un nuevo vehículo
-  static async createVehicle(req, res) {
+  async createVehicle(req, res) {
     try {
       const {
         model,
@@ -107,7 +107,7 @@ class VehicleController {
   }
 
   // Actualizar un vehículo
-  static async updateVehicle(req, res) {
+  async updateVehicle(req, res) {
     try {
       const { id } = req.params;
       const {
@@ -165,7 +165,7 @@ class VehicleController {
   }
 
   // Eliminar un vehículo
-  static async deleteVehicle(req, res) {
+  async deleteVehicle(req, res) {
     try {
       const { id } = req.params;
 
@@ -201,7 +201,7 @@ class VehicleController {
   }
 
   // Obtener vehículos por usuario
-  static async getVehiclesByUserId(req, res) {
+  async getVehiclesByUserId(req, res) {
     try {
       const { user_id } = req.params;
       const vehicles = await VehicleModel.findByUserId(user_id);
@@ -221,7 +221,7 @@ class VehicleController {
   }
 
   // Obtener vehículos por propiedad
-  static async getVehiclesByPropertyId(req, res) {
+  async getVehiclesByPropertyId(req, res) {
     try {
       const { property_id } = req.params;
       const vehicles = await VehicleModel.findByPropertyId(property_id);
@@ -241,7 +241,7 @@ class VehicleController {
   }
 
   // Obtener vehículos por tipo
-  static async getVehiclesByType(req, res) {
+  async getVehiclesByType(req, res) {
     try {
       const { type } = req.params;
       const vehicles = await VehicleModel.findByType(type);
@@ -261,4 +261,4 @@ class VehicleController {
   }
 }
 
-export default VehicleController; 
+export default new VehicleController(); 

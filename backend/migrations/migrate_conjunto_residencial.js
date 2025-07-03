@@ -1,6 +1,6 @@
-import { runMigration } from './migration_conjunto_residencial.js';
+import { runMigrationConjuntoResidencial } from './migration_conjunto_residencial.js';
 
-runMigration()
+await runMigrationConjuntoResidencial()
   .then((result) => {
     if (result.success) {
       console.log('Migración de conjunto_residencial completada exitosamente');

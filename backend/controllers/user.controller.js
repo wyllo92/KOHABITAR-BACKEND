@@ -61,26 +61,32 @@ class UserController {
 
   async update(req, res) {
     try {
-         const {  email,  status_id} = req.body;
-         const id = req.params.id;
+      const { user_name, user_password, role_id, status_id } = req.body;
+      const id = req.params.id;
       // Basic validation
-      if (!email || !status_id|| !id) {
+      if (!user_name || !user_password || !role_id || !status_id || !id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
       // Verify if the User already exists  
       const existingUser = await UserModel.findByIdActive(id);
-      if (existingUser.length === 0) {
-        return res.status(409).json({ data:'',error: 'The User no already exists' });
+      if (!existingUser) {
+        return res.status(409).json({ data:'', error: 'The User does not exist' });
       }   
 
-      const updateUserModel = await UserModel.update(id, { email, status_id});
+      // Encrypt password before updating
+      const encryptedPassword = await encryptPassword(user_password);
+      const updateUserModel = await UserModel.update(id, { 
+        user_name, 
+        user_password: encryptedPassword, 
+        role_id, 
+        status_id
+      });
       res.status(201).json({
-        message: 'User update successfully',
+        message: 'User updated successfully',
         data: updateUserModel
-
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error in user update:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
@@ -140,20 +146,23 @@ class UserController {
         if (!passwordHash) {
           return res.status(401).json({ error: 'Invalid password' });
         } else {
-          const updateLogin = await UserModel.updateLogin(existingUser.id);
+          const updateLogin = await UserModel.updateLogin(existingUser.user_id);
           if (!updateLogin) {
             return res.status(500).json({ error: 'Failed to update login time' });
           }
-          const token = jwt.sign({ id: existingUser.id, email: existingUser.email, status: existingUser.status_id }, process.env.JWT_SECRET, {
+          const token = jwt.sign({ 
+            id: existingUser.user_id, 
+            username: existingUser.user_name, 
+            status: existingUser.status_id 
+          }, process.env.JWT_SECRET, {
             expiresIn: "1h",
             algorithm: "HS256"
           });
           res.status(200).json({
             message: 'Login successful',
             user: {
-              id: existingUser.id,
+              id: existingUser.user_id,
               username: existingUser.user_name,
-              email: existingUser.email,
               statusId: existingUser.status_id,
               token: token
             }
@@ -163,7 +172,7 @@ class UserController {
         return res.status(404).json({ error: 'User not found' });
       }
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error in login:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }

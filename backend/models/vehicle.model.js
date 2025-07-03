@@ -2,10 +2,10 @@ import { connect } from '../config/db/connectMysql.js';
 
 class VehicleModel {
   
-  static async create({ model, type, color, user_id, property_id, parkingZone_id, status_id, vehicle_createAt, vehicle_updateAt }) {
+  static async create({ model, type, color, license_plate, user_id, property_id, parkingZone_id, status_id, vehicle_createAt, vehicle_updateAt }) {
      try {
-      let sqlQuery = "INSERT INTO vehicle (model, type, color, user_id, property_id, parkingZone_id, status_id, vehicle_createAt, vehicle_updateAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-      const [result] = await connect.query(sqlQuery,[model, type, color, user_id, property_id, parkingZone_id, status_id, vehicle_createAt, vehicle_updateAt]);
+      let sqlQuery = "INSERT INTO vehicle (model, type, color, license_plate, user_id, property_id, parkingZone_id, status_id, vehicle_createAt, vehicle_updateAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+      const [result] = await connect.query(sqlQuery,[model, type, color, license_plate, user_id, property_id, parkingZone_id, status_id, vehicle_createAt, vehicle_updateAt]);
       return result.insertId;
     } catch (error) {
       return null;
@@ -32,10 +32,10 @@ class VehicleModel {
     }
   }
 
-  static async update(id, { model, type, color, user_id, property_id, parkingZone_id, status_id, vehicle_updateAt }) {
+  static async update(id, { model, type, color, license_plate, user_id, property_id, parkingZone_id, status_id, vehicle_updateAt }) {
     try {
-      let sqlQuery = "UPDATE vehicle SET model = ?, type = ?, color = ?, user_id = ?, property_id = ?, parkingZone_id = ?, status_id = ?, vehicle_updateAt = ? WHERE vehicle_id = ?;";
-      const [result] = await connect.query(sqlQuery, [model, type, color, user_id, property_id, parkingZone_id, status_id, vehicle_updateAt, id]);
+      let sqlQuery = "UPDATE vehicle SET model = ?, type = ?, color = ?, license_plate = ?, user_id = ?, property_id = ?, parkingZone_id = ?, status_id = ?, vehicle_updateAt = ? WHERE vehicle_id = ?;";
+      const [result] = await connect.query(sqlQuery, [model, type, color, license_plate, user_id, property_id, parkingZone_id, status_id, vehicle_updateAt, id]);
       return result.affectedRows > 0 ? this.findById(id) : null;
     } catch (error) {
       return null;

@@ -58,8 +58,8 @@ class AmenityController {
       }
       // Verify if the Amenity already exists  
       const existingAmenity = await AmenityModel.findByIdActive(id);
-      if (existingAmenity.length === 0) {
-        return res.status(409).json({ data: '', error: 'The Amenity no already exists' });
+      if (!existingAmenity) {
+        return res.status(409).json({ data: '', error: 'The Amenity does not exist' });
       }   
 
       const updateAmenityModel = await AmenityModel.update(id, { 

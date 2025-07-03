@@ -102,7 +102,7 @@ class PropertyModel {
     try {
       let sqlQuery = `SELECT 
                         COUNT(*) as total_properties,
-                        COUNT(CASE WHEN property_type = 'Apartamento' THEN 1 END) as apartments,
+                        COUNT(CASE WHEN property_type = 'Casa' THEN 1 END) as apartments,
                         COUNT(CASE WHEN property_type = 'Casa' THEN 1 END) as houses,
                         (SELECT COUNT(DISTINCT user_id) FROM user_property WHERE status_id = 1) as total_residents
                       FROM property`;
@@ -115,14 +115,23 @@ class PropertyModel {
 
   static async showActive() {
     try {
-      let sqlQuery = `SELECT p.* FROM property p 
-                      WHERE p.property_id IN (
-                        SELECT DISTINCT property_id FROM user_property WHERE status_id = 1
-                      ) ORDER BY p.property_id`;
+      // Since property doesn't have status_id, we'll just return all properties
+      let sqlQuery = "SELECT * FROM property ORDER BY property_id";
       const [result] = await connect.query(sqlQuery);
       return result;
     } catch (error) {
       return [];
+    }
+  }
+
+  static async findByIdActive(id) {
+    try {
+      // Since property doesn't have status_id, this is the same as findById
+      let sqlQuery = 'SELECT * FROM property WHERE property_id = ?';
+      const [result] = await connect.query(sqlQuery, [id]);
+      return result[0];
+    } catch (error) {
+      return null;
     }
   }
 }

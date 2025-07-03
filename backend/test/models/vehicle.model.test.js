@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+﻿import { expect } from 'chai';
 import { describe, it, beforeEach, afterEach } from 'mocha';
 import VehicleModel from '../../models/vehicle.model.js';
 import { TestHelper } from '../helpers/testHelper.js';
@@ -16,12 +16,15 @@ describe('Vehicle Model', () => {
     it('should create a new vehicle and return the id', async () => {
       const vehicleData = {
         license_plate: 'ABC123',
-        brand: 'Toyota',
         model: 'Corolla',
+        type: 'Car',
         color: 'Blue',
-        vehicle_type: 'Car',
+        user_id: 1,
+        property_id: 1,
+        parkingZone_id: null,
         status_id: 1,
-        user_id: null
+        vehicle_createAt: '2025-07-03',
+        vehicle_updateAt: '2025-07-03'
       };
 
       const vehicleId = await VehicleModel.create(vehicleData);
@@ -36,12 +39,15 @@ describe('Vehicle Model', () => {
       // Create test vehicle
       await VehicleModel.create({
         license_plate: 'TEST123',
-        brand: 'Test Brand',
         model: 'Test Model',
+        type: 'Car',
         color: 'Red',
-        vehicle_type: 'Car',
+        user_id: 1,
+        property_id: 1,
+        parkingZone_id: null,
         status_id: 1,
-        user_id: null
+        vehicle_createAt: '2025-07-03',
+        vehicle_updateAt: '2025-07-03'
       });
 
       const vehicles = await VehicleModel.show();
@@ -57,23 +63,31 @@ describe('Vehicle Model', () => {
       // Create active vehicle
       await VehicleModel.create({
         license_plate: 'ACTIVE123',
-        brand: 'Active Brand',
+        model: 'Active Brand',
         model: 'Active Model',
         color: 'Blue',
-        vehicle_type: 'Car',
+        type: 'Car',
         status_id: 1,
-        user_id: null
+        user_id: null,
+        property_id: 1,
+        parkingZone_id: null,
+        vehicle_createAt: '2025-07-03',
+        vehicle_updateAt: '2025-07-03'
       });
 
       // Create inactive vehicle
       await VehicleModel.create({
         license_plate: 'INACTIVE123',
-        brand: 'Inactive Brand',
+        model: 'Inactive Brand',
         model: 'Inactive Model',
         color: 'Red',
-        vehicle_type: 'Car',
+        type: 'Car',
         status_id: 2,
-        user_id: null
+        user_id: null,
+        property_id: 1,
+        parkingZone_id: null,
+        vehicle_createAt: '2025-07-03',
+        vehicle_updateAt: '2025-07-03'
       });
 
       const activeVehicles = await VehicleModel.showActive();
@@ -90,20 +104,24 @@ describe('Vehicle Model', () => {
       // Create test vehicle
       const vehicleId = await VehicleModel.create({
         license_plate: 'TEST123',
-        brand: 'Test Brand',
+        model: 'Test Brand',
         model: 'Test Model',
         color: 'Red',
-        vehicle_type: 'Car',
+        type: 'Car',
         status_id: 1,
-        user_id: null
+        user_id: null,
+        property_id: 1,
+        parkingZone_id: null,
+        vehicle_createAt: '2025-07-03',
+        vehicle_updateAt: '2025-07-03'
       });
 
       const updateData = {
         license_plate: 'UPDATED123',
-        brand: 'Updated Brand',
+        model: 'Updated Brand',
         model: 'Updated Model',
         color: 'Blue',
-        vehicle_type: 'SUV',
+        type: 'SUV',
         status_id: 1,
         user_id: null
       };
@@ -117,10 +135,10 @@ describe('Vehicle Model', () => {
     it('should return null for non-existent vehicle', async () => {
       const updateData = {
         license_plate: 'UPDATED123',
-        brand: 'Updated Brand',
+        model: 'Updated Brand',
         model: 'Updated Model',
         color: 'Blue',
-        vehicle_type: 'SUV',
+        type: 'SUV',
         status_id: 1,
         user_id: null
       };
@@ -136,12 +154,16 @@ describe('Vehicle Model', () => {
       // Create test vehicle
       const vehicleId = await VehicleModel.create({
         license_plate: 'TEST123',
-        brand: 'Test Brand',
+        model: 'Test Brand',
         model: 'Test Model',
         color: 'Red',
-        vehicle_type: 'Car',
+        type: 'Car',
         status_id: 1,
-        user_id: null
+        user_id: null,
+        property_id: 1,
+        parkingZone_id: null,
+        vehicle_createAt: '2025-07-03',
+        vehicle_updateAt: '2025-07-03'
       });
 
       const result = await VehicleModel.delete(vehicleId);
@@ -165,12 +187,16 @@ describe('Vehicle Model', () => {
       // Create test vehicle
       const vehicleId = await VehicleModel.create({
         license_plate: 'TEST123',
-        brand: 'Test Brand',
+        model: 'Test Brand',
         model: 'Test Model',
         color: 'Red',
-        vehicle_type: 'Car',
+        type: 'Car',
         status_id: 1,
-        user_id: null
+        user_id: null,
+        property_id: 1,
+        parkingZone_id: null,
+        vehicle_createAt: '2025-07-03',
+        vehicle_updateAt: '2025-07-03'
       });
 
       const vehicle = await VehicleModel.findById(vehicleId);
@@ -192,12 +218,16 @@ describe('Vehicle Model', () => {
       // Create active vehicle
       const vehicleId = await VehicleModel.create({
         license_plate: 'TEST123',
-        brand: 'Test Brand',
+        model: 'Test Brand',
         model: 'Test Model',
         color: 'Red',
-        vehicle_type: 'Car',
+        type: 'Car',
         status_id: 1,
-        user_id: null
+        user_id: null,
+        property_id: 1,
+        parkingZone_id: null,
+        vehicle_createAt: '2025-07-03',
+        vehicle_updateAt: '2025-07-03'
       });
 
       const vehicle = await VehicleModel.findByIdActive(vehicleId);
@@ -211,12 +241,16 @@ describe('Vehicle Model', () => {
       // Create inactive vehicle
       const vehicleId = await VehicleModel.create({
         license_plate: 'TEST123',
-        brand: 'Test Brand',
+        model: 'Test Brand',
         model: 'Test Model',
         color: 'Red',
-        vehicle_type: 'Car',
+        type: 'Car',
         status_id: 2,
-        user_id: null
+        user_id: null,
+        property_id: 1,
+        parkingZone_id: null,
+        vehicle_createAt: '2025-07-03',
+        vehicle_updateAt: '2025-07-03'
       });
 
       const vehicle = await VehicleModel.findByIdActive(vehicleId);

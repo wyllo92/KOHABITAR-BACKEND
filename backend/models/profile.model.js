@@ -56,6 +56,29 @@ class ProfileModel {
       return null;
     }
   }
- 
+
+  static async showActive() {
+    try {
+      const [rows] = await connect.query(
+        'SELECT p.*, u.user_name, r.role_name, s.status_name FROM profile p LEFT JOIN user u ON p.user_id = u.user_id LEFT JOIN role r ON u.role_id = r.role_id LEFT JOIN status s ON u.status_id = s.status_id WHERE u.status_id = 1 ORDER BY p.user_id'
+      );
+      return rows;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  static async findByIdActive(user_id) {
+    try {
+      const [rows] = await connect.query(
+        'SELECT p.*, u.user_name, r.role_name, s.status_name FROM profile p LEFT JOIN user u ON p.user_id = u.user_id LEFT JOIN role r ON u.role_id = r.role_id LEFT JOIN status s ON u.status_id = s.status_id WHERE p.user_id = ? AND u.status_id = 1',
+        [user_id]
+      );
+      return rows[0];
+    } catch (error) {
+      return null;
+    }
+  }
+
 }
 export default ProfileModel;

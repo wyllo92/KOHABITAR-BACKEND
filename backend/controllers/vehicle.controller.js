@@ -4,21 +4,30 @@ class VehicleController {
 
   async register(req, res) {
     try {
-      const { license_plate, brand, model, color, vehicle_type, status_id, user_id } = req.body;
+      const { license_plate, model, type, color, user_id, property_id, parkingZone_id, status_id } = req.body;
       // Basic validation
-      if (!license_plate || !vehicle_type || !status_id) {
+      if (!license_plate || !model || !type || !color || !user_id || !property_id || !status_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
       
+      const currentDate = new Date().toISOString().split('T')[0];
       const vehicleId = await VehicleModel.create({
         license_plate,
-        brand,
         model,
+        type,
         color,
-        vehicle_type,
+        user_id,
+        property_id,
+        parkingZone_id,
         status_id,
-        user_id
+        vehicle_createAt: currentDate,
+        vehicle_updateAt: currentDate
       });
+      
+      if (!vehicleId) {
+        return res.status(500).json({ error: 'Failed to create vehicle' });
+      }
+      
       res.status(201).json({
         message: 'Vehicle created successfully',
         id: vehicleId
@@ -48,21 +57,36 @@ class VehicleController {
 
   async update(req, res) {
     try {
-      const { license_plate, brand, model, color, vehicle_type, status_id, user_id } = req.body;
+      const { license_plate, model, type, color, user_id, property_id, parkingZone_id, status_id } = req.body;
       const id = req.params.id;
       // Basic validation
-      if (!license_plate || !vehicle_type || !status_id || !id) {
+      if (!license_plate || !model || !type || !color || !user_id || !property_id || !status_id || !id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
+      
       // Verify if the Vehicle already exists  
       const existingVehicle = await VehicleModel.findByIdActive(id);
       if (!existingVehicle) {
         return res.status(409).json({ data: '', error: 'The Vehicle no already exists' });
       }   
 
+      const currentDate = new Date().toISOString().split('T')[0];
       const updateVehicleModel = await VehicleModel.update(id, { 
-        license_plate, brand, model, color, vehicle_type, status_id, user_id 
+        license_plate, 
+        model, 
+        type, 
+        color, 
+        user_id, 
+        property_id, 
+        parkingZone_id, 
+        status_id,
+        vehicle_updateAt: currentDate
       });
+      
+      if (!updateVehicleModel) {
+        return res.status(500).json({ error: 'Failed to update vehicle' });
+      }
+      
       res.status(201).json({
         message: 'Vehicle update successfully',
         data: updateVehicleModel

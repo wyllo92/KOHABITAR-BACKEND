@@ -58,6 +58,8 @@ const sqlStatements = [
     INDEX idx_status_entity (status_entity)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`,
 
+
+
   // Create role table
   `CREATE TABLE IF NOT EXISTS role (
     role_id int(11) NOT NULL AUTO_INCREMENT,
@@ -92,6 +94,7 @@ const sqlStatements = [
     user_password varchar(256) NOT NULL,
     role_id int(11) NOT NULL,
     status_id int(11) NOT NULL,
+    last_login datetime DEFAULT NULL,
     created_at datetime DEFAULT current_timestamp(),
     updated_at datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
     PRIMARY KEY (user_id),
@@ -588,7 +591,7 @@ const sqlStatements = [
 (4, 'Vigilante', 'Controla el ingreso', 1, '2025-05-27 16:14:55');`,
 
   `INSERT INTO property (property_id, property_name, property_description, property_type, property_createAt, property_updateAt) VALUES
-(1, 'Apto 101', 'Apartamento en primer piso', 'Apartamento', '2025-05-27', '2025-05-27'),
+(1, 'Casa 101', 'Casa en primer piso', 'Casa', '2025-05-27', '2025-05-27'),
 (2, 'Casa 10', 'Casa independiente', 'Casa', '2025-05-27', '2025-05-27');`,
 
   `INSERT INTO tariff (tariff_id, type, description, amount, surcharge_amount, surcharge_status, due_date, status_id, created_at, updated_at) VALUES
@@ -603,7 +606,7 @@ const sqlStatements = [
 
   `INSERT INTO profile (user_id, profile_fullName, profile_phone, profile_email, profile_photo, profile_address) VALUES
 (1, 'Admin General', '3000000001', 'admin@example.com', NULL, 'Oficina'),
-(2, 'Juan Residente', '3000000002', 'juan@example.com', NULL, 'Apto 101'),
+(2, 'Juan Residente', '3000000002', 'juan@example.com', NULL, 'Casa 101'),
 (3, 'Maria Propietaria', '3000000003', 'maria@example.com', NULL, 'Casa 10'),
 (4, 'Carlos Vigilante', '3000000004', 'carlos@example.com', NULL, 'Portería');`,
 

@@ -52,6 +52,26 @@ class StatusModel {
     }
   }
 
+  static async showActive() {
+    try {
+      let sqlQuery = "SELECT * FROM status WHERE status_is_active = 1 ORDER BY status_id";
+      const [result] = await connect.query(sqlQuery);
+      return result;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  static async findByIdActive(id) {
+    try {
+      let sqlQuery = 'SELECT * FROM status WHERE status_id = ? AND status_is_active = 1';
+      const [result] = await connect.query(sqlQuery, [id]);
+      return result[0];
+    } catch (error) {
+      return null;
+    }
+  }
+
   static async findByName(status_name) {
     try {
       let sqlQuery = 'SELECT * FROM status WHERE status_name = ?';
@@ -73,4 +93,4 @@ class StatusModel {
   }
 }
 
-export default StatusModel; 
+export default StatusModel;

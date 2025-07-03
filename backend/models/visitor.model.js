@@ -42,9 +42,29 @@ class VisitorModel {
     }
   }
 
+  static async showActive() {
+    try {
+      let sqlQuery = "SELECT v.*, p.property_name, s.status_name, veh.model as vehicle_model, veh.type as vehicle_type, ps.code as parking_slot_code FROM visitor v LEFT JOIN property p ON v.Property_id = p.property_id LEFT JOIN status s ON v.Status_id = s.status_id LEFT JOIN vehicle veh ON v.Vehicle_id = veh.vehicle_id LEFT JOIN parkingslot ps ON v.parkingSlot_id = ps.parkingSlot_id WHERE v.Status_id = 1 ORDER BY v.Visitor_id";
+      const [result] = await connect.query(sqlQuery);
+      return result;
+    } catch (error) {
+      return [];
+    }
+  }
+
   static async findById(id) {
     try {
       let sqlQuery = 'SELECT v.*, p.property_name, s.status_name, veh.model as vehicle_model, veh.type as vehicle_type, ps.code as parking_slot_code FROM visitor v LEFT JOIN property p ON v.Property_id = p.property_id LEFT JOIN status s ON v.Status_id = s.status_id LEFT JOIN vehicle veh ON v.Vehicle_id = veh.vehicle_id LEFT JOIN parkingslot ps ON v.parkingSlot_id = ps.parkingSlot_id WHERE v.Visitor_id = ?';
+      const [result] = await connect.query(sqlQuery, [id]);
+      return result[0];
+    } catch (error) {
+      return null;
+    }
+  }
+
+  static async findByIdActive(id) {
+    try {
+      let sqlQuery = 'SELECT v.*, p.property_name, s.status_name, veh.model as vehicle_model, veh.type as vehicle_type, ps.code as parking_slot_code FROM visitor v LEFT JOIN property p ON v.Property_id = p.property_id LEFT JOIN status s ON v.Status_id = s.status_id LEFT JOIN vehicle veh ON v.Vehicle_id = veh.vehicle_id LEFT JOIN parkingslot ps ON v.parkingSlot_id = ps.parkingSlot_id WHERE v.Visitor_id = ? AND v.Status_id = 1';
       const [result] = await connect.query(sqlQuery, [id]);
       return result[0];
     } catch (error) {

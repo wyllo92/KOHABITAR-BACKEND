@@ -17,12 +17,13 @@ describe('Vehicle Controller', () => {
     it('should create a new vehicle successfully', async () => {
       const req = createMockReq({
         license_plate: 'ABC123',
-        brand: 'Toyota',
         model: 'Corolla',
+        type: 'Car',
         color: 'Blue',
-        vehicle_type: 'Car',
-        status_id: 1,
-        user_id: null
+        user_id: 1,
+        property_id: 1,
+        parkingZone_id: null,
+        status_id: 1
       });
       const res = createMockRes();
 
@@ -35,7 +36,7 @@ describe('Vehicle Controller', () => {
 
     it('should return error for missing required fields', async () => {
       const req = createMockReq({
-        brand: 'Toyota'
+        model: 'Corolla'
         // Missing required fields
       });
       const res = createMockRes();

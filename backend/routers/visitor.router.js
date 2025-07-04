@@ -3,11 +3,10 @@ import VisitorController from '../controllers/visitor.controller.js';
 
 const router = express.Router();
 
-// Rutas para visitor
-router.get('/', VisitorController.show);
-router.get('/:id', VisitorController.findById);
-router.post('/', VisitorController.register);
-router.put('/:id', VisitorController.update);
-router.delete('/:id', VisitorController.delete);
+router.get('/visitor', VisitorController.show);
+router.get('/visitor/:id', VisitorController.findById);
+router.post('/visitor', VisitorController.register);
+router.put('/visitor/:id', VisitorController.update);
+router.delete('/visitor/:id', VisitorController.delete);
 
-export default router; 
+export default router;

@@ -1,243 +1,174 @@
 import PropertyModel from '../models/property.model.js';
 
 class PropertyController {
-  
-  // Obtener todas las propiedades
-  static async getAllProperties(req, res) {
+
+  async register(req, res) {
     try {
-      const properties = await PropertyModel.show();
-      res.json({
-        success: true,
-        data: properties,
-        message: 'Propiedades obtenidas exitosamente'
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener las propiedades',
-        error: error.message
-      });
-    }
-  }
+      const { property_name, property_description, property_type } = req.body;
 
-  // Obtener una propiedad por ID
-  static async getPropertyById(req, res) {
-    try {
-      const { id } = req.params;
-      const property = await PropertyModel.findById(id);
-      
-      if (!property) {
-        return res.status(404).json({
-          success: false,
-          message: 'Propiedad no encontrada'
-        });
-      }
-
-      res.json({
-        success: true,
-        data: property,
-        message: 'Propiedad obtenida exitosamente'
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener la propiedad',
-        error: error.message
-      });
-    }
-  }
-
-  // Crear una nueva propiedad
-  static async createProperty(req, res) {
-    try {
-      const {
-        property_name,
-        property_description,
-        property_type,
-        property_createAt,
-        property_updateAt
-      } = req.body;
-
-      // Validaciones básicas
+      // Basic validation
       if (!property_name || !property_type) {
-        return res.status(400).json({
-          success: false,
-          message: 'El nombre y tipo de propiedad son requeridos'
-        });
+        return res.status(400).json({ error: 'Required fields are missing' });
       }
 
-      const propertyData = {
-        property_name,
-        property_description: property_description || '',
-        property_type,
-        property_createAt: property_createAt || new Date().toISOString().split('T')[0],
-        property_updateAt: property_updateAt || new Date().toISOString().split('T')[0]
-      };
-
-      const propertyId = await PropertyModel.create(propertyData);
-      
-      if (propertyId) {
-        const newProperty = await PropertyModel.findById(propertyId);
-        res.status(201).json({
-          success: true,
-          data: newProperty,
-          message: 'Propiedad creada exitosamente'
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Error al crear la propiedad'
-        });
+      // Check if property with same name already exists
+      const existingProperty = await PropertyModel.findByName(property_name);
+      if (existingProperty) {
+        return res.status(409).json({ error: 'Property with this name already exists' });
       }
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al crear la propiedad',
-        error: error.message
-      });
-    }
-  }
 
-  // Actualizar una propiedad
-  static async updateProperty(req, res) {
-    try {
-      const { id } = req.params;
-      const {
+      const currentDate = new Date().toISOString().split('T')[0];
+      const propertyId = await PropertyModel.create({
         property_name,
         property_description,
         property_type,
-        property_updateAt
-      } = req.body;
-
-      // Verificar si la propiedad existe
-      const existingProperty = await PropertyModel.findById(id);
-      if (!existingProperty) {
-        return res.status(404).json({
-          success: false,
-          message: 'Propiedad no encontrada'
-        });
-      }
-
-      const updateData = {
-        property_name: property_name || existingProperty.property_name,
-        property_description: property_description || existingProperty.property_description,
-        property_type: property_type || existingProperty.property_type,
-        property_updateAt: property_updateAt || new Date().toISOString().split('T')[0]
-      };
-
-      const updatedProperty = await PropertyModel.update(id, updateData);
-      
-      if (updatedProperty) {
-        res.json({
-          success: true,
-          data: updatedProperty,
-          message: 'Propiedad actualizada exitosamente'
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Error al actualizar la propiedad'
-        });
-      }
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al actualizar la propiedad',
-        error: error.message
+        property_createAt: currentDate,
+        property_updateAt: currentDate
       });
+
+      if (!propertyId) {
+        return res.status(500).json({ error: 'Failed to create property' });
+      }
+
+      res.status(201).json({
+        message: 'Property created successfully',
+        id: propertyId
+      });
+    } catch (error) {
+      console.error('Error in property registration:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
-  // Eliminar una propiedad
-  static async deleteProperty(req, res) {
+  async show(req, res) {
     try {
-      const { id } = req.params;
-
-      // Verificar si la propiedad existe
-      const existingProperty = await PropertyModel.findById(id);
-      if (!existingProperty) {
-        return res.status(404).json({
-          success: false,
-          message: 'Propiedad no encontrada'
-        });
-      }
-
-      const deleted = await PropertyModel.delete(id);
-      
-      if (deleted) {
-        res.json({
-          success: true,
-          message: 'Propiedad eliminada exitosamente'
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Error al eliminar la propiedad'
-        });
-      }
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al eliminar la propiedad',
-        error: error.message
+      const propertyModel = await PropertyModel.showActive();
+      res.status(201).json({
+        message: 'Properties retrieved successfully',
+        data: propertyModel
       });
+    } catch (error) {
+      console.error('Error retrieving properties:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
-  // Obtener propiedades por tipo
-  static async getPropertiesByType(req, res) {
+  async update(req, res) {
     try {
-      const { type } = req.params;
-      const properties = await PropertyModel.findByType(type);
-      
-      res.json({
-        success: true,
-        data: properties,
-        message: `Propiedades de tipo ${type} obtenidas exitosamente`
+      const { property_name, property_description, property_type } = req.body;
+      const id = req.params.id;
+
+      // Basic validation
+      if (!property_name || !property_type || !id) {
+        return res.status(400).json({ error: 'Required fields are missing' });
+      }
+
+      // Verify if the Property already exists  
+      const existingProperty = await PropertyModel.findByIdActive(id);
+      if (!existingProperty) {
+        return res.status(409).json({ data: '', error: 'The Property does not exist' });
+      }
+
+      const currentDate = new Date().toISOString().split('T')[0];
+      const updatePropertyModel = await PropertyModel.update(id, {
+        property_name,
+        property_description,
+        property_type,
+        property_updateAt: currentDate
+      });
+
+      if (!updatePropertyModel) {
+        return res.status(500).json({ error: 'Failed to update property' });
+      }
+
+      res.status(201).json({
+        message: 'Property updated successfully',
+        data: updatePropertyModel
       });
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener las propiedades por tipo',
-        error: error.message
-      });
+      console.error('Error in property update:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
-  // Buscar propiedades por nombre
-  static async searchPropertiesByName(req, res) {
+  async delete(req, res) {
+    try {
+      const id = req.params.id;
+      // Basic validate
+      if (!id) {
+        return res.status(400).json({ error: 'Required fields are missing' });
+      }
+      // Verify if the Property already exists
+      const deletePropertyModel = await PropertyModel.delete(id);
+      res.status(201).json({
+        message: 'Property deleted successfully',
+        data: deletePropertyModel
+      });
+    } catch (error) {
+      console.error('Error in property delete:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async findById(req, res) {
+    try {
+      const id = req.params.id;
+      // Basic validate
+      if (!id) {
+        return res.status(400).json({ error: 'Required fields are missing' });
+      }
+      // Verify if the Property already exists
+      const propertyModel = await PropertyModel.findById(id);
+      if (!propertyModel) {
+        return res.status(404).json({ error: 'Property not found' });
+      }
+      res.status(201).json({
+        message: 'Property found successfully',
+        data: propertyModel
+      });
+    } catch (error) {
+      console.error('Error finding property:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async searchPropertiesByName(req, res) {
     try {
       const { name } = req.query;
-      
       if (!name) {
-        return res.status(400).json({
-          success: false,
-          message: 'El parámetro de búsqueda es requerido'
-        });
+        return res.status(400).json({ error: 'Name parameter is required' });
       }
-
-      const property = await PropertyModel.findByName(name);
       
-      if (property) {
-        res.json({
-          success: true,
-          data: property,
-          message: 'Propiedad encontrada exitosamente'
-        });
-      } else {
-        res.status(404).json({
-          success: false,
-          message: 'Propiedad no encontrada'
-        });
+      const property = await PropertyModel.findByName(name);
+      if (!property) {
+        return res.status(404).json({ error: 'Property not found' });
       }
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al buscar la propiedad',
-        error: error.message
+      
+      res.status(200).json({
+        message: 'Property found successfully',
+        data: property
       });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async getPropertiesByType(req, res) {
+    try {
+      const { type } = req.params;
+      if (!type) {
+        return res.status(400).json({ error: 'Type parameter is required' });
+      }
+      
+      const properties = await PropertyModel.findByType(type);
+      res.status(200).json({
+        message: 'Properties retrieved successfully',
+        data: properties
+      });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 }
 
-export default PropertyController; 
+export default new PropertyController();

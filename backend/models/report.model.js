@@ -1,11 +1,11 @@
 import { connect } from '../config/db/connectMysql.js';
 
 class ReportModel {
-  
+
   static async create({ User_id, Report_title, Report_description, report_type_id, Status_id, Report_file_url, Report_created_at }) {
-     try {
+    try {
       let sqlQuery = "INSERT INTO report (User_id, Report_title, Report_description, report_type_id, Status_id, Report_file_url, Report_created_at) VALUES (?, ?, ?, ?, ?, ?, ?);";
-      const [result] = await connect.query(sqlQuery,[User_id, Report_title, Report_description, report_type_id, Status_id, Report_file_url, Report_created_at]);
+      const [result] = await connect.query(sqlQuery, [User_id, Report_title, Report_description, report_type_id, Status_id, Report_file_url, Report_created_at]);
       return result.insertId;
     } catch (error) {
       return null;

@@ -1,8 +1,7 @@
 import ParkingSlotModel from '../models/parkingslot.model.js';
 
 class ParkingSlotController {
-  
-  // Obtener todos los espacios de parqueo
+
   static async getAllParkingSlots(req, res) {
     try {
       const parkingSlots = await ParkingSlotModel.show();
@@ -80,7 +79,7 @@ class ParkingSlotController {
     try {
       const { id } = req.params;
       const parkingSlot = await ParkingSlotModel.findById(id);
-      
+
       if (!parkingSlot) {
         return res.status(404).json({
           success: false,
@@ -107,7 +106,7 @@ class ParkingSlotController {
     try {
       const parkingSlotData = req.body;
       const parkingSlotId = await ParkingSlotModel.create(parkingSlotData);
-      
+
       if (parkingSlotId) {
         const newParkingSlot = await ParkingSlotModel.findById(parkingSlotId);
         res.status(201).json({
@@ -145,7 +144,7 @@ class ParkingSlotController {
       }
 
       const updatedSlot = await ParkingSlotModel.update(id, updateData);
-      
+
       if (updatedSlot) {
         res.json({
           success: true,
@@ -181,7 +180,7 @@ class ParkingSlotController {
       }
 
       const deleted = await ParkingSlotModel.delete(id);
-      
+
       if (deleted) {
         res.json({
           success: true,

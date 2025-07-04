@@ -1,11 +1,11 @@
 import { connect } from '../config/db/connectMysql.js';
 
 class StatusModel {
-  
+
   static async create({ status_name, status_description, status_entity, status_is_active }) {
-     try {
+    try {
       let sqlQuery = "INSERT INTO status (status_name, status_description, status_entity, status_is_active, status_created_at) VALUES (?, ?, ?, ?, NOW());";
-      const [result] = await connect.query(sqlQuery,[status_name, status_description, status_entity, status_is_active]);
+      const [result] = await connect.query(sqlQuery, [status_name, status_description, status_entity, status_is_active]);
       return result.insertId;
     } catch (error) {
       return null;

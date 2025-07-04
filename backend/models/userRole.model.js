@@ -16,12 +16,12 @@ class UserRoleModel {
     );
     return rows[0];
   }
- 
 
-  static async update(id, { user_id, role_id, status_id  }) {
+
+  static async update(id, { user_id, role_id, status_id }) {
     const [result] = await connect.query(
       'UPDATE User_role SET user_id = ?, role_id = ?, status_id=?,updated_at =CURRENT_TIMESTAMP WHERE id = ?',
-      [user_id, role_id, status_id,id ]
+      [user_id, role_id, status_id, id]
     );
     return result.affectedRows > 0 ? this.findById(id) : null;
   }
@@ -42,8 +42,8 @@ class UserRoleModel {
     return rows[0];
   }
 
-   static async showRoleUser(id) {
-     const [rows] = await connect.query(
+  static async showRoleUser(id) {
+    const [rows] = await connect.query(
       'CALL sp_user_role_id(?)',
       [id]
     );

@@ -70,15 +70,15 @@ class UserController {
       // Verify if the User already exists  
       const existingUser = await UserModel.findByIdActive(id);
       if (!existingUser) {
-        return res.status(409).json({ data:'', error: 'The User does not exist' });
-      }   
+        return res.status(409).json({ data: '', error: 'The User does not exist' });
+      }
 
       // Encrypt password before updating
       const encryptedPassword = await encryptPassword(user_password);
-      const updateUserModel = await UserModel.update(id, { 
-        user_name, 
-        user_password: encryptedPassword, 
-        role_id, 
+      const updateUserModel = await UserModel.update(id, {
+        user_name,
+        user_password: encryptedPassword,
+        role_id,
         status_id
       });
       res.status(201).json({
@@ -150,10 +150,10 @@ class UserController {
           if (!updateLogin) {
             return res.status(500).json({ error: 'Failed to update login time' });
           }
-          const token = jwt.sign({ 
-            id: existingUser.user_id, 
-            username: existingUser.user_name, 
-            status: existingUser.status_id 
+          const token = jwt.sign({
+            id: existingUser.user_id,
+            username: existingUser.user_name,
+            status: existingUser.status_id
           }, process.env.JWT_SECRET, {
             expiresIn: "1h",
             algorithm: "HS256"

@@ -1,206 +1,133 @@
 import StatusModel from '../models/status.model.js';
 
 class StatusController {
-  
-  // Obtener todos los estados
-  static async getAllStatus(req, res) {
-    try {
-      const status = await StatusModel.show();
-      res.json({
-        success: true,
-        data: status,
-        message: 'Estados obtenidos exitosamente'
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener los estados',
-        error: error.message
-      });
+
+    async register(req, res) {
+        try {
+            const { status_name, status_description, status_entity, status_is_active } = req.body;
+
+            // Basic validation
+            if (!status_name || !status_entity) {
+                return res.status(400).json({ error: 'Required fields are missing' });
+            }
+
+            // Check if status with same name already exists
+            const existingStatus = await StatusModel.findByName(status_name);
+            if (existingStatus) {
+                return res.status(409).json({ error: 'Status with this name already exists' });
+            }
+
+            const statusId = await StatusModel.create({
+                status_name,
+                status_description,
+                status_entity,
+                status_is_active: status_is_active !== undefined ? status_is_active : 1
+            });
+
+            if (!statusId) {
+                return res.status(500).json({ error: 'Failed to create status' });
+            }
+
+            res.status(201).json({
+                message: 'Status created successfully',
+                id: statusId
+            });
+        } catch (error) {
+            console.error('Error in status registration:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     }
-  }
 
-  // Obtener un estado por ID
-  static async getStatusById(req, res) {
-    try {
-      const { id } = req.params;
-      const status = await StatusModel.findById(id);
-      
-      if (!status) {
-        return res.status(404).json({
-          success: false,
-          message: 'Estado no encontrado'
-        });
-      }
-
-      res.json({
-        success: true,
-        data: status,
-        message: 'Estado obtenido exitosamente'
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener el estado',
-        error: error.message
-      });
+    async show(req, res) {
+        try {
+            const statusModel = await StatusModel.showActive();
+            res.status(201).json({
+                message: 'Status retrieved successfully',
+                data: statusModel
+            });
+        } catch (error) {
+            console.error('Error retrieving status:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     }
-  }
 
-  // Crear un nuevo estado
-  static async createStatus(req, res) {
-    try {
-      const {
-        status_name,
-        status_description,
-        status_entity,
-        status_is_active
-      } = req.body;
+    async update(req, res) {
+        try {
+            const { status_name, status_description, status_entity, status_is_active } = req.body;
+            const id = req.params.id;
 
-      // Validaciones básicas
-      if (!status_name || !status_entity) {
-        return res.status(400).json({
-          success: false,
-          message: 'El nombre y entidad del estado son requeridos'
-        });
-      }
+            // Basic validation
+            if (!status_name || !status_entity || !id) {
+                return res.status(400).json({ error: 'Required fields are missing' });
+            }
 
-      const statusData = {
-        status_name,
-        status_description: status_description || '',
-        status_entity,
-        status_is_active: status_is_active !== undefined ? status_is_active : 1
-      };
+            // Verify if the Status already exists  
+            const existingStatus = await StatusModel.findByIdActive(id);
+            if (!existingStatus) {
+                return res.status(409).json({ data: '', error: 'The Status does not exist' });
+            }
 
-      const statusId = await StatusModel.create(statusData);
-      
-      if (statusId) {
-        const newStatus = await StatusModel.findById(statusId);
-        res.status(201).json({
-          success: true,
-          data: newStatus,
-          message: 'Estado creado exitosamente'
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Error al crear el estado'
-        });
-      }
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al crear el estado',
-        error: error.message
-      });
+            const updateStatusModel = await StatusModel.update(id, {
+                status_name,
+                status_description,
+                status_entity,
+                status_is_active: status_is_active !== undefined ? status_is_active : existingStatus.status_is_active
+            });
+
+            if (!updateStatusModel) {
+                return res.status(500).json({ error: 'Failed to update status' });
+            }
+
+            res.status(201).json({
+                message: 'Status updated successfully',
+                data: updateStatusModel
+            });
+        } catch (error) {
+            console.error('Error in status update:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     }
-  }
 
-  // Actualizar un estado
-  static async updateStatus(req, res) {
-    try {
-      const { id } = req.params;
-      const {
-        status_name,
-        status_description,
-        status_entity,
-        status_is_active
-      } = req.body;
-
-      // Verificar si el estado existe
-      const existingStatus = await StatusModel.findById(id);
-      if (!existingStatus) {
-        return res.status(404).json({
-          success: false,
-          message: 'Estado no encontrado'
-        });
-      }
-
-      const updateData = {
-        status_name: status_name || existingStatus.status_name,
-        status_description: status_description || existingStatus.status_description,
-        status_entity: status_entity || existingStatus.status_entity,
-        status_is_active: status_is_active !== undefined ? status_is_active : existingStatus.status_is_active
-      };
-
-      const updatedStatus = await StatusModel.update(id, updateData);
-      
-      if (updatedStatus) {
-        res.json({
-          success: true,
-          data: updatedStatus,
-          message: 'Estado actualizado exitosamente'
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Error al actualizar el estado'
-        });
-      }
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al actualizar el estado',
-        error: error.message
-      });
+    async delete(req, res) {
+        try {
+            const id = req.params.id;
+            // Basic validate
+            if (!id) {
+                return res.status(400).json({ error: 'Required fields are missing' });
+            }
+            // Verify if the Status already exists
+            const deleteStatusModel = await StatusModel.delete(id);
+            res.status(201).json({
+                message: 'Status deleted successfully',
+                data: deleteStatusModel
+            });
+        } catch (error) {
+            console.error('Error in status delete:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     }
-  }
 
-  // Eliminar un estado
-  static async deleteStatus(req, res) {
-    try {
-      const { id } = req.params;
-
-      // Verificar si el estado existe
-      const existingStatus = await StatusModel.findById(id);
-      if (!existingStatus) {
-        return res.status(404).json({
-          success: false,
-          message: 'Estado no encontrado'
-        });
-      }
-
-      const deleted = await StatusModel.delete(id);
-      
-      if (deleted) {
-        res.json({
-          success: true,
-          message: 'Estado eliminado exitosamente'
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Error al eliminar el estado'
-        });
-      }
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al eliminar el estado',
-        error: error.message
-      });
+    async findById(req, res) {
+        try {
+            const id = req.params.id;
+            // Basic validate
+            if (!id) {
+                return res.status(400).json({ error: 'Required fields are missing' });
+            }
+            // Verify if the Status already exists
+            const statusModel = await StatusModel.findById(id);
+            if (!statusModel) {
+                return res.status(404).json({ error: 'Status not found' });
+            }
+            res.status(201).json({
+                message: 'Status found successfully',
+                data: statusModel
+            });
+        } catch (error) {
+            console.error('Error finding status:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     }
-  }
-
-  // Obtener estados por entidad
-  static async getStatusByEntity(req, res) {
-    try {
-      const { entity } = req.params;
-      const status = await StatusModel.findByEntity(entity);
-      
-      res.json({
-        success: true,
-        data: status,
-        message: `Estados de entidad ${entity} obtenidos exitosamente`
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener los estados por entidad',
-        error: error.message
-      });
-    }
-  }
 }
 
-export default StatusController; 
+export default new StatusController();

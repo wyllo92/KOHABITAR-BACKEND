@@ -1,11 +1,11 @@
 import { connect } from '../config/db/connectMysql.js';
 
 class PropertyModel {
-  
+
   static async create({ property_name, property_description, property_type, property_createAt, property_updateAt }) {
-     try {
+    try {
       let sqlQuery = "INSERT INTO property (property_name, property_description, property_type, property_createAt, property_updateAt) VALUES (?, ?, ?, ?, ?);";
-      const [result] = await connect.query(sqlQuery,[property_name, property_description, property_type, property_createAt, property_updateAt]);
+      const [result] = await connect.query(sqlQuery, [property_name, property_description, property_type, property_createAt, property_updateAt]);
       return result.insertId;
     } catch (error) {
       return null;

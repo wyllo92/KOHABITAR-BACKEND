@@ -1,7 +1,7 @@
 import InvoiceModel from '../models/invoice.model.js';
 
 class InvoiceController {
-  
+
   static async getAllInvoices(req, res) {
     try {
       const invoices = await InvoiceModel.show();
@@ -59,7 +59,7 @@ class InvoiceController {
     try {
       const { id } = req.params;
       const invoice = await InvoiceModel.findById(id);
-      
+
       if (!invoice) {
         return res.status(404).json({
           success: false,
@@ -85,7 +85,7 @@ class InvoiceController {
     try {
       const invoiceData = req.body;
       const invoiceId = await InvoiceModel.create(invoiceData);
-      
+
       if (invoiceId) {
         const newInvoice = await InvoiceModel.findById(invoiceId);
         res.status(201).json({
@@ -122,7 +122,7 @@ class InvoiceController {
       }
 
       const updatedInvoice = await InvoiceModel.update(id, updateData);
-      
+
       if (updatedInvoice) {
         res.json({
           success: true,
@@ -157,7 +157,7 @@ class InvoiceController {
       }
 
       const deleted = await InvoiceModel.delete(id);
-      
+
       if (deleted) {
         res.json({
           success: true,

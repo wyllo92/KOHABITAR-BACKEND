@@ -47,10 +47,10 @@ class ModuleModel {
     }
   }
 
-  static async findModulesByUserRole(idUser,idRole) {
+  static async findModulesByUserRole(idUser, idRole) {
     try {
       let sqlQuery = "CALL sp_module_role_user(?,?); ";
-      const [result] = await connect.query(sqlQuery, [idUser,idRole]);
+      const [result] = await connect.query(sqlQuery, [idUser, idRole]);
       return result;
     } catch (error) {
       return [0];

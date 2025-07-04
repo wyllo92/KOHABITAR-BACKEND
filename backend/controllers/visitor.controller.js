@@ -4,30 +4,30 @@ class VisitorController {
 
   async register(req, res) {
     try {
-      const { 
-        Visitor_full_name, 
-        Visitor_id_document, 
-        Visitor_visit_reason, 
-        Visitor_entry_time, 
-        Visitor_exit_time, 
-        Visitor_authorized_by, 
-        Property_id, 
-        Status_id, 
-        Vehicle_id, 
-        parkingSlot_id 
+      const {
+        Visitor_full_name,
+        Visitor_id_document,
+        Visitor_visit_reason,
+        Visitor_entry_time,
+        Visitor_exit_time,
+        Visitor_authorized_by,
+        Property_id,
+        Status_id,
+        Vehicle_id,
+        parkingSlot_id
       } = req.body;
-      
+
       // Basic validation
       if (!Visitor_full_name || !Visitor_id_document || !Visitor_visit_reason || !Visitor_entry_time || !Visitor_authorized_by || !Property_id || !Status_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      
+
       // Check if visitor with same document already exists and is active
       const existingVisitor = await VisitorModel.findByDocument(Visitor_id_document);
       if (existingVisitor && existingVisitor.Status_id === 1) {
         return res.status(409).json({ error: 'Visitor with this document is already registered and active' });
       }
-      
+
       const visitorId = await VisitorModel.create({
         Visitor_full_name,
         Visitor_id_document,
@@ -40,11 +40,11 @@ class VisitorController {
         Vehicle_id,
         parkingSlot_id
       });
-      
+
       if (!visitorId) {
         return res.status(500).json({ error: 'Failed to create visitor' });
       }
-      
+
       res.status(201).json({
         message: 'Visitor created successfully',
         id: visitorId
@@ -70,32 +70,32 @@ class VisitorController {
 
   async update(req, res) {
     try {
-      const { 
-        Visitor_full_name, 
-        Visitor_id_document, 
-        Visitor_visit_reason, 
-        Visitor_entry_time, 
-        Visitor_exit_time, 
-        Visitor_authorized_by, 
-        Property_id, 
-        Status_id, 
-        Vehicle_id, 
-        parkingSlot_id 
+      const {
+        Visitor_full_name,
+        Visitor_id_document,
+        Visitor_visit_reason,
+        Visitor_entry_time,
+        Visitor_exit_time,
+        Visitor_authorized_by,
+        Property_id,
+        Status_id,
+        Vehicle_id,
+        parkingSlot_id
       } = req.body;
       const id = req.params.id;
-      
+
       // Basic validation
       if (!Visitor_full_name || !Visitor_id_document || !Visitor_visit_reason || !Visitor_entry_time || !Visitor_authorized_by || !Property_id || !Status_id || !id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      
+
       // Verify if the Visitor already exists  
       const existingVisitor = await VisitorModel.findByIdActive(id);
       if (!existingVisitor) {
         return res.status(409).json({ data: '', error: 'The Visitor does not exist' });
-      }   
+      }
 
-      const updateVisitorModel = await VisitorModel.update(id, { 
+      const updateVisitorModel = await VisitorModel.update(id, {
         Visitor_full_name,
         Visitor_id_document,
         Visitor_visit_reason,
@@ -107,11 +107,11 @@ class VisitorController {
         Vehicle_id,
         parkingSlot_id
       });
-      
+
       if (!updateVisitorModel) {
         return res.status(500).json({ error: 'Failed to update visitor' });
       }
-      
+
       res.status(201).json({
         message: 'Visitor updated successfully',
         data: updateVisitorModel
@@ -164,4 +164,4 @@ class VisitorController {
   }
 }
 
-export default new VisitorController(); 
+export default new VisitorController();

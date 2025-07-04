@@ -1,8 +1,8 @@
 import { Router } from "express";
-import {verifyToken} from "../controllers/token.controller.js";
-const router = Router();  
+import { verifyToken } from "../controllers/token.controller.js";
+const router = Router();
 
-const name='/validate-token';
+const name = '/validate-token';
 
 router.post(name, verifyToken);
 

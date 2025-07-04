@@ -1,11 +1,11 @@
 import { connect } from '../config/db/connectMysql.js';
 
 class TariffModel {
-  
+
   static async create({ type, description, amount, surcharge_amount, surcharge_status, due_date, status_id, created_at, updated_at }) {
-     try {
+    try {
       let sqlQuery = "INSERT INTO tariff (type, description, amount, surcharge_amount, surcharge_status, due_date, status_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-      const [result] = await connect.query(sqlQuery,[type, description, amount, surcharge_amount, surcharge_status, due_date, status_id, created_at, updated_at]);
+      const [result] = await connect.query(sqlQuery, [type, description, amount, surcharge_amount, surcharge_status, due_date, status_id, created_at, updated_at]);
       return result.insertId;
     } catch (error) {
       return null;

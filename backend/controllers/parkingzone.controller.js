@@ -1,7 +1,7 @@
 import ParkingZoneModel from '../models/parkingzone.model.js';
 
 class ParkingZoneController {
-  
+
   static async getAllParkingZones(req, res) {
     try {
       const parkingZones = await ParkingZoneModel.show();
@@ -23,7 +23,7 @@ class ParkingZoneController {
     try {
       const { id } = req.params;
       const parkingZone = await ParkingZoneModel.findById(id);
-      
+
       if (!parkingZone) {
         return res.status(404).json({
           success: false,
@@ -49,7 +49,7 @@ class ParkingZoneController {
     try {
       const parkingZoneData = req.body;
       const parkingZoneId = await ParkingZoneModel.create(parkingZoneData);
-      
+
       if (parkingZoneId) {
         const newParkingZone = await ParkingZoneModel.findById(parkingZoneId);
         res.status(201).json({
@@ -86,7 +86,7 @@ class ParkingZoneController {
       }
 
       const updatedZone = await ParkingZoneModel.update(id, updateData);
-      
+
       if (updatedZone) {
         res.json({
           success: true,
@@ -121,7 +121,7 @@ class ParkingZoneController {
       }
 
       const deleted = await ParkingZoneModel.delete(id);
-      
+
       if (deleted) {
         res.json({
           success: true,

@@ -1,11 +1,11 @@
 import { connect } from '../config/db/connectMysql.js';
 
 class NotificationModel {
-  
+
   static async create({ User_id, Property_id, Notification_type_id, Notification_title, Notification_message, Status_id, Notification_priority, Notification_createAt, Notification_updateAt }) {
-     try {
+    try {
       let sqlQuery = "INSERT INTO notification (User_id, Property_id, Notification_type_id, Notification_title, Notification_message, Status_id, Notification_priority, Notification_createAt, Notification_updateAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-      const [result] = await connect.query(sqlQuery,[User_id, Property_id, Notification_type_id, Notification_title, Notification_message, Status_id, Notification_priority, Notification_createAt, Notification_updateAt]);
+      const [result] = await connect.query(sqlQuery, [User_id, Property_id, Notification_type_id, Notification_title, Notification_message, Status_id, Notification_priority, Notification_createAt, Notification_updateAt]);
       return result.insertId;
     } catch (error) {
       return null;

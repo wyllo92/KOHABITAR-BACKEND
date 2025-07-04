@@ -1,11 +1,11 @@
 import { connect } from '../config/db/connectMysql.js';
 
 class ReservationModel {
-  
+
   static async create({ amenity_id, user_id, status_id, tariff_id, reservation_createAt, reservation_start_time, reservation_end_time, reservation_time_unit, reservation_capacity }) {
-     try {
+    try {
       let sqlQuery = "INSERT INTO reservation (amenity_id, user_id, status_id, tariff_id, reservation_createAt, reservation_start_time, reservation_end_time, reservation_time_unit, reservation_capacity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-      const [result] = await connect.query(sqlQuery,[amenity_id, user_id, status_id, tariff_id, reservation_createAt, reservation_start_time, reservation_end_time, reservation_time_unit, reservation_capacity]);
+      const [result] = await connect.query(sqlQuery, [amenity_id, user_id, status_id, tariff_id, reservation_createAt, reservation_start_time, reservation_end_time, reservation_time_unit, reservation_capacity]);
       return result.insertId;
     } catch (error) {
       return null;

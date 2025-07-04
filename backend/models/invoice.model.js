@@ -1,11 +1,11 @@
 import { connect } from '../config/db/connectMysql.js';
 
 class InvoiceModel {
-  
+
   static async create({ user_id, property_id, tariff_id, date, due_date, amount, status_id, description, created_at, updated_at }) {
-     try {
+    try {
       let sqlQuery = "INSERT INTO invoice (user_id, property_id, tariff_id, date, due_date, amount, status_id, description, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-      const [result] = await connect.query(sqlQuery,[user_id, property_id, tariff_id, date, due_date, amount, status_id, description, created_at, updated_at]);
+      const [result] = await connect.query(sqlQuery, [user_id, property_id, tariff_id, date, due_date, amount, status_id, description, created_at, updated_at]);
       return result.insertId;
     } catch (error) {
       return null;

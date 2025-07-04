@@ -3,13 +3,12 @@ import PropertyController from '../controllers/property.controller.js';
 
 const router = express.Router();
 
-// Rutas para propiedades
-router.get('/', PropertyController.getAllProperties);
-router.get('/search', PropertyController.searchPropertiesByName);
-router.get('/type/:type', PropertyController.getPropertiesByType);
-router.get('/:id', PropertyController.getPropertyById);
-router.post('/', PropertyController.createProperty);
-router.put('/:id', PropertyController.updateProperty);
-router.delete('/:id', PropertyController.deleteProperty);
+router.get('/property', PropertyController.show);
+router.get('/property/search', PropertyController.searchPropertiesByName);
+router.get('/property/type/:type', PropertyController.getPropertiesByType);
+router.get('/property/:id', PropertyController.findById);
+router.post('/property', PropertyController.register);
+router.put('/property/:id', PropertyController.update);
+router.delete('/property/:id', PropertyController.delete);
 
-export default router; 
+export default router;

@@ -9,7 +9,7 @@ class VehicleController {
       if (!license_plate || !model || !type || !color || !user_id || !property_id || !status_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      
+
       const currentDate = new Date().toISOString().split('T')[0];
       const vehicleId = await VehicleModel.create({
         license_plate,
@@ -23,11 +23,11 @@ class VehicleController {
         vehicle_createAt: currentDate,
         vehicle_updateAt: currentDate
       });
-      
+
       if (!vehicleId) {
         return res.status(500).json({ error: 'Failed to create vehicle' });
       }
-      
+
       res.status(201).json({
         message: 'Vehicle created successfully',
         id: vehicleId
@@ -63,30 +63,30 @@ class VehicleController {
       if (!license_plate || !model || !type || !color || !user_id || !property_id || !status_id || !id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      
+
       // Verify if the Vehicle already exists  
       const existingVehicle = await VehicleModel.findByIdActive(id);
       if (!existingVehicle) {
         return res.status(409).json({ data: '', error: 'The Vehicle no already exists' });
-      }   
+      }
 
       const currentDate = new Date().toISOString().split('T')[0];
-      const updateVehicleModel = await VehicleModel.update(id, { 
-        license_plate, 
-        model, 
-        type, 
-        color, 
-        user_id, 
-        property_id, 
-        parkingZone_id, 
+      const updateVehicleModel = await VehicleModel.update(id, {
+        license_plate,
+        model,
+        type,
+        color,
+        user_id,
+        property_id,
+        parkingZone_id,
         status_id,
         vehicle_updateAt: currentDate
       });
-      
+
       if (!updateVehicleModel) {
         return res.status(500).json({ error: 'Failed to update vehicle' });
       }
-      
+
       res.status(201).json({
         message: 'Vehicle update successfully',
         data: updateVehicleModel
@@ -172,7 +172,7 @@ class VehicleController {
       };
 
       const vehicleId = await VehicleModel.create(vehicleData);
-      
+
       if (vehicleId) {
         const newVehicle = await VehicleModel.findById(vehicleId);
         res.status(201).json({
@@ -231,7 +231,7 @@ class VehicleController {
       };
 
       const updatedVehicle = await VehicleModel.update(id, updateData);
-      
+
       if (updatedVehicle) {
         res.json({
           success: true,
@@ -268,7 +268,7 @@ class VehicleController {
       }
 
       const deleted = await VehicleModel.delete(id);
-      
+
       if (deleted) {
         res.json({
           success: true,
@@ -294,7 +294,7 @@ class VehicleController {
     try {
       const { user_id } = req.params;
       const vehicles = await VehicleModel.findByUserId(user_id);
-      
+
       res.json({
         success: true,
         data: vehicles,
@@ -314,7 +314,7 @@ class VehicleController {
     try {
       const { property_id } = req.params;
       const vehicles = await VehicleModel.findByPropertyId(property_id);
-      
+
       res.json({
         success: true,
         data: vehicles,
@@ -334,7 +334,7 @@ class VehicleController {
     try {
       const { type } = req.params;
       const vehicles = await VehicleModel.findByType(type);
-      
+
       res.json({
         success: true,
         data: vehicles,

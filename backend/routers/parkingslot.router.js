@@ -3,14 +3,13 @@ import ParkingSlotController from '../controllers/parkingslot.controller.js';
 
 const router = express.Router();
 
-// Rutas para parkingslot
-router.get('/', ParkingSlotController.getAllParkingSlots);
-router.get('/available', ParkingSlotController.getAvailableSlots);
-router.get('/reserved', ParkingSlotController.getReservedSlots);
-router.get('/zone/:parkingZone_id', ParkingSlotController.getSlotsByZone);
-router.get('/:id', ParkingSlotController.getParkingSlotById);
-router.post('/', ParkingSlotController.createParkingSlot);
-router.put('/:id', ParkingSlotController.updateParkingSlot);
-router.delete('/:id', ParkingSlotController.deleteParkingSlot);
+router.get('/parkingslot', ParkingSlotController.getAllParkingSlots);
+router.get('/parkingslot/available', ParkingSlotController.getAvailableSlots);
+router.get('/parkingslot/reserved', ParkingSlotController.getReservedSlots);
+router.get('/parkingslot/zone/:parkingZone_id', ParkingSlotController.getSlotsByZone);
+router.get('/parkingslot/:id', ParkingSlotController.getParkingSlotById);
+router.post('/parkingslot', ParkingSlotController.createParkingSlot);
+router.put('/parkingslot/:id', ParkingSlotController.updateParkingSlot);
+router.delete('/parkingslot/:id', ParkingSlotController.deleteParkingSlot);
 
-export default router; 
+export default router;

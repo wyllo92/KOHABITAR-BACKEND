@@ -6,7 +6,7 @@ class UserStatusController {
     try {
       const { name, description } = req.body;
       // Basic validate
-      if (!name || !description ) {
+      if (!name || !description) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
       // Create the new User Status
@@ -14,9 +14,9 @@ class UserStatusController {
         name,
         description
       });
-      res.status(201).json({ 
+      res.status(201).json({
         message: 'User Status created successfully',
-        data:UserStatusModelId 
+        data: UserStatusModelId
       });
     } catch (error) {
       console.error('Error in registration:', error);
@@ -31,32 +31,9 @@ class UserStatusController {
       if (!existingUserStatusModel) {
         return res.status(409).json({ error: 'The User Status no already exists' });
       }
-      res.status(201).json({ 
+      res.status(201).json({
         message: 'User Status successfully',
-        data:existingUserStatusModel 
-      });
-    } catch (error) {
-      console.error('Error in registration:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  }
-  
-  async update(req, res) {
-    try {
-      const { name, description} = req.body;
-      const id = req.params.id;  
-      // Basic validate
-      if (!name || !description || !id) {
-        return res.status(400).json({ error: 'Required fields are missing' });
-      }
-      // Verify if the User Status already exists
-      const updateUserStatusModel = await UserStatusModel.update(id,{name,description});
-      if (!updateUserStatusModel) {
-        return res.status(409).json({ error: 'The User Status already exists' });
-      }
-      res.status(201).json({ 
-        message: 'User Status update successfully',
-        data:updateUserStatusModel 
+        data: existingUserStatusModel
       });
     } catch (error) {
       console.error('Error in registration:', error);
@@ -64,10 +41,33 @@ class UserStatusController {
     }
   }
 
-   async delete(req, res) {
+  async update(req, res) {
     try {
-  
-         const id = req.params.id;  
+      const { name, description } = req.body;
+      const id = req.params.id;
+      // Basic validate
+      if (!name || !description || !id) {
+        return res.status(400).json({ error: 'Required fields are missing' });
+      }
+      // Verify if the User Status already exists
+      const updateUserStatusModel = await UserStatusModel.update(id, { name, description });
+      if (!updateUserStatusModel) {
+        return res.status(409).json({ error: 'The User Status already exists' });
+      }
+      res.status(201).json({
+        message: 'User Status update successfully',
+        data: updateUserStatusModel
+      });
+    } catch (error) {
+      console.error('Error in registration:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async delete(req, res) {
+    try {
+
+      const id = req.params.id;
       // Basic validate
       if (!id) {
         return res.status(400).json({ error: 'Required fields are missing' });
@@ -77,9 +77,9 @@ class UserStatusController {
       if (!deleteUserStatusModel) {
         return res.status(409).json({ error: 'The User Status already exists' });
       }
-      res.status(201).json({ 
+      res.status(201).json({
         message: 'User Status delete successfully',
-        data:deleteUserStatusModel 
+        data: deleteUserStatusModel
       });
     } catch (error) {
       console.error('Error in registration:', error);
@@ -87,12 +87,12 @@ class UserStatusController {
     }
   }
 
-   async findById(req, res) {
+  async findById(req, res) {
     try {
-       const id = req.params.id;  
-     
+      const id = req.params.id;
+
       // Basic validate
-      if (!id ) {
+      if (!id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
       // Verify if the User Status already exists
@@ -100,9 +100,9 @@ class UserStatusController {
       if (!existingUserStatusModel) {
         return res.status(409).json({ error: 'The User Status No already exists' });
       }
-      res.status(201).json({ 
+      res.status(201).json({
         message: 'User Status successfully',
-        data:existingUserStatusModel 
+        data: existingUserStatusModel
       });
     } catch (error) {
       console.error('Error in registration:', error);

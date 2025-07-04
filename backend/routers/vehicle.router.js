@@ -3,10 +3,9 @@ import VehicleController from '../controllers/vehicle.controller.js';
 const router = Router();
 const name = '/vehicle';
 
-// Rutas agrupadas para vehículos
 router.route(name)
   .get(VehicleController.show)
-  .post(VehicleController.createVehicle);
+  .post(VehicleController.register);
 
 router.route(`${name}/user/:user_id`)
   .get(VehicleController.getVehiclesByUserId);
@@ -19,7 +18,7 @@ router.route(`${name}/type/:type`)
 
 router.route(`${name}/:id`)
   .get(VehicleController.findById)
-  .put(VehicleController.updateVehicle)
-  .delete(VehicleController.deleteVehicle);
+  .put(VehicleController.update)
+  .delete(VehicleController.delete);
 
-export default router; 
+export default router;

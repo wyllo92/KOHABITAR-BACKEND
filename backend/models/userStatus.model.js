@@ -1,11 +1,11 @@
 import { connect } from '../config/db/connectMysql.js';
 
 class UserStatusModel {
-  
+
   static async create({ name, description }) {
-     try {
+    try {
       let sqlQuery = "INSERT INTO user_status (name, description) VALUES (?, ?);";
-      const [result] = await connect.query(sqlQuery,[name, description]);
+      const [result] = await connect.query(sqlQuery, [name, description]);
       return result.insertId;
     } catch (error) {
       return [0];

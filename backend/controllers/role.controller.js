@@ -9,7 +9,7 @@ class RoleController {
       if (!role_name || !role_description || !status_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      
+
       const roleId = await RoleModel.create({
         role_name,
         role_description,
@@ -54,10 +54,10 @@ class RoleController {
       const existingRole = await RoleModel.findByIdActive(id);
       if (!existingRole) {
         return res.status(409).json({ data: '', error: 'The Role no already exists' });
-      }   
+      }
 
-      const updateRoleModel = await RoleModel.update(id, { 
-        role_name, role_description, status_id 
+      const updateRoleModel = await RoleModel.update(id, {
+        role_name, role_description, status_id
       });
       res.status(201).json({
         message: 'Role update successfully',

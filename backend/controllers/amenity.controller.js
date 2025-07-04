@@ -5,11 +5,11 @@ class AmenityController {
   async register(req, res) {
     try {
       const { name, capacity, description, time_unit, total, status_id, tariff_id, property_id, amenity_type_id } = req.body;
+
       // Basic validation
       if (!name || !status_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      
       const amenityId = await AmenityModel.create({
         name,
         capacity,
@@ -26,25 +26,23 @@ class AmenityController {
         id: amenityId
       });
     } catch (error) {
-      console.error('Registration error:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
   async show(req, res) {
     try {
-      // Verify if the Amenity already exists
       const amenityModel = await AmenityModel.showActive();
-      if (!amenityModel) {
-        return res.status(409).json({ error: 'The Amenity no already exists' });
-      }
-      res.status(201).json({
-        message: 'Amenity successfully',
+      res.status(200).json({
+        success: true,
+        message: 'Amenities retrieved successfully',
         data: amenityModel
       });
     } catch (error) {
-      console.error('Error in registration:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({
+        success: false,
+        error: 'Internal Server Error'
+      });
     }
   }
 
@@ -60,10 +58,10 @@ class AmenityController {
       const existingAmenity = await AmenityModel.findByIdActive(id);
       if (!existingAmenity) {
         return res.status(409).json({ data: '', error: 'The Amenity does not exist' });
-      }   
+      }
 
-      const updateAmenityModel = await AmenityModel.update(id, { 
-        name, capacity, description, time_unit, total, status_id, tariff_id, property_id, amenity_type_id 
+      const updateAmenityModel = await AmenityModel.update(id, {
+        name, capacity, description, time_unit, total, status_id, tariff_id, property_id, amenity_type_id
       });
       res.status(201).json({
         message: 'Amenity update successfully',
@@ -112,7 +110,8 @@ class AmenityController {
       });
     } catch (error) {
       console.error('Error in registration:', error);
-      res.status(500).json({ error: 'Internal Server Error' });    }
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   }
 }
 

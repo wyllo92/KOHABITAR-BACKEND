@@ -3,7 +3,6 @@ import PaymentController from '../controllers/payment.controller.js';
 
 const router = express.Router();
 
-// Rutas para payment
 router.get('/', PaymentController.getAllPayments);
 router.get('/invoice/:invoice_id', PaymentController.getPaymentsByInvoice);
 router.get('/user/:user_id', PaymentController.getPaymentsByUser);

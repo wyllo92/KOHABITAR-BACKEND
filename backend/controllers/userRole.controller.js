@@ -4,12 +4,12 @@ class UserRoleController {
 
   async register(req, res) {
     try {
-      const { user_id, role_id, status_id} = req.body;
+      const { user_id, role_id, status_id } = req.body;
       // Basic validation
-      if (!user_id || !role_id || !status_id ) {
+      if (!user_id || !role_id || !status_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      
+
       const userId = await UserRoleModel.create({
         user_id,
         role_id,
@@ -42,7 +42,7 @@ class UserRoleController {
     }
   }
 
-    async showRoleUser(req, res) {
+  async showRoleUser(req, res) {
     try {
       const id = req.params.id;
       const userRoleModel = await UserRoleModel.showRoleUser(id);
@@ -61,17 +61,17 @@ class UserRoleController {
 
   async update(req, res) {
     try {
-         const { user_id, role_id, status_id} = req.body;
-         const id = req.params.id;
+      const { user_id, role_id, status_id } = req.body;
+      const id = req.params.id;
       // Basic validation
-      if (!user_id || !role_id|| !status_id|| !id) {
+      if (!user_id || !role_id || !status_id || !id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
       // Verify if the User already exists  
       const existingUser = await UserRoleModel.findById(id);
       if (existingUser.length === 0) {
-        return res.status(409).json({ data:'',error: 'The User Role no already exists' });
-      }   
+        return res.status(409).json({ data: '', error: 'The User Role no already exists' });
+      }
 
       const updateUserRoleModel = await UserRoleModel.update(id, { user_id, role_id, status_id });
       res.status(201).json({
@@ -126,7 +126,7 @@ class UserRoleController {
     }
   }
 
- 
+
 }
 
 export default new UserRoleController();

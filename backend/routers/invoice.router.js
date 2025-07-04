@@ -3,7 +3,6 @@ import InvoiceController from '../controllers/invoice.controller.js';
 
 const router = express.Router();
 
-// Rutas para invoice
 router.get('/', InvoiceController.getAllInvoices);
 router.get('/user/:user_id', InvoiceController.getInvoicesByUser);
 router.get('/property/:property_id', InvoiceController.getInvoicesByProperty);

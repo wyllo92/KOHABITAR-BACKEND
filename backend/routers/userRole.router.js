@@ -14,8 +14,8 @@ router.route(`${name}/:id`)
   .put(UserRoleController.update)// Update a user by ID
   .delete(UserRoleController.delete);// Delete a user by ID
 
-  //Login route
-  router.route(`${nameUserRole}/:id`)
-    .get(UserRoleController.showRoleUser);// Login a user
+//Login route
+router.route(`${nameUserRole}/:id`)
+  .get(UserRoleController.showRoleUser);// Login a user
 
 export default router;

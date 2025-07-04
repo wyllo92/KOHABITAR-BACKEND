@@ -1,7 +1,7 @@
 import ReservationModel from '../models/reservation.model.js';
 
 class ReservationController {
-  
+
   static async getAllReservations(req, res) {
     try {
       const reservations = await ReservationModel.show();
@@ -59,7 +59,7 @@ class ReservationController {
     try {
       const { id } = req.params;
       const reservation = await ReservationModel.findById(id);
-      
+
       if (!reservation) {
         return res.status(404).json({
           success: false,
@@ -85,7 +85,7 @@ class ReservationController {
     try {
       const reservationData = req.body;
       const reservationId = await ReservationModel.create(reservationData);
-      
+
       if (reservationId) {
         const newReservation = await ReservationModel.findById(reservationId);
         res.status(201).json({
@@ -122,7 +122,7 @@ class ReservationController {
       }
 
       const updatedReservation = await ReservationModel.update(id, updateData);
-      
+
       if (updatedReservation) {
         res.json({
           success: true,
@@ -157,7 +157,7 @@ class ReservationController {
       }
 
       const deleted = await ReservationModel.delete(id);
-      
+
       if (deleted) {
         res.json({
           success: true,

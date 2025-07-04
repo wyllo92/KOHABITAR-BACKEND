@@ -1,11 +1,11 @@
 import { connect } from '../config/db/connectMysql.js';
 
 class VehicleModel {
-  
+
   static async create({ model, type, color, license_plate, user_id, property_id, parkingZone_id, status_id, vehicle_createAt, vehicle_updateAt }) {
-     try {
+    try {
       let sqlQuery = "INSERT INTO vehicle (model, type, color, license_plate, user_id, property_id, parkingZone_id, status_id, vehicle_createAt, vehicle_updateAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-      const [result] = await connect.query(sqlQuery,[model, type, color, license_plate, user_id, property_id, parkingZone_id, status_id, vehicle_createAt, vehicle_updateAt]);
+      const [result] = await connect.query(sqlQuery, [model, type, color, license_plate, user_id, property_id, parkingZone_id, status_id, vehicle_createAt, vehicle_updateAt]);
       return result.insertId;
     } catch (error) {
       return null;

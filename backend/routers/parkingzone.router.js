@@ -3,11 +3,11 @@ import ParkingZoneController from '../controllers/parkingzone.controller.js';
 
 const router = express.Router();
 
-// Rutas para parkingzone
-router.get('/', ParkingZoneController.getAllParkingZones);
-router.get('/:id', ParkingZoneController.getParkingZoneById);
-router.post('/', ParkingZoneController.createParkingZone);
-router.put('/:id', ParkingZoneController.updateParkingZone);
-router.delete('/:id', ParkingZoneController.deleteParkingZone);
 
-export default router; 
+router.get('/parkingzone', ParkingZoneController.getAllParkingZones);
+router.get('/parkingzone/:id', ParkingZoneController.getParkingZoneById);
+router.post('/parkingzone', ParkingZoneController.createParkingZone);
+router.put('/parkingzone/:id', ParkingZoneController.updateParkingZone);
+router.delete('/parkingzone/:id', ParkingZoneController.deleteParkingZone);
+
+export default router;

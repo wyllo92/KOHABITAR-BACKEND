@@ -1,11 +1,11 @@
 import { connect } from '../config/db/connectMysql.js';
 
 class PaymentModel {
-  
+
   static async create({ user_id, amount_paid, payment_date, method, reference, invoice_id, reservation_id, parking_assignment_id, status_id, payment_type_id, created_at }) {
-     try {
+    try {
       let sqlQuery = "INSERT INTO payment (user_id, amount_paid, payment_date, method, reference, invoice_id, reservation_id, parking_assignment_id, status_id, payment_type_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-      const [result] = await connect.query(sqlQuery,[user_id, amount_paid, payment_date, method, reference, invoice_id, reservation_id, parking_assignment_id, status_id, payment_type_id, created_at]);
+      const [result] = await connect.query(sqlQuery, [user_id, amount_paid, payment_date, method, reference, invoice_id, reservation_id, parking_assignment_id, status_id, payment_type_id, created_at]);
       return result.insertId;
     } catch (error) {
       return null;

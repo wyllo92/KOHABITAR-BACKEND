@@ -1,11 +1,11 @@
 import { connect } from '../config/db/connectMysql.js';
 
 class RoleModel {
-  
+
   static async create({ role_name, role_description, status_id }) {
-     try {
+    try {
       let sqlQuery = "INSERT INTO role (role_name, role_description, status_id, role_createAt) VALUES (?, ?, ?, NOW());";
-      const [result] = await connect.query(sqlQuery,[role_name, role_description, status_id]);
+      const [result] = await connect.query(sqlQuery, [role_name, role_description, status_id]);
       return result.insertId;
     } catch (error) {
       return null;

@@ -1,0 +1,1610 @@
+{
+	"info": {
+		"_postman_id": "3331797b-9754-4700-ab49-dc1a89c345d2",
+		"name": "KOHABITAR Backend & API",
+		"description": "Comprehensive API collection for testing KOHABITAR Backend endpoints with test data",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30938704",
+		"_collection_link": "https://team-kohabitar.postman.co/workspace/team-Kohabitar-Workspace~18f31f43-c883-4bd7-8a2b-f3313865ec8f/collection/45716216-3331797b-9754-4700-ab49-dc1a89c345d2?action=share&source=collection_link&creator=30938704"
+	},
+	"item": [
+		{
+			"name": "Amenities",
+			"item": [
+				{
+					"name": "Obtener todas las zonas comunes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/amenity",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"amenity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener zona común por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/amenity/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"amenity",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear una nueva zona común",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amenity_name\": \"Piscina\",\n  \"amenity_description\": \"Piscina descubierta\",\n  \"amenity_capacity\": 50,\n  \"amenity_schedule\": \"06:00-22:00\",\n  \"amenity_status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/amenity",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"amenity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar zona común por ID",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amenity_name\": \"Salón social\",\n  \"amenity_description\": \"Salón social para fiestas\",\n  \"amenity_capacity\": 60,\n  \"amenity_schedule\": \"05:00-23:00\",\n  \"amenity_status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/amenity/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"amenity",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Amenity",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/amenity/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"amenity",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Get All Notifications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/notification",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"notification"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notification by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/notification/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"notification",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": 1,\n  \"notification_title\": \"Payment Reminder\",\n  \"notification_message\": \"Your monthly administration fee is due on July 31st\",\n  \"notification_type\": \"payment\",\n  \"notification_status\": \"unread\",\n  \"created_at\": \"2025-07-04T10:00:00.000Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/notification",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"notification"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Notification",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": 1,\n  \"notification_title\": \"Payment Reminder - Updated\",\n  \"notification_message\": \"Your monthly administration fee payment was received. Thank you!\",\n  \"notification_type\": \"payment\",\n  \"notification_status\": \"read\",\n  \"created_at\": \"2025-07-04T10:00:00.000Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/notification/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"notification",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Notification",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/notification/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"notification",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Parking Zones",
+			"item": [
+				{
+					"name": "Actualizar zona de parqueo",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"Descubierta\",\n  \"capacity\": 15,\n  \"property_id\": 1,\n  \"status_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/parkingzone/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"parkingzone",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener todas las zonas de parqueo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/parkingzone",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"parkingzone"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener zona de parqueo por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/parkingzone/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"parkingzone",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear zona de parqueo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"Cubierta\",\n  \"capacity\": 10,\n  \"property_id\": 1,\n  \"status_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/parkingzone",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"parkingzone"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar zona de parqueo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/parkingzone/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"parkingzone",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Parking Slots",
+			"item": [
+				{
+					"name": "Obtener todas las zonas de parqueo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/parkingslot",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"parkingslot"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener la zona de parqueo por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/parkingslot/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"parkingslot",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear zona de parqueo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"slot_number\": \"A-101\",\n  \"slot_type\": \"resident\",\n  \"slot_status\": \"available\",\n  \"property_id\": 1,\n  \"parking_zone_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/parkingslot",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"parkingslot"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar zona de parqueo por ID",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"slot_number\": \"A-401\",\n  \"slot_type\": \"resident\",\n  \"slot_status\": \"occupied\",\n  \"property_id\": 1,\n  \"parking_zone_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/parkingslot/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"parkingslot",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar zona de parqueo por ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/parkingslot/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"parkingslot",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Profiles",
+			"item": [
+				{
+					"name": "Obtener todos los perfiles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener perfil por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/profile/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"profile",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear nuevo perfil",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": 1,\n  \"profile_fullName\": \"Perfil Prueba\",\n  \"profile_phone\": \"3001234567\",\n  \"profile_email\": \"prueba@prueba.com\",\n  \"profile_photo\": null,\n  \"profile_address\": \"Casa 101\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Properties",
+			"item": [
+				{
+					"name": "Obtener todas las propiedades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/property",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"property"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener propiedad por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/property/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"property",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear nueva propiedad",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"property_name\": \"Casa 103\",\n  \"property_description\": \"Casa nueva\",\n  \"property_type\": \"Casa\",\n  \"property_createAt\": \"2025-01-15\",\n  \"property_updateAt\": \"2025-01-15\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/property",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"property"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar propiedad por nombre",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/properties/search?name=Casa 101",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"properties",
+								"search"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Casa 101"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener propiedades por tipo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1property/type/Casa",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1property",
+								"type",
+								"Casa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar propiedad por ID",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"property_name\": \"Apartment 101 Updated\",\n  \"property_description\": \"Two bedroom apartment with balcony and parking\",\n  \"property_type\": \"apartment\",\n  \"property_updateAt\": \"2025-07-04T00:00:00.000Z\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/property/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"property",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar propiedades por ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/property/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"property",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reports",
+			"item": [
+				{
+					"name": "Get All Reports",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/report",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"report"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Report by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/report/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"report",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Report",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"report_name\": \"Monthly Financial Report\",\n  \"report_type\": \"financial\",\n  \"report_period\": \"2025-07\",\n  \"generated_by\": 1,\n  \"report_data\": {},\n  \"generated_at\": \"2025-07-04T10:00:00.000Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/report",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"report"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Report",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"report_name\": \"Monthly Financial Report - Updated\",\n  \"report_type\": \"financial\",\n  \"report_period\": \"2025-07\",\n  \"generated_by\": 1,\n  \"report_data\": {\"total_income\": 5000000, \"total_expenses\": 3000000},\n  \"generated_at\": \"2025-07-04T10:00:00.000Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/report/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"report",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Report",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/report/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"report",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Roles",
+			"item": [
+				{
+					"name": "Obtener todos los roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/role",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener rol por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/role/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"role",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear nuevo rol",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"role_name\": \"Puebl\",\n  \"role_description\": \"Descripción\",\n  \"status_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/role",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar rol por ID",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"role_name\": \"Resident Updated\",\n  \"role_description\": \"Property resident with enhanced access to amenities\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/role/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"role",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar rol",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/role/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"role",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Status",
+			"item": [
+				{
+					"name": "Obtener todos los estados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener estado por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/status/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"status",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear nuevo estado",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status_name\": \"Nuevo Estado\",\n  \"status_description\": \"Descripción del nuevo estado\",\n  \"status_entity\": \"General\",\n  \"status_is_active\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar estado por ID",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status_name\": \"Estado Actualizado\",\n  \"status_description\": \"Descripción actualizada\",\n  \"status_entity\": \"General\",\n  \"status_is_active\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/status/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"status",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar estado por ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/status/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"status",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "Login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "  {\r\n    \"user\": \"adminuser\",\r\n    \"password\": \"sirve*Sirve*\"\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api_v1/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api_v1",
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Obtener todos los usuarios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener usuario por ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/user/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear nuevo usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_name\": \"adminUser\",\n  \"user_password\": \"sirve*Sirve*\",\n  \"role_id\": 2,\n  \"status_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar usuario por ID",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_name\": \"john_doe_updated\",\n  \"user_password\": \"newpassword123\",\n  \"role_id\": 2,\n  \"status_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/user/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar usuario por ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/user/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vehicles",
+			"item": [
+				{
+					"name": "Obtener todos los vehículos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/vehicle",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"vehicle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener vehículo por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/vehicle/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"vehicle",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear nuevo vehículo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"model\": \"Toyota Corolla\",\n  \"type\": \"Carro\",\n  \"color\": \"Blanco\",\n  \"user_id\": 2,\n  \"property_id\": 1,\n  \"parkingZone_id\": null,\n  \"status_id\": 1,\n  \"vehicle_createAt\": \"2025-01-15\",\n  \"vehicle_updateAt\": \"2025-01-15\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/vehicle",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"vehicle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener vehículos por usuario",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/vehicle/user/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"vehicle",
+								"user",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener vehículos por propiedad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/vehicle/property/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"vehicle",
+								"property",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener vehículos por tipo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/vehicle/type/Carro",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"vehicle",
+								"type",
+								"Carro"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar vehículo por ID",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"vehicle_license_plate\": \"ABC-123\",\n  \"vehicle_type\": \"carr\",\n  \"vehicle_brand\": \"Corolla\",\n  \"vehicle_model\": \"Civic\",\n  \"vehicle_color\": \"Verde\",\n  \"user_id\": 1,\n  \"property_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/vehicle/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"vehicle",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar vehículo por ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/vehicle/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"vehicle",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Visitors",
+			"item": [
+				{
+					"name": "Obtener todos los visitantes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/visitor",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"visitor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener visitante por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/visitor/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"visitor",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear visitante por ID",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"visitor_name\": \"Pepito Perez\",\n  \"visitor_document\": \"12345678\",\n  \"visitor_phone\": \"555-1234\",\n  \"visitor_email\": \"pepito@perez.com\",\n  \"visit_date\": \"2025-07-04\",\n  \"visit_time\": \"14:30:00\",\n  \"property_id\": 1,\n  \"visitor_status\": \"pending\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/visitor",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"visitor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar visitante por ID",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"visitor_name\": \"Pepito Peres\",\n  \"visitor_document\": \"12345678\",\n  \"visitor_phone\": \"555-1234\",\n  \"visitor_email\": \"pepito@peres.com\",\n  \"visit_date\": \"2025-07-04\",\n  \"visit_time\": \"15:00:00\",\n  \"property_id\": 1,\n  \"visitor_status\": \"approved\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api_v1/visitor/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"visitor",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar visitante",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api_v1/visitor/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api_v1",
+								"visitor",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api_v1",
+			"type": "string"
+		}
+	]
+}

@@ -1,7 +1,7 @@
 import PaymentModel from '../models/payment.model.js';
 
 class PaymentController {
-  
+
   static async getAllPayments(req, res) {
     try {
       const payments = await PaymentModel.show();
@@ -59,7 +59,7 @@ class PaymentController {
     try {
       const { id } = req.params;
       const payment = await PaymentModel.findById(id);
-      
+
       if (!payment) {
         return res.status(404).json({
           success: false,
@@ -85,7 +85,7 @@ class PaymentController {
     try {
       const paymentData = req.body;
       const paymentId = await PaymentModel.create(paymentData);
-      
+
       if (paymentId) {
         const newPayment = await PaymentModel.findById(paymentId);
         res.status(201).json({
@@ -122,7 +122,7 @@ class PaymentController {
       }
 
       const updatedPayment = await PaymentModel.update(id, updateData);
-      
+
       if (updatedPayment) {
         res.json({
           success: true,
@@ -157,7 +157,7 @@ class PaymentController {
       }
 
       const deleted = await PaymentModel.delete(id);
-      
+
       if (deleted) {
         res.json({
           success: true,

@@ -1,107 +1,142 @@
 import ProfileModel from '../models/profile.model.js';
 
-
 class ProfileController {
 
   async register(req, res) {
     try {
-      const {user_id, first_name, last_name, address, phone, document_type_id, document_number, photo_url, birth_date} = req.body;
+      const { user_id, profile_fullName, profile_phone, profile_email, profile_photo, profile_address } = req.body;
+
       // Basic validation
-      if (!user_id || !first_name || !last_name || !address||!phone || !document_type_id || !document_number || !photo_url || !birth_date) {
+      if (!user_id || !profile_fullName || !profile_phone || !profile_email) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-     
+
+      // Check if profile for this user already exists
+      const existingProfile = await ProfileModel.findById(user_id);
+      if (existingProfile) {
+        return res.status(409).json({ error: 'Profile for this user already exists' });
+      }
+
+      // Check if email is already in use
+      const existingEmail = await ProfileModel.findByEmail(profile_email);
+      if (existingEmail) {
+        return res.status(409).json({ error: 'Email already in use' });
+      }
+
       const profileId = await ProfileModel.create({
-        user_id, first_name, last_name, address, phone, document_type_id, document_number, photo_url, birth_date
+        user_id,
+        profile_fullName,
+        profile_phone,
+        profile_email,
+        profile_photo,
+        profile_address
       });
+
+      if (!profileId) {
+        return res.status(500).json({ error: 'Failed to create profile' });
+      }
+
       res.status(201).json({
         message: 'Profile created successfully',
         id: profileId
       });
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error('Error in profile registration:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
   async show(req, res) {
     try {
-      // Verify if the Profile already exists
-      const profileModel = await ProfileModel.show();
-      if (!profileModel) {
-        return res.status(409).json({ error: 'The Profile no already exists' });
-      }
+      const profileModel = await ProfileModel.showActive();
       res.status(201).json({
-        message: 'Profile successfully',
+        message: 'Profiles retrieved successfully',
         data: profileModel
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error retrieving profiles:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
   async update(req, res) {
     try {
-      const { user_id, first_name, last_name, address, phone, document_type_id, document_number, photo_url, birth_date} = req.body;
-      const id = req.params.id;
-      // Basic validate
-      if (!user_id || !first_name || !last_name || !address||!phone || !document_type_id || !document_number || !photo_url || !birth_date) {
+      const { profile_fullName, profile_phone, profile_email, profile_photo, profile_address } = req.body;
+      const user_id = req.params.id;
+
+      // Basic validation
+      if (!profile_fullName || !profile_phone || !profile_email || !user_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      
-      const updateProfileModel = await ProfileModel.update(id, { user_id, first_name, last_name, address, phone, document_type_id, document_number, photo_url, birth_date});
+
+      // Verify if the Profile already exists  
+      const existingProfile = await ProfileModel.findByIdActive(user_id);
+      if (!existingProfile) {
+        return res.status(409).json({ data: '', error: 'The Profile does not exist' });
+      }
+
+      const updateProfileModel = await ProfileModel.update(user_id, {
+        profile_fullName,
+        profile_phone,
+        profile_email,
+        profile_photo,
+        profile_address
+      });
+
+      if (!updateProfileModel) {
+        return res.status(500).json({ error: 'Failed to update profile' });
+      }
+
       res.status(201).json({
-        message: 'Profile update successfully',
+        message: 'Profile updated successfully',
         data: updateProfileModel
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error in profile update:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
   async delete(req, res) {
     try {
-      const id = req.params.id;
+      const user_id = req.params.id;
       // Basic validate
-      if (!id) {
+      if (!user_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
       // Verify if the Profile already exists
-      const deleteProfileModel = await ProfileModel.delete(id);
+      const deleteProfileModel = await ProfileModel.delete(user_id);
       res.status(201).json({
-        message: 'Profile delete successfully',
+        message: 'Profile deleted successfully',
         data: deleteProfileModel
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error in profile delete:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
   async findById(req, res) {
     try {
-      const id = req.params.id;
+      const user_id = req.params.id;
       // Basic validate
-      if (!id) {
+      if (!user_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
       // Verify if the Profile already exists
-      const existingProfileModel = await ProfileModel.findById(id);
-      if (!existingProfileModel) {
-        return res.status(409).json({ error: 'The Profile No already exists' });
+      const profileModel = await ProfileModel.findById(user_id);
+      if (!profileModel) {
+        return res.status(404).json({ error: 'Profile not found' });
       }
       res.status(201).json({
-        message: 'Profile successfully',
-        data: existingProfileModel
+        message: 'Profile found successfully',
+        data: profileModel
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error finding profile:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
-
 }
 
 export default new ProfileController();

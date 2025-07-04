@@ -22,10 +22,10 @@ La base de datos incluye las siguientes tablas principales:
 - **parkingzone**: Zonas de parqueo
 - **parking_assignment**: Asignaciones de parqueaderos
 
-### Tablas de Amenidades y Reservas
-- **amenity**: Amenidades/comodidades del conjunto
-- **amenity_type**: Tipos de amenidades
-- **reservation**: Reservas de amenidades
+### Tablas de Zonas comunez y Reservas
+- **amenity**: zonas comunes/comodidades del conjunto
+- **amenity_type**: Tipos de zonas comunes  
+- **reservation**: Reservas de zonas comunes
 
 ### Tablas de Facturación y Pagos
 - **invoice**: Facturas generadas
@@ -93,8 +93,8 @@ npm start
 - `ParkingSlotModel`: Gestión de espacios de parqueo
 - `ParkingZoneModel`: Gestión de zonas de parqueo
 
-### Modelos de Amenidades
-- `AmenityModel`: Gestión de amenidades
+### Modelos de Zonas comunes
+- `AmenityModel`: Gestión de zonas comunes
 - `ReservationModel`: Gestión de reservas
 
 ### Modelos de Facturación
@@ -126,8 +126,8 @@ npm start
 - Asignación de parqueaderos
 - Gestión de zonas de parqueo
 
-### Gestión de Amenidades
-- Registro de amenidades disponibles
+### Gestión de Zonas comunes
+- Registro de zonas comunes disponibles
 - Sistema de reservas
 - Control de capacidad y horarios
 
@@ -160,7 +160,7 @@ npm start
 
 ### Residente
 - Acceso a sus propiedades
-- Reserva de amenidades
+- Reserva de zonas comunes
 - Visualización de facturas y pagos
 
 ### Propietario
@@ -183,7 +183,7 @@ Los endpoints de la API están organizados por módulos:
 - `/api/properties` - Gestión de propiedades
 - `/api/vehicles` - Gestión de vehículos
 - `/api/parkingslots` - Gestión de parqueaderos
-- `/api/amenities` - Gestión de amenidades
+- `/api/amenities` - Gestión de zonas comunes
 - `/api/reservations` - Gestión de reservas
 - `/api/invoices` - Gestión de facturas
 - `/api/payments` - Gestión de pagos

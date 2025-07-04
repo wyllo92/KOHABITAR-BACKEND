@@ -585,14 +585,14 @@ const sqlStatements = [
 (5, 'Cancelado', 'Estado cancelado', 'General', 1, '2025-05-27 16:14:45');`,
 
   `INSERT INTO role (role_id, role_name, role_description, status_id, role_createAt) VALUES
-(1, 'Administrador', 'Gestiona el sistema', 1, '2025-05-27 16:14:55'),
+(1, 'Administrador', 'Gestiona el conjunto', 1, '2025-05-27 16:14:55'),
 (2, 'Residente', 'Vive en el conjunto', 1, '2025-05-27 16:14:55'),
 (3, 'Propietario', 'Dueño de una propiedad', 1, '2025-05-27 16:14:55'),
 (4, 'Vigilante', 'Controla el ingreso', 1, '2025-05-27 16:14:55');`,
 
   `INSERT INTO property (property_id, property_name, property_description, property_type, property_createAt, property_updateAt) VALUES
-(1, 'Casa 101', 'Casa en primer piso', 'Casa', '2025-05-27', '2025-05-27'),
-(2, 'Casa 10', 'Casa independiente', 'Casa', '2025-05-27', '2025-05-27');`,
+(1, 'Casa 101', 'Casa', 'Casa', '2025-05-27', '2025-05-27'),
+(2, 'Casa 102', 'Casa', 'Casa', '2025-05-27', '2025-05-27');`,
 
   `INSERT INTO tariff (tariff_id, type, description, amount, surcharge_amount, surcharge_status, due_date, status_id, created_at, updated_at) VALUES
 (1, 'Fija', 'Tarifa mensual', 50000, NULL, NULL, NULL, 1, '2025-05-27 16:17:01', '2025-05-27 16:17:01'),
@@ -649,7 +649,7 @@ const sqlStatements = [
 (2, '/usuarios', 'Gestión de usuarios', 1, '2025-05-27 16:17:01', '2025-05-27 16:17:01'),
 (3, '/propiedades', 'Gestión de propiedades', 1, '2025-05-27 16:17:01', '2025-05-27 16:17:01'),
 (4, '/parqueaderos', 'Gestión de parqueaderos', 1, '2025-05-27 16:17:01', '2025-05-27 16:17:01'),
-(5, '/amenidades', 'Gestión de amenidades', 1, '2025-05-27 16:17:01', '2025-05-27 16:17:01'),
+(5, '/zonas comunes', 'Gestión de zonas comunes', 1, '2025-05-27 16:17:01', '2025-05-27 16:17:01'),
 (6, '/visitantes', 'Gestión de visitantes', 1, '2025-05-27 16:17:01', '2025-05-27 16:17:01'),
 (7, '/reportes', 'Gestión de reportes', 1, '2025-05-27 16:17:01', '2025-05-27 16:17:01'),
 (8, '/pagos', 'Gestión de pagos', 1, '2025-05-27 16:17:01', '2025-05-27 16:17:01');`,

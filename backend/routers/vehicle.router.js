@@ -5,7 +5,7 @@ const name = '/vehicle';
 
 // Rutas agrupadas para vehículos
 router.route(name)
-  .get(VehicleController.getAllVehicles)
+  .get(VehicleController.show)
   .post(VehicleController.createVehicle);
 
 router.route(`${name}/user/:user_id`)
@@ -18,7 +18,7 @@ router.route(`${name}/type/:type`)
   .get(VehicleController.getVehiclesByType);
 
 router.route(`${name}/:id`)
-  .get(VehicleController.getVehicleById)
+  .get(VehicleController.findById)
   .put(VehicleController.updateVehicle)
   .delete(VehicleController.deleteVehicle);
 

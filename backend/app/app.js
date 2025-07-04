@@ -52,7 +52,7 @@ app.use('/api_v1', vehicleRouter);
 app.use('/api_v1/status', statusRouter);
 app.use('/api_v1/parkingslot', parkingslotRouter);
 app.use('/api_v1/parkingzone', parkingzoneRouter);
-app.use('/api_v1/amenitie', amenityRouter);
+app.use('/api_v1/amenity', amenityRouter);
 app.use('/api_v1/reservation', reservationRouter);
 app.use('/api_v1/visitor', visitorRouter);
 app.use('/api_v1/invoice', invoiceRouter);

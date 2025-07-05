@@ -1,207 +1,155 @@
-# Sistema de Gestión de Conjunto Residencial
 
-Este proyecto ha sido modificado para ser compatible con la base de datos `conjunto_residencial` que gestiona un sistema completo de administración de conjuntos residenciales.
+# KOHABITAR - Sistema Integral de Gestión de Conjuntos Residenciales
+
+Bienvenido a **KOHABITAR**, una solución integral para la administración y gestión de conjuntos residenciales. Este proyecto está diseñado para facilitar la operación, el control y la comunicación dentro de comunidades residenciales, integrando módulos para usuarios, propiedades, parqueaderos, zonas comunes, facturación, visitantes, notificaciones y reportes.
+
+---
+
+## ¿Qué es KOHABITAR?
+
+KOHABITAR es una plataforma backend desarrollada en Node.js y Express, conectada a una base de datos MySQL, que permite gestionar de manera eficiente todos los procesos administrativos de un conjunto residencial. Incluye autenticación segura, control de acceso por roles, y una API RESTful robusta y escalable.
+
+---
+
+
+## Características principales
+
+- Gestión de usuarios, roles y perfiles
+- Administración de propiedades y vehículos
+- Control de parqueaderos y zonas comunes
+- Sistema de reservas para amenities
+- Facturación y control de pagos
+- Registro y control de visitantes
+- Envío y gestión de notificaciones
+- Generación y seguimiento de reportes
+- Seguridad con autenticación JWT y contraseñas hasheadas
+- Validaciones y relaciones entre entidades
+
+---
 
 ## Estructura de la Base de Datos
 
-La base de datos incluye las siguientes tablas principales:
 
-### Tablas de Usuarios y Autenticación
-- **user**: Usuarios del sistema
-- **profile**: Perfiles de usuarios con información personal
-- **role**: Roles del sistema (Administrador, Residente, Propietario, Vigilante)
-- **status**: Estados generales del sistema
+La base de datos `conjunto_residencial` está compuesta por tablas que cubren todos los aspectos de la gestión residencial:
 
-### Tablas de Propiedades
-- **property**: Propiedades del conjunto residencial
-- **user_property**: Relación entre usuarios y propiedades
+- **Usuarios y autenticación**: user, profile, role, status
+- **Propiedades**: property, user_property
+- **Vehículos y parqueaderos**: vehicle, parkingslot, parkingzone, parking_assignment
+- **Zonas comunes y reservas**: amenity, amenity_type, reservation
+- **Facturación y pagos**: invoice, payment, tariff
+- **Visitantes y notificaciones**: visitor, notification, notification_type
+- **Reportes**: report, report_type
 
-### Tablas de Vehículos y Parqueaderos
-- **vehicle**: Vehículos registrados
-- **parkingslot**: Espacios de parqueo individuales
-- **parkingzone**: Zonas de parqueo
-- **parking_assignment**: Asignaciones de parqueaderos
+---
 
-### Tablas de Zonas comunez y Reservas
-- **amenity**: zonas comunes/comodidades del conjunto
-- **amenity_type**: Tipos de zonas comunes  
-- **reservation**: Reservas de zonas comunes
 
-### Tablas de Facturación y Pagos
-- **invoice**: Facturas generadas
-- **payment**: Pagos realizados
-- **tariff**: Tarifas del sistema
+## Instalación y Puesta en Marcha
 
-### Tablas de Visitantes y Notificaciones
-- **visitor**: Registro de visitantes
-- **notification**: Notificaciones del sistema
-- **notification_type**: Tipos de notificaciones
+1. **Clona el repositorio y accede a la carpeta backend:**
+   ```bash
+   git clone <url-del-repo>
+   cd backend
+   ```
+2. **Configura las variables de entorno:**
+   Crea un archivo `.env` con:
+   ```env
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=
+   DB_NAME=conjunto_residencial
+   DB_PORT=3306
+   JWT_SECRET=tu_jwt_secret
+   ```
+3. **Instala las dependencias:**
+   ```bash
+   npm install
+   ```
+4. **Crea la base de datos y tablas:**
+   ```bash
+   node migrate.js
+   npm run migrate:conjunto
+   ```
+5. **Inicia el servidor:**
+   ```bash
+   node server.js
+   # o
+   npm start
+   ```
 
-### Tablas de Reportes
-- **report**: Reportes del sistema
-- **report_type**: Tipos de reportes
+---
 
-## Configuración
 
-### 1. Variables de Entorno
+## Arquitectura y Modelos
 
-Crea un archivo `.env` en la carpeta `backend` con la siguiente configuración:
+El sistema está organizado en módulos independientes, cada uno con su propio modelo, controlador y rutas. Los modelos principales incluyen:
 
-```env
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=
-DB_NAME=conjunto_residencial
-DB_PORT=3306
-JWT_SECRET=tu_jwt_secret
-```
+- **UserModel, ProfileModel, RoleModel, StatusModel**: Gestión de usuarios y autenticación
+- **PropertyModel, VehicleModel**: Administración de propiedades y vehículos
+- **ParkingSlotModel, ParkingZoneModel**: Control de parqueaderos
+- **AmenityModel, ReservationModel**: Gestión de zonas comunes y reservas
+- **InvoiceModel, PaymentModel, TariffModel**: Facturación y pagos
+- **VisitorModel**: Registro de visitantes
+- **NotificationModel, ReportModel**: Notificaciones y reportes
 
-### 2. Instalación de Dependencias
+---
 
-```bash
-cd backend
-npm install
-```
 
-### 3. Creación de la Base de Datos
+## Funcionalidades Destacadas
 
-Ejecuta el script de migración para crear la base de datos y las tablas:
+- CRUD de usuarios, perfiles y roles
+- Gestión de propiedades y asignación a usuarios
+- Control y asignación de parqueaderos
+- Registro y reservas de zonas comunes
+- Facturación automática y control de pagos
+- Registro y control de visitantes
+- Envío y gestión de notificaciones por prioridad y tipo
+- Generación y seguimiento de reportes
 
-```bash
-node migrate.js
-npm run migrate:conjunto
+---
 
-```
 
-### 4. Iniciar el Servidor
+## Roles y Permisos
 
-```bash
-node server.js
-npm start
-```
+- **Administrador**: Acceso total, gestión de usuarios, propiedades y configuración
+- **Residente**: Acceso a sus propiedades, reservas y facturación
+- **Propietario**: Gestión de propiedades y residentes, visualización de reportes
+- **Vigilante**: Control de visitantes, parqueaderos y registro de incidentes
 
-## Modelos
+---
 
-### Modelos Principales
-- `UserModel`: Gestión de usuarios
-- `ProfileModel`: Gestión de perfiles
-- `RoleModel`: Gestión de roles
-- `StatusModel`: Gestión de estados
 
-### Modelos de Propiedades
-- `PropertyModel`: Gestión de propiedades
-- `VehicleModel`: Gestión de vehículos
+## API RESTful
 
-### Modelos de Parqueaderos
-- `ParkingSlotModel`: Gestión de espacios de parqueo
-- `ParkingZoneModel`: Gestión de zonas de parqueo
+La API está organizada por módulos y sigue buenas prácticas REST. Ejemplos de endpoints:
 
-### Modelos de Zonas comunes
-- `AmenityModel`: Gestión de zonas comunes
-- `ReservationModel`: Gestión de reservas
+- `/api_v1/user` - Usuarios
+- `/api_v1/profile` - Perfiles
+- `/api_v1/role` - Roles
+- `/api_v1/property` - Propiedades
+- `/api_v1/vehicle` - Vehículos
+- `/api_v1/parkingslot` - Parqueaderos
+- `/api_v1/amenity` - Zonas comunes
+- `/api_v1/reservation` - Reservas
+- `/api_v1/invoice` - Facturación
+- `/api_v1/payment` - Pagos
+- `/api_v1/visitor` - Visitantes
+- `/api_v1/notification` - Notificaciones
+- `/api_v1/report` - Reportes
 
-### Modelos de Facturación
-- `InvoiceModel`: Gestión de facturas
-- `PaymentModel`: Gestión de pagos
-- `TariffModel`: Gestión de tarifas
+---
 
-### Modelos de Visitantes 
-- `VisitorModel`: Gestión de visitantes
 
-### Modelos de Notificaciones y Reportes
-- `ReportModel`: Gestión de reportes
-- - `NotificationModel`: Gestión de notificaciones
+## Seguridad y Buenas Prácticas
 
-## Funcionalidades Principales
+- Contraseñas protegidas con bcrypt
+- Autenticación y autorización con JWT
+- Validaciones en todos los modelos
+- Relaciones entre entidades mediante claves foráneas
+- Control de estados para flujos de datos
 
-### Gestión de Usuarios
-- Crear, leer, actualizar y eliminar usuarios
-- Asignar roles y estados
-- Gestión de perfiles de usuario
+---
 
-### Gestión de Propiedades
-- Registro de propiedades del conjunto
-- Asignación de usuarios a propiedades
-- Gestión de vehículos por propiedad
 
-### Gestión de Parqueaderos
-- Control de espacios de parqueo
-- Asignación de parqueaderos
-- Gestión de zonas de parqueo
+## Soporte y Contacto
 
-### Gestión de Zonas comunes
-- Registro de zonas comunes disponibles
-- Sistema de reservas
-- Control de capacidad y horarios
-
-### Gestión de Facturación
-- Generación de facturas
-- Control de pagos
-- Gestión de tarifas
-
-### Gestión de Visitantes
-- Registro de visitantes
-- Control de entrada y salida
-- Asignación de parqueaderos para visitantes
-
-### Sistema de Notificaciones
-- Envío de notificaciones
-- Diferentes tipos de notificaciones
-- Control de prioridades
-
-### Sistema de Reportes
-- Generación de reportes
-- Diferentes tipos de reportes
-- Control de estados de reportes
-
-## Estructura de Roles
-
-### Administrador
-- Acceso completo al sistema
-- Gestión de usuarios y propiedades
-- Configuración del sistema
-
-### Residente
-- Acceso a sus propiedades
-- Reserva de zonas comunes
-- Visualización de facturas y pagos
-
-### Propietario
-- Gestión de sus propiedades
-- Control de residentes
-- Visualización de reportes
-
-### Vigilante
-- Control de visitantes
-- Gestión de parqueaderos
-- Registro de incidentes
-
-## API Endpoints
-
-Los endpoints de la API están organizados por módulos:
-
-- `/api/users` - Gestión de usuarios
-- `/api/profiles` - Gestión de perfiles
-- `/api/roles` - Gestión de roles
-- `/api/properties` - Gestión de propiedades
-- `/api/vehicles` - Gestión de vehículos
-- `/api/parkingslots` - Gestión de parqueaderos
-- `/api/amenities` - Gestión de zonas comunes
-- `/api/reservations` - Gestión de reservas
-- `/api/invoices` - Gestión de facturas
-- `/api/payments` - Gestión de pagos
-- `/api/visitors` - Gestión de visitantes
-- `/api/notifications` - Gestión de notificaciones
-- `/api/reports` - Gestión de reportes
-
-## Notas Importantes
-
-1. **Contraseñas**: Las contraseñas se almacenan hasheadas usando bcrypt
-2. **Autenticación**: Se utiliza JWT para la autenticación
-3. **Validaciones**: Todos los modelos incluyen validaciones básicas
-4. **Relaciones**: Las tablas están relacionadas mediante claves foráneas
-5. **Estados**: Se utiliza un sistema de estados para controlar el flujo de datos
-
-## Soporte
-
-Para soporte técnico o preguntas sobre la implementación, contacta al equipo de desarrollo. 
+¿Tienes dudas o necesitas soporte? Contacta al equipo de desarrollo para más información o colaboración.

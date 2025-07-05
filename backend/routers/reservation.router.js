@@ -3,12 +3,12 @@ import ReservationController from '../controllers/reservation.controller.js';
 
 const router = express.Router();
 
-router.get('/reservation', ReservationController.getAllReservations);
-router.get('/reservation/user/:user_id', ReservationController.getReservationsByUser);
-router.get('/reservation/amenity/:amenity_id', ReservationController.getReservationsByAmenity);
-router.get('/reservation/:id', ReservationController.getReservationById);
-router.post('/reservation', ReservationController.createReservation);
-router.put('/reservation/:id', ReservationController.updateReservation);
-router.delete('/reservation/:id', ReservationController.deleteReservation);
+
+
+router.get('/reservation', ReservationController.getAll);
+router.get('/reservation/:id', ReservationController.getById);
+router.post('/reservation', ReservationController.create);
+router.put('/reservation/:id', ReservationController.update);
+router.delete('/reservation/:id', ReservationController.delete);
 
 export default router; 

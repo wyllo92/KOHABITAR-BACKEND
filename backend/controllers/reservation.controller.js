@@ -1,182 +1,106 @@
-import ReservationModel from '../models/reservation.model.js';
+import ReservationModel from "../models/reservation.model.js";
+
+
 
 class ReservationController {
-
-  static async getAllReservations(req, res) {
+  // Obtener todas las reservas
+  async getAll(req, res) {
     try {
       const reservations = await ReservationModel.show();
-      res.json({
-        success: true,
-        data: reservations,
-        message: 'Reservas obtenidas exitosamente'
-      });
+      res.status(200).json(reservations);
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener las reservas',
-        error: error.message
-      });
+      res.status(500).json({ error: "Internal Server Error" });
     }
   }
 
-  static async getReservationsByUser(req, res) {
-    try {
-      const { user_id } = req.params;
-      const reservations = await ReservationModel.findByUser(user_id);
-      res.json({
-        success: true,
-        data: reservations,
-        message: `Reservas del usuario ${user_id} obtenidas exitosamente`
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener las reservas del usuario',
-        error: error.message
-      });
-    }
-  }
-
-  static async getReservationsByAmenity(req, res) {
-    try {
-      const { amenity_id } = req.params;
-      const reservations = await ReservationModel.findByAmenity(amenity_id);
-      res.json({
-        success: true,
-        data: reservations,
-        message: `Reservas de la amenidad ${amenity_id} obtenidas exitosamente`
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener las reservas de la amenidad',
-        error: error.message
-      });
-    }
-  }
-
-  static async getReservationById(req, res) {
+  // Obtener una reserva por ID
+  async getById(req, res) {
     try {
       const { id } = req.params;
       const reservation = await ReservationModel.findById(id);
-
       if (!reservation) {
-        return res.status(404).json({
-          success: false,
-          message: 'Reserva no encontrada'
-        });
+        return res.status(404).json({ error: "Reservation not found" });
       }
-
-      res.json({
-        success: true,
-        data: reservation,
-        message: 'Reserva obtenida exitosamente'
-      });
+      res.status(200).json(reservation);
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al obtener la reserva',
-        error: error.message
-      });
+      res.status(500).json({ error: "Internal Server Error" });
     }
   }
 
-  static async createReservation(req, res) {
+  // Crear una reserva
+  async create(req, res) {
     try {
-      const reservationData = req.body;
-      const reservationId = await ReservationModel.create(reservationData);
-
-      if (reservationId) {
-        const newReservation = await ReservationModel.findById(reservationId);
-        res.status(201).json({
-          success: true,
-          data: newReservation,
-          message: 'Reserva creada exitosamente'
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Error al crear la reserva'
-        });
+      const { amenity_id, user_id, status_id, tariff_id, reservation_createAt, reservation_start_time, reservation_end_time, reservation_time_unit, reservation_capacity } = req.body;
+      if (!amenity_id || !user_id) {
+        return res.status(400).json({ error: "Required fields are missing" });
       }
+      const reservationId = await ReservationModel.create({
+        amenity_id,
+        user_id,
+        status_id,
+        tariff_id,
+        reservation_createAt,
+        reservation_start_time,
+        reservation_end_time,
+        reservation_time_unit,
+        reservation_capacity
+      });
+      if (!reservationId) {
+        return res.status(500).json({ error: "No se pudo crear la reserva. Verifica los datos y las claves foráneas." });
+      }
+      res.status(201).json({ message: "Reservation created", id: reservationId });
     } catch (error) {
       res.status(500).json({
-        success: false,
-        message: 'Error al crear la reserva',
-        error: error.message
+        error: "Internal Server Error",
+        details: error.message,
+        stack: error.stack
       });
     }
   }
 
-  static async updateReservation(req, res) {
+  // Actualizar una reserva
+  async update(req, res) {
     try {
       const { id } = req.params;
-      const updateData = req.body;
-
-      const existingReservation = await ReservationModel.findById(id);
-      if (!existingReservation) {
-        return res.status(404).json({
-          success: false,
-          message: 'Reserva no encontrada'
-        });
+      const { amenity_id, user_id, status_id, tariff_id, reservation_start_time, reservation_end_time, reservation_time_unit, reservation_capacity } = req.body;
+      if (!id || !amenity_id || !user_id) {
+        return res.status(400).json({ error: "Required fields are missing" });
       }
-
-      const updatedReservation = await ReservationModel.update(id, updateData);
-
-      if (updatedReservation) {
-        res.json({
-          success: true,
-          data: updatedReservation,
-          message: 'Reserva actualizada exitosamente'
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Error al actualizar la reserva'
-        });
-      }
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al actualizar la reserva',
-        error: error.message
+      const updated = await ReservationModel.update(id, {
+        amenity_id,
+        user_id,
+        status_id,
+        tariff_id,
+        reservation_start_time,
+        reservation_end_time,
+        reservation_time_unit,
+        reservation_capacity
       });
+      if (!updated) {
+        return res.status(404).json({ error: "Reservation not found or not updated" });
+      }
+      res.status(200).json({ message: "Reservation updated", data: updated });
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error" });
     }
   }
 
-  static async deleteReservation(req, res) {
+  // Eliminar una reserva
+  async delete(req, res) {
     try {
       const { id } = req.params;
-
-      const existingReservation = await ReservationModel.findById(id);
-      if (!existingReservation) {
-        return res.status(404).json({
-          success: false,
-          message: 'Reserva no encontrada'
-        });
+      if (!id) {
+        return res.status(400).json({ error: "Reservation id is required" });
       }
-
       const deleted = await ReservationModel.delete(id);
-
-      if (deleted) {
-        res.json({
-          success: true,
-          message: 'Reserva eliminada exitosamente'
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Error al eliminar la reserva'
-        });
+      if (!deleted) {
+        return res.status(404).json({ error: "Reservation not found or not deleted" });
       }
+      res.status(200).json({ message: "Reservation deleted" });
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error al eliminar la reserva',
-        error: error.message
-      });
+      res.status(500).json({ error: "Internal Server Error" });
     }
   }
 }
 
-export default ReservationController; 
+export default new ReservationController();

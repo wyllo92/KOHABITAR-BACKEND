@@ -49,19 +49,20 @@ app.use('/api_v1', userRouter);
 app.use('/api_v1', profileRouter);
 app.use('/api_v1', userRoleRouter);
 app.use('/api_v1', moduleRouter);
-app.use('/api_v1/', propertyRouter);
-app.use('/api_v1/', vehicleRouter);
-app.use('/api_v1/', statusRouter);
-app.use('/api_v1/', parkingslotRouter);
-app.use('/api_v1/', parkingzoneRouter);
-app.use('/api_v1/', amenityRouter);
-app.use('/api_v1/', reservationRouter);
-app.use('/api_v1/', visitorRouter);
-app.use('/api_v1/', invoiceRouter);
-app.use('/api_v1/', paymentRouter);
-app.use('/api_v1/', tariffRouter);
-app.use('/api_v1/', notificationRouter);
-app.use('/api_v1/', reportRouter);
+app.use('/api_v1', tokenRouter);
+app.use('/api_v1', propertyRouter);
+app.use('/api_v1', vehicleRouter);
+app.use('/api_v1', statusRouter);
+app.use('/api_v1', parkingslotRouter);
+app.use('/api_v1', parkingzoneRouter);
+app.use('/api_v1', amenityRouter);
+app.use('/api_v1', reservationRouter);
+app.use('/api_v1', visitorRouter);
+app.use('/api_v1', invoiceRouter);
+app.use('/api_v1', paymentRouter);
+app.use('/api_v1', tariffRouter);
+app.use('/api_v1', notificationRouter);
+app.use('/api_v1', reportRouter);
 
 // Add a test route to verify the server is working
 app.get('/health', (req, res) => {
@@ -72,7 +73,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-app.use((rep, res, nex) => {
+app.use((req, res, next) => {
   res.status(404).json({
     message: 'Endpoint losses'
   });

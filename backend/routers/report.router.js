@@ -1,12 +1,16 @@
-import express from 'express';
+import { Router } from "express";
 import ReportController from '../controllers/report.controller.js';
+const router = Router();
+const name = '/report';
+// Public route
 
-const router = express.Router();
+router.route(name)
+    .post(ReportController.register) // Register a new report
+    .get(ReportController.show);// Show all reports
 
-router.get('/report', ReportController.show);
-router.get('/report/:id', ReportController.findById);
-router.post('/report', ReportController.register);
-router.put('/report/:id', ReportController.update);
-router.delete('/report/:id', ReportController.delete);
+router.route(`${name}/:id`)
+    .get(ReportController.findById)// Show a report by ID
+    .put(ReportController.update)// Update a report by ID
+    .delete(ReportController.delete);// Delete a report by ID
 
 export default router;

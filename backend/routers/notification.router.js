@@ -1,12 +1,16 @@
-import express from 'express';
+import { Router } from "express";
 import NotificationController from '../controllers/notification.controller.js';
+const router = Router();
+const name = '/notification';
+// Public route
 
-const router = express.Router();
+router.route(name)
+    .post(NotificationController.register) // Register a new notification
+    .get(NotificationController.show);// Show all notifications
 
-router.get('/notification', NotificationController.show);
-router.get('/notification/:id', NotificationController.findById);
-router.post('/notification', NotificationController.register);
-router.put('/notification/:id', NotificationController.update);
-router.delete('/notification/:id', NotificationController.delete);
+router.route(`${name}/:id`)
+    .get(NotificationController.findById)// Show a notification by ID
+    .put(NotificationController.update)// Update a notification by ID
+    .delete(NotificationController.delete);// Delete a notification by ID
 
 export default router;

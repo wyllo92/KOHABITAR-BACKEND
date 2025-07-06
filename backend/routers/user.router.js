@@ -4,6 +4,7 @@ const router = Router();
 const name = '/user';
 const nameLogin = '/login';
 // Public route
+
 router.route(name)
   .post(UserController.register) // Register a new user
   .get(UserController.show);// Show all users

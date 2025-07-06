@@ -8,7 +8,8 @@ class NotificationModel {
       const [result] = await connect.query(sqlQuery, [User_id, Property_id, Notification_type_id, Notification_title, Notification_message, Status_id, Notification_priority, Notification_createAt, Notification_updateAt]);
       return result.insertId;
     } catch (error) {
-      return null;
+      console.error('Database error in NotificationModel.create:', error);
+      throw error; // Throw the error instead of returning null
     }
   }
 
@@ -123,4 +124,4 @@ class NotificationModel {
   }
 }
 
-export default NotificationModel; 
+export default NotificationModel;

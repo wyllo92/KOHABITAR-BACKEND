@@ -44,17 +44,14 @@ class UserController {
 
   async show(req, res) {
     try {
-      // Verify if the User already exists
+      // Get all active users
       const userModel = await UserModel.showActive();
-      if (!userModel) {
-        return res.status(409).json({ error: 'The User no already exists' });
-      }
-      res.status(201).json({
-        message: 'User successfully',
-        data: userModel
+      res.status(200).json({
+        message: 'Users retrieved successfully',
+        data: userModel || []
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error retrieving users:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
@@ -67,10 +64,10 @@ class UserController {
       if (!user_name || !user_password || !role_id || !status_id || !id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the User already exists  
+      // Verify if the User exists  
       const existingUser = await UserModel.findByIdActive(id);
       if (!existingUser) {
-        return res.status(409).json({ data: '', error: 'The User does not exist' });
+        return res.status(404).json({ error: 'User not found' });
       }
 
       // Encrypt password before updating
@@ -81,7 +78,7 @@ class UserController {
         role_id,
         status_id
       });
-      res.status(201).json({
+      res.status(200).json({
         message: 'User updated successfully',
         data: updateUserModel
       });
@@ -98,14 +95,14 @@ class UserController {
       if (!id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the User already exists
+      // Delete user
       const deleteUserModel = await UserModel.delete(id);
-      res.status(201).json({
-        message: 'User delete successfully',
+      res.status(200).json({
+        message: 'User deleted successfully',
         data: deleteUserModel
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error deleting user:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
@@ -117,17 +114,17 @@ class UserController {
       if (!id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the User already exists
+      // Get user by ID
       const existingUserModel = await UserModel.findByIdActive(id);
       if (!existingUserModel) {
-        return res.status(409).json({ error: 'The User No already exists' });
+        return res.status(404).json({ error: 'User not found' });
       }
-      res.status(201).json({
-        message: 'User successfully',
+      res.status(200).json({
+        message: 'User found successfully',
         data: existingUserModel
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error finding user:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }

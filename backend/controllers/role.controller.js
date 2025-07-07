@@ -27,17 +27,14 @@ class RoleController {
 
   async show(req, res) {
     try {
-      // Verify if the Role already exists
+      // Get all active roles
       const roleModel = await RoleModel.showActive();
-      if (!roleModel) {
-        return res.status(409).json({ error: 'The Role no already exists' });
-      }
-      res.status(201).json({
-        message: 'Role successfully',
-        data: roleModel
+      res.status(200).json({
+        message: 'Roles retrieved successfully',
+        data: roleModel || []
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error retrieving roles:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
@@ -50,21 +47,21 @@ class RoleController {
       if (!role_name || !role_description || !status_id || !id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the Role already exists  
+      // Verify if the Role exists  
       const existingRole = await RoleModel.findByIdActive(id);
       if (!existingRole) {
-        return res.status(409).json({ data: '', error: 'The Role no already exists' });
+        return res.status(404).json({ error: 'Role not found' });
       }
 
       const updateRoleModel = await RoleModel.update(id, {
         role_name, role_description, status_id
       });
-      res.status(201).json({
-        message: 'Role update successfully',
+      res.status(200).json({
+        message: 'Role updated successfully',
         data: updateRoleModel
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error in role update:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
@@ -76,14 +73,14 @@ class RoleController {
       if (!id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the Role already exists
+      // Delete role
       const deleteRoleModel = await RoleModel.delete(id);
-      res.status(201).json({
-        message: 'Role delete successfully',
+      res.status(200).json({
+        message: 'Role deleted successfully',
         data: deleteRoleModel
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error deleting role:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
@@ -95,17 +92,17 @@ class RoleController {
       if (!id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the Role already exists
+      // Get role by ID
       const existingRoleModel = await RoleModel.findByIdActive(id);
       if (!existingRoleModel) {
-        return res.status(409).json({ error: 'The Role No already exists' });
+        return res.status(404).json({ error: 'Role not found' });
       }
-      res.status(201).json({
-        message: 'Role successfully',
+      res.status(200).json({
+        message: 'Role found successfully',
         data: existingRoleModel
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error finding role:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }

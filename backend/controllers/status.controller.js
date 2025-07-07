@@ -41,9 +41,9 @@ class StatusController {
     async show(req, res) {
         try {
             const statusModel = await StatusModel.showActive();
-            res.status(201).json({
+            res.status(200).json({
                 message: 'Status retrieved successfully',
-                data: statusModel
+                data: statusModel || []
             });
         } catch (error) {
             console.error('Error retrieving status:', error);

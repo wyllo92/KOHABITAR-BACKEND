@@ -8,7 +8,7 @@ import cors from 'cors';
 /* The routers are imported to handle specific routes in the application.*/
 
 import roleRouter from '../routers/role.router.js';
-import userStatusRouter from '../routers/userStatus.router.js';
+import userStatusRouter from '../routers/status.router.js';
 import userRouter from '../routers/user.router.js';
 import profileRouter from '../routers/profile.router.js';
 import userRoleRouter from '../routers/userRole.router.js';
@@ -28,6 +28,7 @@ import paymentRouter from '../routers/payment.router.js';
 import tariffRouter from '../routers/tariff.router.js';
 import notificationRouter from '../routers/notification.router.js';
 import reportRouter from '../routers/report.router.js';
+import amenityTypeRouter from '../routers/amenityType.router.js';
 
 const app = express();
 
@@ -63,6 +64,7 @@ app.use('/api_v1', paymentRouter);
 app.use('/api_v1', tariffRouter);
 app.use('/api_v1', notificationRouter);
 app.use('/api_v1', reportRouter);
+app.use('/api_v1', amenityTypeRouter);
 
 // Add a test route to verify the server is working
 app.get('/health', (req, res) => {

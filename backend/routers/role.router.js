@@ -1,6 +1,6 @@
 import { Router } from "express";
 import RoleController from '../controllers/role.controller.js';
-import { verifyToken } from '../middleware/authMiddleware.js';
+// import { verifyToken } from '../middleware/authMiddleware.js';
 // Importing necessary modules
 const router= Router();
 const name='/role';

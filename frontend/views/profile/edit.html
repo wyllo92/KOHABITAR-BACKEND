@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Perfil</title>
+  <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+</head>
+<body>
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white text-center">
+            <h3 class="mb-0">Editar Perfil</h3>
+          </div>
+          <div class="card-body">
+            <form id="editProfileForm" enctype="multipart/form-data">
+              <div class="mb-3">
+                <label for="profile_fullName" class="form-label">Nombre completo</label>
+                <input type="text" class="form-control" id="profile_fullName" name="profile_fullName" required>
+              </div>
+              <div class="mb-3">
+                <label for="profile_phone" class="form-label">Teléfono</label>
+                <input type="tel" class="form-control" id="profile_phone" name="profile_phone" required>
+              </div>
+              <div class="mb-3">
+                <label for="profile_email" class="form-label">Correo electrónico</label>
+                <input type="email" class="form-control" id="profile_email" name="profile_email" required>
+              </div>
+              <div class="mb-3">
+                <label for="profile_photo" class="form-label">Foto de perfil</label>
+                <input type="file" class="form-control" id="profile_photo" name="profile_photo" accept="image/*">
+                <div class="mt-2">
+                  <img id="profilePhotoPreview" src="" alt="Foto actual" class="img-thumbnail" style="max-width: 120px; display: none;">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="profile_address" class="form-label">Dirección</label>
+                <input type="text" class="form-control" id="profile_address" name="profile_address">
+              </div>
+              <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../assets/js/controllers/profile/editProfile.controller.js"></script>
+</body>
+</html> 

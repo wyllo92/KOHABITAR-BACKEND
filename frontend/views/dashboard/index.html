@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Módulos</title>
+      <!-- Favicon -->
+  <link rel="icon" href="../../assets//img/logos/logo.png" type="image/png">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="../../assets/css//dashboard.css">
+</head>
+<body>
+    <!-- Barra de navegación -->
+    
+    <!-- Encabezado del dashboard -->
+    <header class="dashboard-header">
+        <div class="container text-center">
+            <h1 class="display-4">Bienvenido al Sistema</h1>
+            <p class="lead">Selecciona el módulo que deseas utilizar</p>
+        </div>
+    </header>
+
+    <!-- Contenido principal - Módulos -->
+    <main class="container">
+        <div class="row g-4">
+            <!-- Usuarios -->
+            <div class="col-md-6 col-lg-4">
+                <div class="module-card card">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h5 class="card-title">Gestión de Usuarios</h5>
+                        <p class="card-text">Administra los usuarios del sistema, roles y permisos de acceso a las diferentes funcionalidades.</p>
+                        <a href="#" data-module="user" class="btn btn-primary btn-module">
+                            <i class="fas fa-sign-in-alt me-2"></i> Ingresar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Reportes -->
+            <div class="col-md-6 col-lg-4">
+                <div class="module-card card">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h5 class="card-title">Reportes y Estadísticas</h5>
+                        <p class="card-text">Genera reportes personalizados y visualiza estadísticas clave para la toma de decisiones.</p>
+                        <a href="#" data-module="report" class="btn btn-primary btn-module">
+                            <i class="fas fa-sign-in-alt me-2"></i> Ingresar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Propiedades -->
+            <div class="col-md-6 col-lg-4">
+                <div class="module-card card">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="fas fa-house"></i>
+                        </div>
+                        <h5 class="card-title">Propiedades</h5>
+                        <p class="card-text">Gestiona las propiedades residenciales y sus características.</p>
+                        <a href="#" data-module="property" class="btn btn-primary btn-module">
+                            <i class="fas fa-sign-in-alt me-2"></i> Ingresar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Vehículos -->
+            <div class="col-md-6 col-lg-4">
+                <div class="module-card card">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <h5 class="card-title">Vehículos</h5>
+                        <p class="card-text">Administra los vehículos registrados en el sistema.</p>
+                        <a href="#" data-module="vehicle" class="btn btn-primary btn-module">
+                            <i class="fas fa-sign-in-alt me-2"></i> Ingresar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Parqueos -->
+            <div class="col-md-6 col-lg-4">
+                <div class="module-card card">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="fas fa-parking"></i>
+                        </div>
+                        <h5 class="card-title">Espacios de Parqueo</h5>
+                        <p class="card-text">Gestiona los espacios y zonas de parqueo disponibles.</p>
+                        <a href="#" data-module="parkingslot" class="btn btn-primary btn-module">
+                            <i class="fas fa-sign-in-alt me-2"></i> Ingresar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Amenidades -->
+            <div class="col-md-6 col-lg-4">
+                <div class="module-card card">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h5 class="card-title">Amenidades</h5>
+                        <p class="card-text">Administra las amenidades y servicios comunes del conjunto.</p>
+                        <a href="#" data-module="amenity" class="btn btn-primary btn-module">
+                            <i class="fas fa-sign-in-alt me-2"></i> Ingresar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Notificaciones -->
+            <div class="col-md-6 col-lg-4">
+                <div class="module-card card">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h5 class="card-title">Notificaciones</h5>
+                        <p class="card-text">Envía y gestiona notificaciones para los usuarios.</p>
+                        <a href="#" data-module="notification" class="btn btn-primary btn-module">
+                            <i class="fas fa-sign-in-alt me-2"></i> Ingresar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Módulos -->
+            <div class="col-md-6 col-lg-4">
+                <div class="module-card card">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="fas fa-th-large"></i>
+                        </div>
+                        <h5 class="card-title">Módulos</h5>
+                        <p class="card-text">Gestiona los módulos del sistema y su configuración.</p>
+                        <a href="#" data-module="module" class="btn btn-primary btn-module">
+                            <i class="fas fa-sign-in-alt me-2"></i> Ingresar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Roles -->
+            <div class="col-md-6 col-lg-4">
+                <div class="module-card card">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <h5 class="card-title">Roles</h5>
+                        <p class="card-text">Administra los roles y permisos de los usuarios.</p>
+                        <a href="#" data-module="role" class="btn btn-primary btn-module">
+                            <i class="fas fa-sign-in-alt me-2"></i> Ingresar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Estado de Usuario -->
+            <div class="col-md-6 col-lg-4">
+                <div class="module-card card">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="fas fa-user-gear"></i>
+                        </div>
+                        <h5 class="card-title">Estado de Usuario</h5>
+                        <p class="card-text">Gestiona los estados de los usuarios del sistema.</p>
+                        <a href="#" data-module="status" class="btn btn-primary btn-module">
+                            <i class="fas fa-sign-in-alt me-2"></i> Ingresar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+  
+
+  <!--Loading -->
+  <div id="loading-screen">
+    <div class="spinner-border text-light spinner" role="status">
+      <span class="visually-hidden">Loading ...</span>
+    </div>
+    <p class="mt-3">Data loading, please wait...</p>
+  </div>
+  <!--End Loading -->
+    <!-- Bootstrap 5 JS Bundle con Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+     <!-- JS personalizado -->
+   <script src="../../assets/js/app/constants.js"></script>
+  <script src="../../assets/js/storage/appStorage.js"></script>
+    <script src="../../assets/js/services/services.js"></script> 
+  <script src="../../assets/js/app/app.js"></script>
+
+   <script src="../../assets/js/controllers/dashboard/dashboard.controller.js"></script>
+   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('a[data-module]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const module = this.getAttribute('data-module');
+          if (window.parent && typeof window.parent.changeIframeView === 'function') {
+            window.parent.changeIframeView(module);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -36,7 +36,13 @@ class VehicleModel {
     try {
       let sqlQuery = "UPDATE vehicle SET model = ?, type = ?, color = ?, license_plate = ?, user_id = ?, property_id = ?, parkingZone_id = ?, status_id = ?, vehicle_updateAt = ? WHERE vehicle_id = ?;";
       const [result] = await connect.query(sqlQuery, [model, type, color, license_plate, user_id, property_id, parkingZone_id, status_id, vehicle_updateAt, id]);
-      return result.affectedRows > 0 ? this.findById(id) : null;
+      
+      if (result.affectedRows > 0) {
+        const updatedVehicle = await this.findById(id);
+        return updatedVehicle;
+      } else {
+        return null;
+      }
     } catch (error) {
       return null;
     }

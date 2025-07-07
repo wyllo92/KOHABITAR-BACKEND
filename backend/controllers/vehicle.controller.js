@@ -67,11 +67,11 @@ class VehicleController {
       // Verify if the Vehicle already exists  
       const existingVehicle = await VehicleModel.findByIdActive(id);
       if (!existingVehicle) {
-        return res.status(409).json({ data: '', error: 'The Vehicle no already exists' });
+        return res.status(409).json({ data: '', error: 'The Vehicle does not exist' });
       }
 
       const currentDate = new Date().toISOString().split('T')[0];
-      const updateVehicleModel = await VehicleModel.update(id, {
+      const updateData = {
         license_plate,
         model,
         type,
@@ -81,7 +81,8 @@ class VehicleController {
         parkingZone_id,
         status_id,
         vehicle_updateAt: currentDate
-      });
+      };
+      const updateVehicleModel = await VehicleModel.update(id, updateData);
 
       if (!updateVehicleModel) {
         return res.status(500).json({ error: 'Failed to update vehicle' });

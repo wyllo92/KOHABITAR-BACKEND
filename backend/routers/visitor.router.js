@@ -1,12 +1,16 @@
-import express from 'express';
+import { Router } from "express";
 import VisitorController from '../controllers/visitor.controller.js';
+const router = Router();
+const name = '/visitor';
+// Public route
 
-const router = express.Router();
+router.route(name)
+    .post(VisitorController.register) // Register a new visitor
+    .get(VisitorController.show);// Show all visitors
 
-router.get('/visitor', VisitorController.show);
-router.get('/visitor/:id', VisitorController.findById);
-router.post('/visitor', VisitorController.register);
-router.put('/visitor/:id', VisitorController.update);
-router.delete('/visitor/:id', VisitorController.delete);
+router.route(`${name}/:id`)
+    .get(VisitorController.findById)// Show a visitor by ID
+    .put(VisitorController.update)// Update a visitor by ID
+    .delete(VisitorController.delete);// Delete a visitor by ID
 
 export default router;

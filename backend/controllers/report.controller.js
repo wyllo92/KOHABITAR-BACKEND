@@ -4,15 +4,16 @@ class ReportController {
 
     async register(req, res) {
         try {
-            const { report_name, report_type, report_period, generated_by, report_data } = req.body;
+            const { report_name, report_type, report_period, generated_by, report_data, generated_at } = req.body;
 
             // Basic validation
             if (!report_name || !report_type || !generated_by) {
-                return res.status(400).json({ error: 'Required fields are missing' });
+                return res.status(400).json({ error: 'Required fields are missing: report_name, report_type, generated_by' });
             }
 
-            const currentDate = new Date().toISOString();
-            const reportId = await ReportModel.create({
+            const currentDate = generated_at || new Date().toISOString();
+
+            const reportData = {
                 User_id: generated_by,
                 Report_title: report_name,
                 Report_description: report_period || 'Generated report',
@@ -20,7 +21,9 @@ class ReportController {
                 Status_id: 1, // Default status
                 Report_file_url: null,
                 Report_created_at: currentDate
-            });
+            };
+
+            const reportId = await ReportModel.create(reportData);
 
             if (!reportId) {
                 return res.status(500).json({ error: 'Failed to create report' });
@@ -37,16 +40,20 @@ class ReportController {
 
     async show(req, res) {
         try {
-            // Return empty array for now to avoid database errors
+            console.log('Fetching all reports...');
+            const reports = await ReportModel.show();
+            console.log('Reports fetched:', reports);
+
             res.status(200).json({
                 success: true,
                 message: 'Reports retrieved successfully',
-                data: []
+                data: reports
             });
         } catch (error) {
             res.status(500).json({
                 success: false,
-                error: 'Internal Server Error'
+                error: 'Internal Server Error',
+                details: error.message
             });
         }
     }
@@ -65,15 +72,17 @@ class ReportController {
                 return res.status(404).json({ error: 'Report not found' });
             }
 
-            const currentDate = new Date().toISOString();
-            const updatedReport = await ReportModel.update(id, {
-                report_name,
-                report_type,
-                report_period,
-                generated_by,
-                report_data: JSON.stringify(report_data || {}),
-                generated_at: currentDate
-            });
+            // Map the request fields to model fields
+            const updateData = {
+                User_id: generated_by,
+                Report_title: report_name,
+                Report_description: report_period || 'Updated report',
+                report_type_id: 1, // Default report type
+                Status_id: 1, // Default status
+                Report_file_url: null 
+            };
+            
+            const updatedReport = await ReportModel.update(id, updateData);
 
             if (!updatedReport) {
                 return res.status(500).json({ error: 'Failed to update report' });
@@ -84,7 +93,11 @@ class ReportController {
                 data: updatedReport
             });
         } catch (error) {
-            res.status(500).json({ error: 'Internal Server Error' });
+            console.error('Error in report update:', error);
+            res.status(500).json({ 
+                error: 'Internal Server Error',
+                details: error.message
+            });
         }
     }
 

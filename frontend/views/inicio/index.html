@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="KOHABITAR - Gestión de propiedades y comunidades residenciales">
+    <meta name="keywords" content="kohabitar, propiedades, comunidad, residencias">
+    <meta name="author" content="KOHABITAR">
+    <title>KOHABITAR - Bienvenidos</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para íconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/paginaInicio.css">
+</head>
+
+<body>
+    <!-- Encabezado -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">KOHABITAR</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item me-4">
+                        <div class="contact-info">
+                            <strong>Canales de atención</strong><br>
+                            <i class="fas fa-phone"></i> +57 312 432 1567<br>
+                            <i class="fas fa-envelope"></i> administracion@kohabitar.com
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../auth/index.html" class="btn btn-primary">Iniciar Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Carrusel de Noticias -->
+    <div class="container my-2">
+        <h2 class="text-center fw-bold mb-4">Conoce nuestras instalaciones</h2>
+        <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="../../assets/img/portadas/suburbio.jpg" class="d-block w-100" alt="Conjunto residencial">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Nuevo Conjunto Residencial</h5>
+                        <p>Conoce nuestras nuevas instalaciones y áreas comunes.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="../../assets/img/portadas/parking.jpg" class="d-block w-100" alt="Reunión de comunidad">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Reunión de Comunidad</h5>
+                        <p>Próxima reunión para discutir mejoras en el parqueadero.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="../../assets/img/portadas/areascomunes.jpg" class="d-block w-100" alt="Corte de agua">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Aviso de Corte de Agua</h5>
+                        <p>Programado para el próximo 25 de abril.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="../../assets/img/portadas/edificio.jpg" class="d-block w-100" alt="Mantenimiento de áreas verdes">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Mantenimiento de Áreas Verdes</h5>
+                        <p>Mejoramos nuestros jardines y zonas recreativas para tu disfrute.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="../../assets/img/portadas/casas.jpg" class="d-block w-100" alt="Evento comunitario">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Evento Comunitario</h5>
+                        <p>Únete a nuestra actividad deportiva este 30 de abril en el parque central.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+            </button>
+        </div>
+    </div>
+    <!-- Sección de Tarjetas -->
+    <div class="container my-5">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <img src="../../assets/img/portadas/suburbio.jpg" class="card-img-top" alt="Conjunto residencial">
+                    <div class="card-body">
+                        <h5 class="card-title">Nuevas Instalaciones</h5>
+                        <p class="card-text">Explora las mejoras en nuestras áreas comunes y zonas recreativas.</p>
+                        <a href="#" class="btn btn-primary btn-sm">Ver Más</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <img src="../../assets/img/portadas/parking.jpg" class="card-img-top" alt="Parqueadero">
+                    <div class="card-body">
+                        <h5 class="card-title">Mejoras en Parqueadero</h5>
+                        <p class="card-text">Nuevas medidas de seguridad y organización para el parqueadero.</p>
+                        <a href="#" class="btn btn-primary btn-sm">Ver Más</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <img src="../../assets/img/portadas/areascomunes.jpg" class="card-img-top" alt="Áreas comunes">
+                    <div class="card-body">
+                        <h5 class="card-title">Corte de Agua</h5>
+                        <p class="card-text">Infórmate sobre los horarios de los próximos cortes de agua.</p>
+                        <a href="#" class="btn btn-primary btn-sm">Ver Más</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de Página -->
+    <footer class="footer text-center">
+        <div class="container">
+            <p>© 2025 KOHABITAR. Todos los derechos reservados.</p>
+            <p>
+                <a href="#" class="me-3">Política de Privacidad</a> |
+                <a href="#" class="ms-3">Términos y Condiciones</a>
+            </p>
+            <p><i class="fas fa-envelope"></i> administracion@kohabitar.com | <i class="fas fa-phone"></i> +57 312 432 1567</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html> 

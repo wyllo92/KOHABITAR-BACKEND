@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
       e.preventDefault();
       localStorage.clear();
       sessionStorage.clear();
-      window.location.href = 'index.html';
+      window.location.href = '../views/inicio/index.html';
     });
   }
 

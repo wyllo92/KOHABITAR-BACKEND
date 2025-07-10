@@ -127,7 +127,7 @@ function getDataId(id) {
     console.log('Datos del módulo:', data);
     if (data.data) {
       let getData = data.data;
-      objForm.setDataFormJson(getData);
+      objForm.setDataFormJson(getData[0] || getData); // El backend devuelve un array o un objeto
     } else {
       alert('Error: No se encontraron datos del módulo');
     }
@@ -180,24 +180,24 @@ function createTable(data) {
     console.log('Fila actual:', row);
     
     // Determinar el estado activo/inactivo
-    const statusActive = row.module_is_active == 1 ? 'Activo' : 'Inactivo';
-    const statusClass = row.module_is_active == 1 ? 'text-success' : 'text-danger';
+    const statusActive = row.is_active == 1 ? 'Activo' : 'Inactivo';
+    const statusClass = row.is_active == 1 ? 'text-success' : 'text-danger';
     
     let dataRow = `<tr>
-      <td>${row.module_id || row.id}</td>
-      <td>${row.module_name || row.name || 'N/A'}</td>
-      <td>${row.module_description || row.description || 'N/A'}</td>
+      <td>${row.module_id}</td>
+      <td>${row.module_route || 'N/A'}</td>
+      <td>${row.module_description || 'N/A'}</td>
       <td>
         <span class="${statusClass}">${statusActive}</span>
       </td>
       <td>
-        <button type="button" title="Ver Módulo" class="btn btn-success btn-sm" onclick="showId(${row.module_id || row.id})">
+        <button type="button" title="Ver Módulo" class="btn btn-success btn-sm" onclick="showId(${row.module_id})">
           <i class='fas fa-eye'></i>
         </button>
-        <button type="button" title="Editar Módulo" class="btn btn-primary btn-sm" onclick="edit(${row.module_id || row.id})">
+        <button type="button" title="Editar Módulo" class="btn btn-primary btn-sm" onclick="edit(${row.module_id})">
           <i class='fas fa-edit'></i>
         </button>
-        <button type="button" title="Eliminar Módulo" class="btn btn-danger btn-sm" onclick="delete_(${row.module_id || row.id})">
+        <button type="button" title="Eliminar Módulo" class="btn btn-danger btn-sm" onclick="delete_(${row.module_id})">
           <i class='fas fa-trash'></i>
         </button>
       </td>

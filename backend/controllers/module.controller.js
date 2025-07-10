@@ -4,107 +4,98 @@ class ModuleController {
 
   async register(req, res) {
     try {
-      const { name, route, icon, description, is_active } = req.body;
+      const { module_route, module_description, is_active } = req.body;
       // Basic validation
-      if (!name || !route || !icon || !description || !is_active) {
+      if (!module_route || !is_active) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
 
-      const userId = await ModuleModel.create({
-        name,
-        route,
-        icon, description, is_active
+      const moduleId = await ModuleModel.create({
+        module_route,
+        module_description,
+        is_active
       });
       res.status(201).json({
         message: 'Module created successfully',
-        id: userId
+        module_id: moduleId
       });
     } catch (error) {
       console.error('Registration error:', error);
-      res.status(500).json({ error: 'Internal Server Errorr' });
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
   async show(req, res) {
     try {
-      // Verify if the User already exists
       const moduleModel = await ModuleModel.show();
       if (!moduleModel) {
-        return res.status(409).json({ error: 'The module no already exists' });
+        return res.status(409).json({ error: 'No modules found' });
       }
-      res.status(201).json({
-        message: 'Module successfully',
+      res.status(200).json({
+        message: 'Modules fetched successfully',
         data: moduleModel
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error in show:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
   async update(req, res) {
     try {
-      const { name, route, icon, description, is_active } = req.body;
-      const id = req.params.id;
-      // Basic validation
-      if (!name || !route || !icon || !description || !is_active || !id) {
+      const { module_route, module_description, is_active } = req.body;
+      const module_id = req.params.id;
+      if (!module_route || !is_active || !module_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-
-      const existingUser = await ModuleModel.findById(id);
-      if (existingUser.length === 0) {
-        return res.status(409).json({ data: '', error: 'The Module no already exists' });
+      const existingModule = await ModuleModel.findById(module_id);
+      if (!existingModule || existingModule.length === 0) {
+        return res.status(404).json({ error: 'Module not found' });
       }
-
-      const updateModuleModel = await ModuleModel.update(id, { name, route, icon, description, is_active });
-      res.status(201).json({
-        message: 'Module update successfully',
-        data: updateModuleModel
-
+      const updateModule = await ModuleModel.update(module_id, { module_route, module_description, is_active });
+      res.status(200).json({
+        message: 'Module updated successfully',
+        data: updateModule
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error in update:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
   async delete(req, res) {
     try {
-      const id = req.params.id;
-      // Basic validate
-      if (!id) {
+      const module_id = req.params.id;
+      if (!module_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the User already exists
-      const deleteModuleModel = await ModuleModel.delete(id);
-      res.status(201).json({
-        message: 'Module delete successfully',
-        data: deleteModuleModel
+      const deleteModule = await ModuleModel.delete(module_id);
+      res.status(200).json({
+        message: 'Module deleted successfully',
+        data: deleteModule
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error in delete:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
   async findById(req, res) {
     try {
-      const id = req.params.id;
-      // Basic validate
-      if (!id) {
+      const module_id = req.params.id;
+      if (!module_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the User already exists
-      const existingModuleModel = await ModuleModel.findById(id);
-      if (!existingModuleModel) {
-        return res.status(409).json({ error: 'The User Role No already exists' });
+      const module = await ModuleModel.findById(module_id);
+      if (!module || module.length === 0) {
+        return res.status(404).json({ error: 'Module not found' });
       }
-      res.status(201).json({
-        message: 'Module successfully',
-        data: existingModuleModel
+      res.status(200).json({
+        message: 'Module fetched successfully',
+        data: module
       });
     } catch (error) {
-      console.error('Error in registration:', error);
+      console.error('Error in findById:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }

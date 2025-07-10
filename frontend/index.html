@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Aplicación CRUD para gestión de usuarios" />
-    <title>Menú Principal</title>
+    <title>Kohabitar</title>
     
     <!-- Favicon -->
     <link rel="icon" href="assets/img/icons/icono-kohabitar.png" type="image/png" />
@@ -54,12 +54,12 @@
           <ul class="nav flex-column">
             <li class="nav-item">
               <a class="nav-link text-white" href="#user">
-                <i class="bi bi-people me-2"></i> Usuarios
+                <i class="fa fa-users me-2"></i> Usuarios
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link text-white" href="#property">
-                <i class="bi bi-house me-2"></i> Propiedades
+                <i class="fa fa-building me-2"></i> Propiedades
               </a>
             </li>
             <li class="nav-item">
@@ -70,17 +70,17 @@
                 <ul class="nav flex-column">
                   <li class="nav-item">
                     <a class="nav-link text-white" href="#parkingslot">
-                      <i class=""></i> Vehículos
+                      <i class="fa fa-car me-2"></i> Vehículos
                     </a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link text-white" href="#parkingzone">
-                      <i class="bi bi-map me-2"></i> Zonas
+                      <i class="fa fa-map me-2"></i> Zonas
                     </a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link text-white" href="#reservation">
-                      <i class="bi bi-calendar-check me-2"></i> Reservas
+                      <i class="fa fa-calendar-check me-2"></i> Reservas
                     </a>
                   </li>
                 </ul>
@@ -89,54 +89,60 @@
 
             <li class="nav-item">
               <a class="nav-link text-white" href="#status">
-                <i class="bi bi-person-gear me-2"></i> Estado de Usuario
+                <i class="fa fa-user-gear me-2"></i> Estado de Usuario
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link text-white" href="#role">
-                <i class="bi bi-people-fill me-2"></i> Roles
+                <i class="fa fa-users-cog me-2"></i> Roles
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link text-white" href="#module">
-                <i class="bi bi-grid me-2"></i> Módulos
+                <i class="fa fa-th-large me-2"></i> Módulos
+              </a>
+            </li>
+            
+            <li class="nav-item">
+              <a class="nav-link text-white" href="#visitor">
+                <i class="fa fa-user-friends me-2"></i> Visitantes
               </a>
             </li>
             
             <li class="nav-item">
               <a class="nav-link text-white" href="#vehicle">
-                <i class="bi bi-truck me-2"></i> Vehículos
+                <i class="fa fa-truck me-2"></i> Vehículos
               </a>
             </li>
             
             <li class="nav-item">
               <a class="nav-link text-white" href="#amenity">
-                <i class="bi bi-star me-2"></i> Amenidades
+                <i class="fa fa-tree me-2"></i> Zonas comunes
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link text-white" href="#notification">
-                <i class="bi bi-bell me-2"></i> Notificaciones
+                <i class="fa fa-bell me-2"></i> Notificaciones
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link text-white" href="#profile">
-                <i class="bi bi-person-vcard me-2"></i> Perfil
+                <i class="fa fa-id-card me-2"></i> Perfil
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link text-white" href="#report">
-                <i class="bi bi-file-earmark-text me-2"></i> Reportes
+                <i class="fa fa-file-alt me-2"></i> Reportes
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link text-white" href="#dashboard">
-                <i class="bi bi-graph-up me-2"></i> Estadísticas
+                <i class="fa fa-chart-line me-2"></i> Estadísticas
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link text-white" href="#help">
-                <i class="bi bi-question-circle me-2"></i> Ayuda
+                <i class="fa fa-question-circle me-2"></i> Ayuda
               </a>
             </li>
           </ul>
@@ -199,6 +205,7 @@
       '#notification': 'views/notification/index.html',
       '#profile': 'views/profile/index.html',
       '#report': 'views/report/index.html',
+      '#visitor': 'views/visitor/index.html',
       '#help': 'views/errors/help.html',
     };
 
@@ -283,7 +290,7 @@
           e.preventDefault();
           localStorage.clear();
           sessionStorage.clear();
-          window.location.href = 'index.html';
+          window.location.href = 'views/inicio/index.html';
         }
       });
     });

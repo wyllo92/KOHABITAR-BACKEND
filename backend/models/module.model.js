@@ -2,17 +2,17 @@ import { connect } from '../config/db/connectMysql.js';
 
 class ModuleModel {
 
-  static async create({ name, route, icon, description, is_active }) {
+  static async create({ module_route, module_description, is_active }) {
     const [result] = await connect.query(
-      'INSERT INTO Module (name, route, icon, description, is_active) VALUES (?, ?, ?, ?, ?)',
-      [name, route, icon, description, is_active]
+      'INSERT INTO module (module_route, module_description, is_active) VALUES (?, ?, ?)',
+      [module_route, module_description, is_active]
     );
     return result.insertId;
   }
 
   static async show() {
     try {
-      let sqlQuery = "SELECT * FROM `module` ORDER BY `id`";
+      let sqlQuery = "SELECT * FROM `module` ORDER BY `module_id`";
       const [result] = await connect.query(sqlQuery);
       return result;
     } catch (error) {
@@ -20,27 +20,26 @@ class ModuleModel {
     }
   }
 
-  static async update(id, { name, route, icon, description, is_active }) {
+  static async update(module_id, { module_route, module_description, is_active }) {
     const [result] = await connect.query(
-      'UPDATE Module SET name = ?, route = ?, icon=?, description = ?, is_active = ?, updated_at =CURRENT_TIMESTAMP WHERE id = ?',
-      [name, route, icon, description, is_active, id]
+      'UPDATE module SET module_route = ?, module_description = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE module_id = ?',
+      [module_route, module_description, is_active, module_id]
     );
-    return result.affectedRows > 0 ? this.findById(id) : null;
+    return result.affectedRows > 0 ? this.findById(module_id) : null;
   }
 
-  static async delete(id) {
+  static async delete(module_id) {
     const [result] = await connect.query(
-      'DELETE FROM Module WHERE id=?',
-      [id]
+      'DELETE FROM module WHERE module_id=?',
+      [module_id]
     );
-    return result.affectedRows > 0 ? this.findById(id) : null;
+    return result.affectedRows > 0 ? this.findById(module_id) : null;
   }
 
-
-  static async findById(id) {
+  static async findById(module_id) {
     try {
-      let sqlQuery = "SELECT * FROM `module` WHERE id = ? ORDER BY `id`";
-      const [result] = await connect.query(sqlQuery, id);
+      let sqlQuery = "SELECT * FROM `module` WHERE module_id = ? ORDER BY `module_id`";
+      const [result] = await connect.query(sqlQuery, module_id);
       return result;
     } catch (error) {
       return [0];

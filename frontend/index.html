@@ -4,41 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Aplicación CRUD para gestión de usuarios" />
-    <title>My App</title>
+    <title>Menú Principal</title>
     
     <!-- Favicon -->
     <link rel="icon" href="assets/img/icons/icono-kohabitar.png" type="image/png" />
-    
+
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   
+    <!-- Loading -->
+    <link rel="stylesheet" href="assets/css/loading.css">
     <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="assets/css/loading.css" />
-    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/Index.css">
   </head>
 
-  <body>
-    <!-- Header -->
-    <header>
-      <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-          <button class="btn btn-outline-light me-2" id="sidebarToggle" aria-label="Toggle sidebar">
-            <i class="bi bi-list"></i>
+  <body class="min-vh-100 d-flex flex-column">
+    <header class="w-100 d-flex justify-content-between align-items-center px-4 py-2 border-bottom shadow-sm">
+        <div class="d-flex align-items-center">
+            <a href="index.html" onclick="cargarVista('index.html')"
+                style="display: inline-flex; align-items: center;">
+                <img src="assets/img/logos/Logo_luisa.png" alt="Logo" height="50" >
+            </a>
+        </div>
+          
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userDropdown"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa-solid fa-user"></i> Mi Cuenta
           </button>
-          
-          <a class="navbar-brand" href="#" aria-label="Home">
-            <img src="assets/img/logos/logo-kohabitar.jpg" alt="Logo" width="42" height="42" class="d-inline-block align-text-top" />
-          </a>
-          
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarProfileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-person me-1"></i> Perfil
-                </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarProfileDropdown">
                   <li><a class="dropdown-item" href="#profile-edit"><i class="bi bi-pencil-square me-1"></i> Editar perfil</a></li>
                   <li><hr class="dropdown-divider"></li>
@@ -53,21 +49,44 @@
 
     <!-- Sidebar -->
     <aside class="sidebar text-white">
-      <div class="p-3">
-        <h5 class="text-center">Menú</h5>
-        <hr />
+      <div class="py-3">
         <nav>
           <ul class="nav flex-column">
-            <li class="nav-item">
-              <a class="nav-link text-white" href="#dashboard">
-                <i class="bi bi-speedometer2 me-2"></i> Dashboard
-              </a>
-            </li>
             <li class="nav-item">
               <a class="nav-link text-white" href="#user">
                 <i class="bi bi-people me-2"></i> Usuarios
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="#property">
+                <i class="bi bi-house me-2"></i> Propiedades
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="#" data-bs-toggle="collapse" data-bs-target="#parkingSubmenu">
+                <i class="bi bi-p-square me-2"></i> Parqueaderos
+              </a>
+              <div class="collapse" id="parkingSubmenu">
+                <ul class="nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link text-white" href="#parkingslot">
+                      <i class=""></i> Vehículos
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-white" href="#parkingzone">
+                      <i class="bi bi-map me-2"></i> Zonas
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-white" href="#reservation">
+                      <i class="bi bi-calendar-check me-2"></i> Reservas
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+
             <li class="nav-item">
               <a class="nav-link text-white" href="#status">
                 <i class="bi bi-person-gear me-2"></i> Estado de Usuario
@@ -83,26 +102,13 @@
                 <i class="bi bi-grid me-2"></i> Módulos
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link text-white" href="#property">
-                <i class="bi bi-house me-2"></i> Propiedades
-              </a>
-            </li>
+            
             <li class="nav-item">
               <a class="nav-link text-white" href="#vehicle">
                 <i class="bi bi-truck me-2"></i> Vehículos
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link text-white" href="#parkingslot">
-                <i class="bi bi-p-square me-2"></i> Espacios de Parqueo
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-white" href="#parkingzone">
-                <i class="bi bi-map me-2"></i> Zonas de Parqueo
-              </a>
-            </li>
+            
             <li class="nav-item">
               <a class="nav-link text-white" href="#amenity">
                 <i class="bi bi-star me-2"></i> Amenidades
@@ -156,7 +162,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-primary text-white text-center p-3">
+    <footer class="text-white text-center p-3">
       <p class="mb-0">© 2025 Kohabitar. Todos los derechos reservados.</p>
     </footer>
 
@@ -188,6 +194,7 @@
       '#vehicle': 'views/vehicle/index.html',
       '#parkingslot': 'views/parkingslot/index.html',
       '#parkingzone': 'views/parkingzone/index.html',
+      '#reservation': 'views/reservation/index.html',
       '#amenity': 'views/amenity/index.html',
       '#notification': 'views/notification/index.html',
       '#profile': 'views/profile/index.html',

@@ -578,10 +578,10 @@ const sqlStatements = [
 
   // Insert initial data
   `INSERT INTO status (status_id, status_name, status_description, status_entity, status_is_active, status_created_at) VALUES
-(1, 'Activo', 'Estado activo', 'General', 1, '2025-05-27 16:14:45'),
-(2, 'Inactivo', 'Estado inactivo', 'General', 1, '2025-05-27 16:14:45'),
-(3, 'Pendiente', 'Estado pendiente', 'General', 1, '2025-05-27 16:14:45'),
-(4, 'Completado', 'Estado completado', 'General', 1, '2025-05-27 16:14:45'),
+(1, 'Activo', 'Estado activo', 'Usuarios', 1, '2025-05-27 16:14:45'),
+(2, 'Inactivo', 'Estado inactivo', 'Usuarios', 1, '2025-05-27 16:14:45'),
+(3, 'Activo', 'Estado Activo', 'Propiedades', 1, '2025-05-27 16:14:45'),
+(4, 'Inactivo', 'Estado Inactivo', 'Propiedades', 1, '2025-05-27 16:14:45'),
 (5, 'Cancelado', 'Estado cancelado', 'General', 1, '2025-05-27 16:14:45');`,
 
   `INSERT INTO role (role_id, role_name, role_description, status_id, role_createAt) VALUES

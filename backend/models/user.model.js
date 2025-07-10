@@ -12,14 +12,37 @@ class UserModel {
 
   static async show() {
     const [rows] = await connect.query(
-      'SELECT u.*, r.role_name, s.status_name FROM user u LEFT JOIN role r ON u.role_id = r.role_id LEFT JOIN status s ON u.status_id = s.status_id ORDER BY u.user_id'
+      `SELECT 
+        u.user_id,
+        u.user_name,
+        p.profile_phone,
+        p.profile_email,
+        r.role_name, 
+        s.status_name 
+      FROM user u 
+      LEFT JOIN profile p ON u.user_id = p.user_id 
+      LEFT JOIN role r ON u.role_id = r.role_id 
+      LEFT JOIN status s ON u.status_id = s.status_id 
+      ORDER BY u.user_id`
     );
     return rows;
   }
 
   static async showActive() {
     const [rows] = await connect.query(
-      'SELECT u.*, r.role_name, s.status_name FROM user u LEFT JOIN role r ON u.role_id = r.role_id LEFT JOIN status s ON u.status_id = s.status_id WHERE u.status_id = 1 ORDER BY u.user_id'
+      `SELECT 
+        u.user_id,
+        u.user_name,
+        p.profile_phone,
+        p.profile_email,
+        r.role_name, 
+        s.status_name 
+      FROM user u 
+      LEFT JOIN profile p ON u.user_id = p.user_id 
+      LEFT JOIN role r ON u.role_id = r.role_id 
+      LEFT JOIN status s ON u.status_id = s.status_id 
+      WHERE u.status_id = 1 
+      ORDER BY u.user_id`
     );
     return rows;
   }
@@ -42,7 +65,21 @@ class UserModel {
 
   static async findById(id) {
     const [rows] = await connect.query(
-      'SELECT u.*, r.role_name, s.status_name FROM user u LEFT JOIN role r ON u.role_id = r.role_id LEFT JOIN status s ON u.status_id = s.status_id WHERE u.user_id = ?',
+      `SELECT 
+        u.user_id,
+        u.user_name,
+        u.role_id,
+        u.status_id,
+        u.user_password,
+        p.profile_phone,
+        p.profile_email,
+        r.role_name, 
+        s.status_name 
+      FROM user u 
+      LEFT JOIN profile p ON u.user_id = p.user_id 
+      LEFT JOIN role r ON u.role_id = r.role_id 
+      LEFT JOIN status s ON u.status_id = s.status_id 
+      WHERE u.user_id = ?`,
       [id]
     );
     return rows[0];
@@ -50,7 +87,19 @@ class UserModel {
 
   static async findByIdActive(id) {
     const [rows] = await connect.query(
-      'SELECT u.*, r.role_name, s.status_name FROM user u LEFT JOIN role r ON u.role_id = r.role_id LEFT JOIN status s ON u.status_id = s.status_id WHERE u.user_id = ? AND u.status_id = 1',
+      `SELECT 
+        u.user_id,
+        u.user_name,
+        u.user_password,
+        p.profile_phone,
+        p.profile_email,
+        r.role_name, 
+        s.status_name 
+      FROM user u 
+      LEFT JOIN profile p ON u.user_id = p.user_id 
+      LEFT JOIN role r ON u.role_id = r.role_id 
+      LEFT JOIN status s ON u.status_id = s.status_id 
+      WHERE u.user_id = ? AND u.status_id = 1`,
       [id]
     );
     return rows[0];
@@ -58,7 +107,19 @@ class UserModel {
 
   static async findByName(user_name) {
     const [rows] = await connect.query(
-      'SELECT u.*, r.role_name, s.status_name FROM user u LEFT JOIN role r ON u.role_id = r.role_id LEFT JOIN status s ON u.status_id = s.status_id WHERE u.user_name = ?',
+      `SELECT 
+        u.user_id,
+        u.user_name,
+        u.user_password,
+        p.profile_phone,
+        p.profile_email,
+        r.role_name, 
+        s.status_name 
+      FROM user u 
+      LEFT JOIN profile p ON u.user_id = p.user_id 
+      LEFT JOIN role r ON u.role_id = r.role_id 
+      LEFT JOIN status s ON u.status_id = s.status_id 
+      WHERE u.user_name = ?`,
       [user_name]
     );
     return rows[0];

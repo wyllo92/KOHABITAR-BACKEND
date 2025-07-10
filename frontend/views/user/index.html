@@ -34,7 +34,9 @@
           <thead class=" ">
             <tr class="table-primary text-center">
               <th>#</th>
-              <th>Nombre de Usuario</th>
+              <th>Nombre</th>
+              <th>Teléfono</th>
+              <th>Email</th>
               <th>Rol</th>
               <th>Estado</th>
               <th>Acciones</th>
@@ -45,8 +47,10 @@
           </tbody>
           <tfoot>
             <tr class="table-primary text-center">
-              <td>#</td>
-              <td>Nombre de Usuario</td>
+              <td>ID</td>
+              <td>Nombre</td>
+              <td>Teléfono</td>
+              <td>Email</td>
               <td>Rol</td>
               <td>Estado</td>
               <td>Acciones</td>
@@ -81,6 +85,20 @@
                     <input type="password" class="form-control edit-input" placeholder="Contraseña" id="user_password"
                       name="user_password" required value="">
                     <label for="user_password">Contraseña</label>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="profile_phone" class="form-label"></label>
+                  <div class="form-floating">
+                    <input type="tel" class="form-control" placeholder="Teléfono" id="profile_phone" name="profile_phone" required>
+                    <label for="profile_phone">Teléfono</label>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="profile_email" class="form-label"></label>
+                  <div class="form-floating">
+                    <input type="email" class="form-control" placeholder="Email" id="profile_email" name="profile_email" required>
+                    <label for="profile_email">Email</label>
                   </div>
                 </div>
                 <div class="mb-3">

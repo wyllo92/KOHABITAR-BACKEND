@@ -38,7 +38,6 @@
               <th>Nombre</th>
               <th>Tipo</th>
               <th>Descripción</th>
-              <th>Fecha Creación</th>
               <th>Estado</th>
               <th>Acciones</th>
             </tr>
@@ -51,7 +50,6 @@
               <td>Nombre</td>
               <td>Tipo</td>
               <td>Descripción</td>
-              <td>Fecha Creación</td>
               <td>Estado</td>
               <td>Acciones</td>
             </tr>
@@ -101,6 +99,18 @@
                   <div class="form-floating">
                     <textarea class="form-control" placeholder="Descripción de la propiedad" id="property_description" name="property_description" style="height: 100px"></textarea>
                     <label for="property_description">Descripción de la Propiedad</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="status_id" class="form-label">Estado</label>
+                    <div class="form-floating">
+                      <select class="form-select" id="status_id" name="status_id" required>
+                        <option value="" selected disabled>Seleccione un estado</option>
+                        <!-- Opciones se llenarán dinámicamente -->
+                      </select>
+                      <label for="status_id">Estado</label>
+                    </div>
                   </div>
                 </div>
                 <div class="mb-3">

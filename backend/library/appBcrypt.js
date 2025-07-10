@@ -31,10 +31,16 @@ export const encryptPassword = async (password) => {
  */
 export const comparePassword = async (password, hashedPassword) => {
     try {
+        // Validar que ambos parámetros existan
+        if (!password || !hashedPassword) {
+            console.error('Error: password or hashedPassword is null/undefined');
+            return false;
+        }
+        
         const match = await appBcrypt.compare(password, hashedPassword);
         return match;
     } catch (error) {
         console.error('Error compare the hash:', error);
-        throw error;
+        return false;
     }
 };

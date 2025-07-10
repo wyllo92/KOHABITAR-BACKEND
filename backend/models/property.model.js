@@ -2,10 +2,10 @@ import { connect } from '../config/db/connectMysql.js';
 
 class PropertyModel {
 
-  static async create({ property_name, property_description, property_type, property_createAt, property_updateAt }) {
+  static async create({ property_name, property_description, property_type, property_createAt, property_updateAt, status_id }) {
     try {
-      let sqlQuery = "INSERT INTO property (property_name, property_description, property_type, property_createAt, property_updateAt) VALUES (?, ?, ?, ?, ?);";
-      const [result] = await connect.query(sqlQuery, [property_name, property_description, property_type, property_createAt, property_updateAt]);
+      let sqlQuery = "INSERT INTO property (property_name, property_description, property_type, property_createAt, property_updateAt, status_id) VALUES (?, ?, ?, ?, ?, ?);";
+      const [result] = await connect.query(sqlQuery, [property_name, property_description, property_type, property_createAt, property_updateAt, status_id]);
       return result.insertId;
     } catch (error) {
       return null;
@@ -14,18 +14,25 @@ class PropertyModel {
 
   static async show() {
     try {
-      let sqlQuery = "SELECT * FROM property ORDER BY property_id";
+      let sqlQuery = `
+        SELECT p.*, s.status_name
+        FROM property p
+        LEFT JOIN status s ON p.status_id = s.status_id
+        ORDER BY p.property_id
+      `;
       const [result] = await connect.query(sqlQuery);
+      console.log('PROPIEDADES ENCONTRADAS:', result); // <-- Log de depuración
       return result;
     } catch (error) {
+      console.error('ERROR EN PROPERTY SHOW:', error); // <-- Log de error
       return [];
     }
   }
 
-  static async update(id, { property_name, property_description, property_type, property_updateAt }) {
+  static async update(id, { property_name, property_description, property_type, property_updateAt, status_id }) {
     try {
-      let sqlQuery = "UPDATE property SET property_name = ?, property_description = ?, property_type = ?, property_updateAt = ? WHERE property_id = ?;";
-      const [result] = await connect.query(sqlQuery, [property_name, property_description, property_type, property_updateAt, id]);
+      let sqlQuery = "UPDATE property SET property_name = ?, property_description = ?, property_type = ?, property_updateAt = ?, status_id = ? WHERE property_id = ?;";
+      const [result] = await connect.query(sqlQuery, [property_name, property_description, property_type, property_updateAt, status_id, id]);
       return result.affectedRows > 0 ? this.findById(id) : null;
     } catch (error) {
       return null;
@@ -132,6 +139,16 @@ class PropertyModel {
       return result[0];
     } catch (error) {
       return null;
+    }
+  }
+
+  static async getPropertyStatusIds() {
+    try {
+      let sqlQuery = "SELECT status_id, status_name FROM status WHERE status_entity = 'Propiedad' OR status_entity = 'Propiedades'";
+      const [result] = await connect.query(sqlQuery);
+      return result;
+    } catch (error) {
+      return [];
     }
   }
 }

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Formulario de Login</title>
+  <title>Login - Kohabitar Cloud</title>
 
   <!-- Favicon -->
  <link rel="icon" href="../../assets//img/icons/icono-kohabitar.png" type="image/png">
@@ -17,25 +17,17 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
   <!-- Loading -->
   <link rel="stylesheet" href="../../assets/css/loading.css">
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" href="../../assets/css/login.css">
 </head>
 
-<body>
+<body class="d-flex justify-content-center align-items-center" style="height: 100vh;">
 
-  <!--Container -->
-  <div class="container">
-
-    <!--Content data-->
-    <main>
-
-      <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
-          <div class="card auth-card shadow">
-            <div class="card-body p-4">
-              <div class="text-center mb-4">
-                <img src="../../assets/img/icons/icono-kohabitar.png" width="50" alt="Logo" class="auth-logo img ">
-                <h2 class="auth-title">Iniciar Sesión</h2>
-              </div>
-              <!--Form-->
+<div class="card shadow" style="width: 100%; max-width: 400px;">
+  <div class="card-header text-center">
+      <h4>Iniciar Sesión</h4>
+  </div>
+  <div class="card-body">   
               <form id="loginForm">
                 <div class="mb-3">
                   <label for="user" class="form-label">Usuario</label>

@@ -41,8 +41,7 @@ myForm.addEventListener('submit', (e) => {
     endpointUrl = URL_USER + keyId;
   }
   documentData = objForm.getDataForm();
-  //console.log(documentData);
-
+  console.log('Datos enviados:', documentData); // <-- Log para depuración
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
   resultServices.then(response => {
     return response.json();
@@ -109,6 +108,40 @@ function delete_(id) {
   }
 }
 
+function getDataRole(callback) {
+  documentData = "";
+  httpMethod = METHODS[0]; // GET method
+  endpointUrl = URL_ROLE;
+  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
+  resultServices.then(response => {
+    return response.json();
+  }).then(data => {
+    createSelectRole(data);
+    if (callback) callback();
+  }).catch(error => {
+    console.log(error);
+  }).finally(() => {
+    toggleLoading(false);
+  });
+}
+
+function getDataStatus(callback) {
+  documentData = "";
+  httpMethod = METHODS[0]; // GET method
+  endpointUrl = URL_STATUS;
+  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
+  resultServices.then(response => {
+    return response.json();
+  }).then(data => {
+    createSelectStatus(data);
+    if (callback) callback();
+  }).catch(error => {
+    console.log(error);
+  }).finally(() => {
+    toggleLoading(false);
+  });
+}
+
 function getDataId(id) {
   documentData = "";
   httpMethod = METHODS[0]; // GET method
@@ -118,11 +151,58 @@ function getDataId(id) {
     return response.json();
   }).then(data => {
     let getData = data["data"];
+    // Log detallado para depuración
+    console.log('Datos del usuario:', getData, 'role_id:', getData.role_id, 'status_id:', getData.status_id);
     objForm.setDataFormJson(getData);
+
+    // Llenar roles y estados, y luego asignar los valores
+    getDataRole(() => {
+      getDataStatus(() => {
+        console.log('Opciones de Rol:', document.getElementById('role_id').innerHTML);
+        console.log('Opciones de Estado:', document.getElementById('status_id').innerHTML);
+        // Forzar selección manual si la asignación directa falla
+        const roleSelect = document.getElementById('role_id');
+        const statusSelect = document.getElementById('status_id');
+        let roleSet = false;
+        let statusSet = false;
+        if (getData.role_id) {
+          roleSelect.value = String(getData.role_id);
+          if (roleSelect.value !== String(getData.role_id)) {
+            // Selección manual
+            for (let i = 0; i < roleSelect.options.length; i++) {
+              if (String(roleSelect.options[i].value) === String(getData.role_id)) {
+                roleSelect.selectedIndex = i;
+                roleSet = true;
+                break;
+              }
+            }
+          } else {
+            roleSet = true;
+          }
+          roleSelect.dispatchEvent(new Event('change'));
+        }
+        if (getData.status_id) {
+          statusSelect.value = String(getData.status_id);
+          if (statusSelect.value !== String(getData.status_id)) {
+            // Selección manual
+            for (let i = 0; i < statusSelect.options.length; i++) {
+              if (String(statusSelect.options[i].value) === String(getData.status_id)) {
+                statusSelect.selectedIndex = i;
+                statusSet = true;
+                break;
+              }
+            }
+          } else {
+            statusSet = true;
+          }
+          statusSelect.dispatchEvent(new Event('change'));
+        }
+        console.log('¿Rol seleccionado?', roleSet, '¿Estado seleccionado?', statusSet);
+      });
+    });
   }).catch(error => {
     console.log(error);
   }).finally(() => {
-    //console.log("finally");
     showHiddenModal(true);
   });
 }
@@ -157,6 +237,8 @@ function createTable(data) {
     let dataRow = `<tr>
 <td>${row.user_id}</td>
 <td>${row.user_name}</td>
+<td>${row.profile_phone || 'N/A'}</td>
+<td>${row.profile_email || 'N/A'}</td>
 <td>${row.role_name || 'N/A'}</td>
 <td>${row.status_name || 'N/A'}</td>
 <td>
@@ -204,44 +286,6 @@ function showHiddenModal(type) {
 function loadView() {
   getData();
   toggleLoading(true);
-}
-
-function getDataStatus() {
-  documentData = "";
-  httpMethod = METHODS[0]; // GET method
-  endpointUrl = URL_STATUS;
-  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
-  resultServices.then(response => {
-    return response.json();
-  }).then(data => {
-    //Create table 
-    //console.log(data['data']);
-    createSelectStatus(data);
-  }).catch(error => {
-    console.log(error);
-  }).finally(() => {
-    //console.log("finally");
-    toggleLoading(false);
-  });
-}
-
-function getDataRole() {
-  documentData = "";
-  httpMethod = METHODS[0]; // GET method
-  endpointUrl = URL_ROLE;
-  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
-  resultServices.then(response => {
-    return response.json();
-  }).then(data => {
-    //Create table 
-    //console.log(data['data']);
-    createSelectRole(data);
-  }).catch(error => {
-    console.log(error);
-  }).finally(() => {
-    //console.log("finally");
-    toggleLoading(false);
-  });
 }
 
 window.addEventListener('load', () => {

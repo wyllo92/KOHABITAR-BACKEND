@@ -3,9 +3,15 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: white;
 }
 
+#parkingSubmenu .nav-link {
+  padding-left: 1rem; /* igual que el padre */
+  font-size: 1rem;     /* igual tamaño que el padre */
+  color: white !important; /* igual color que el padre */
+  background-color: transparent; /* evita grises de hover */
+}
 /* Header fijo */
 header {
   position: fixed;
@@ -14,15 +20,16 @@ header {
   right: 0;
   z-index: 1030;
   width: 100%;
-  background-color: #392759;
+  background-color: #fbf9f7;
+  color: white;
 }
 
 /* Sidebar */
 .sidebar {
-  width: 250px;
+  width: 210px;
   height: calc(100vh - 56px);
-  background-color: #545F66;
-  color: #000;
+  background: #2c3e50;
+  color: white;
   position: fixed;
   left: 0;
   top: 56px;
@@ -30,21 +37,14 @@ header {
   z-index: 1000;
   overflow-y: auto;
   will-change: transform;
-}
-
-/* Contenido principal */
-.main-content {
-  margin-left: 250px;
-  margin-top: 56px;
-  transition: margin-left 0.15s ease;
-  flex: 1;
-  will-change: margin-left;
-  min-height: calc(100vh - 56px);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
 }
 
 /* Estados del sidebar */
 .sidebar-collapsed {
-  transform: translateX(-250px);
+  transform: translateX(-210px);
 }
 
 .content-expanded {
@@ -54,7 +54,7 @@ header {
 /* Responsive */
 @media (max-width: 992px) {
   .sidebar {
-    transform: translateX(-250px);
+    transform: translateX(-210px);
   }
 
   .sidebar.show {
@@ -66,9 +66,85 @@ header {
   }
 }
 
+/* Contenido principal */
+.main-content {
+  margin-left: 210px;
+  margin-top: 56px;
+  transition: margin-left 0.15s ease;
+  flex: 1;
+  will-change: margin-left;
+  min-height: calc(100vh - 56px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilos del sidebar */
+.sidebar a {
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  display: block;
+  border-radius: 5px;
+}
+
+.sidebar a:hover {
+  background: #495057;
+}
+
+.sidebar .submenu a {
+  font-size: 14px;
+  padding: 5px 10px;
+}
+
+/* Submenú acordeón */
+.sidebar .nav-link.dropdown-toggle {
+  position: relative;
+  cursor: pointer;
+}
+
+.sidebar .collapse {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
+  margin-left: 0.5rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.sidebar .collapse .nav-link {
+  padding-left: 2rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  transition: all 0.2s ease;
+}
+
+.sidebar .collapse .nav-link:hover {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .collapse .nav-link i {
+  font-size: 0.8rem;
+}
+
+/* Rotación de iconos */
+.rotate-icon {
+  transition: transform 0.3s ease;
+}
+
+.rotate-icon.open {
+  transform: rotate(90deg);
+}
+
+/* Contenido */
+.content {
+  flex-grow: 1;
+  padding: 20px;
+}
+
 /* Footer */
 footer {
   margin-top: auto;
+  background-color: #2c3e50;
+  color: white;
 }
 
 /* Mejoras de accesibilidad */
@@ -88,6 +164,12 @@ footer {
 
 #contentFrame.loaded {
   opacity: 1;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 /* Transición para el contenido de la tarjeta */
@@ -242,3 +324,4 @@ a {
 a:hover {
   color: var(--main-yellow);
 }
+

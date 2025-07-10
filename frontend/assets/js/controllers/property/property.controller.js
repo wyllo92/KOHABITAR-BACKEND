@@ -166,7 +166,7 @@ function createTable(data) {
   
   if (getData.length === 0) {
     console.log('No hay datos para mostrar');
-    objTableBody.innerHTML = '<tr><td colspan="7" class="text-center">No hay propiedades disponibles</td></tr>';
+    objTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No hay propiedades disponibles</td></tr>';
     return;
   }
   
@@ -179,19 +179,12 @@ function createTable(data) {
     const statusActive = row.status_name || 'N/A';
     const statusClass = row.status_name === 'Activo' ? 'text-success' : 'text-danger';
     
-    // Formatear fecha de creación
-    const createDate = row.property_createAt || row.createAt || 'N/A';
-    const formattedDate = createDate !== 'N/A' ? new Date(createDate).toLocaleDateString('es-ES') : 'N/A';
-    
     let dataRow = `<tr>
       <td>${row.property_id || row.id}</td>
       <td>${row.property_name || row.name || 'N/A'}</td>
       <td>${row.property_type || row.type || 'N/A'}</td>
       <td>${row.property_description || row.description || 'N/A'}</td>
-      <td>${formattedDate}</td>
-      <td>
-        <span class="text-success">Activo</span>
-      </td>
+      <td><span class="${statusClass}">${statusActive}</span></td>
       <td>
         <button type="button" title="Ver Propiedad" class="btn btn-success btn-sm" onclick="showId(${row.property_id || row.id})">
           <i class='fas fa-eye'></i>
@@ -221,6 +214,27 @@ function loadView() {
   toggleLoading(true);
 }
 
+function fillStatusSelect() {
+  documentData = "";
+  httpMethod = METHODS[0]; // GET method
+  endpointUrl = URL_STATUS;
+  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
+  resultServices.then(response => {
+    return response.json();
+  }).then(data => {
+    const select = document.getElementById('status_id');
+    select.innerHTML = '<option value="" selected disabled>Seleccione un estado</option>';
+    let getData = data['data'] || [];
+    // Filtrar solo los estados de la entidad Propiedad
+    getData.filter(row => row.status_entity === 'Propiedad').forEach(row => {
+      select.innerHTML += `<option value="${row.status_id}">${row.status_name}</option>`;
+    });
+  }).catch(error => {
+    console.log('Error al cargar estados:', error);
+  });
+}
+
 window.addEventListener('load', () => {
   loadView();
+  fillStatusSelect();
 }); 

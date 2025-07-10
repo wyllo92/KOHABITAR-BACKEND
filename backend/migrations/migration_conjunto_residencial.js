@@ -582,7 +582,10 @@ const sqlStatements = [
 (2, 'Inactivo', 'Estado inactivo', 'Usuarios', 1, '2025-05-27 16:14:45'),
 (3, 'Activo', 'Estado Activo', 'Propiedades', 1, '2025-05-27 16:14:45'),
 (4, 'Inactivo', 'Estado Inactivo', 'Propiedades', 1, '2025-05-27 16:14:45'),
-(5, 'Cancelado', 'Estado cancelado', 'General', 1, '2025-05-27 16:14:45');`,
+(5, 'Cancelado', 'Estado cancelado', 'General', 1, '2025-05-27 16:14:45'),
+(6, 'Disponible', 'Vehículo disponible', 'Vehiculo', 1, '2025-05-27 16:14:45'),
+(7, 'En mantenimiento', 'Vehículo en mantenimiento', 'Vehiculo', 1, '2025-05-27 16:14:45'),
+(8, 'Fuera de servicio', 'Vehículo fuera de servicio', 'Vehiculo', 1, '2025-05-27 16:14:45');`,
 
   `INSERT INTO role (role_id, role_name, role_description, status_id, role_createAt) VALUES
 (1, 'Administrador', 'Gestiona el conjunto', 1, '2025-05-27 16:14:55'),

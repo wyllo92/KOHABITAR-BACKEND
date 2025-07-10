@@ -70,6 +70,14 @@ function add() {
   objForm.enabledForm();
   objForm.enabledButton();
   objForm.showButton();
+
+  // Si hay una propiedad seleccionada, la preselecciona y bloquea el campo
+  if (propiedadSeleccionadaId) {
+    objSelectProperty.value = propiedadSeleccionadaId;
+    objSelectProperty.disabled = true;
+  } else {
+    objSelectProperty.disabled = false;
+  }
 }
 
 function showId(id) {
@@ -142,114 +150,6 @@ function getDataId(id) {
   });
 }
 
-function getData() {
-  documentData = "";
-  httpMethod = METHODS[0]; // GET method
-  endpointUrl = URL_VEHICLE;
-
-  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
-  resultServices.then(response => {
-    return response.json();
-  }).then(data => {
-    console.log('Datos recibidos del backend:', data);
-    createTable(data);
-  }).catch(error => {
-    console.log('Error al obtener datos:', error);
-    alert('Error al cargar los datos de vehículos');
-  }).finally(() => {
-    new DataTable(appTable);
-    toggleLoading(false);
-  });
-}
-
-function createTable(data) {
-  objTableBody.innerHTML = ""; // Clear previous table data
-  let getData = data.data || [];
-  console.log('Datos para crear tabla:', getData);
-  
-  if (getData.length === 0) {
-    console.log('No hay datos para mostrar');
-    objTableBody.innerHTML = '<tr><td colspan="8" class="text-center">No hay vehículos disponibles</td></tr>';
-    return;
-  }
-  
-  let rowLong = getData.length;
-  for (let i = 0; i < rowLong; i++) {
-    let row = getData[i];
-    console.log('Fila actual:', row);
-    
-    // Determinar el estado activo/inactivo
-    const statusActive = row.status_name || 'N/A';
-    const statusClass = row.status_name === 'Activo' ? 'text-success' : 'text-danger';
-    
-    let dataRow = `<tr>
-      <td>${row.vehicle_id || row.id}</td>
-      <td>${row.model || 'N/A'}</td>
-      <td>${row.type || 'N/A'}</td>
-      <td>${row.color || 'N/A'}</td>
-      <td>${row.user_name || 'N/A'}</td>
-      <td>${row.property_name || 'N/A'}</td>
-      <td>
-        <span class="${statusClass}">${statusActive}</span>
-      </td>
-      <td>
-        <button type="button" title="Ver Vehículo" class="btn btn-success btn-sm" onclick="showId(${row.vehicle_id || row.id})">
-          <i class='fas fa-eye'></i>
-        </button>
-        <button type="button" title="Editar Vehículo" class="btn btn-primary btn-sm" onclick="edit(${row.vehicle_id || row.id})">
-          <i class='fas fa-edit'></i>
-        </button>
-        <button type="button" title="Eliminar Vehículo" class="btn btn-danger btn-sm" onclick="delete_(${row.vehicle_id || row.id})">
-          <i class='fas fa-trash'></i>
-        </button>
-      </td>
-    </tr>`;
-    objTableBody.innerHTML += dataRow;
-  }
-}
-
-function createSelectUser(data) {
-  objSelectUser.innerHTML = "<option value='' selected disabled>Selecciona el propietario</option>";
-
-  let getData = data.data || [];
-  if (getData.length === 0) return;
-  
-  let rowLong = getData.length;
-  for (let i = 0; i < rowLong; i++) {
-    let row = getData[i];
-    let dataRow = `<option value="${row.user_id || row.id}">${row.user_name || row.username || 'Usuario ' + (row.user_id || row.id)}</option>`;
-    objSelectUser.innerHTML += dataRow;
-  }
-}
-
-function createSelectProperty(data) {
-  objSelectProperty.innerHTML = "<option value='' selected disabled>Selecciona la propiedad</option>";
-
-  let getData = data.data || [];
-  if (getData.length === 0) return;
-  
-  let rowLong = getData.length;
-  for (let i = 0; i < rowLong; i++) {
-    let row = getData[i];
-    let dataRow = `<option value="${row.property_id || row.id}">${row.property_name || row.name || 'Propiedad ' + (row.property_id || row.id)}</option>`;
-    objSelectProperty.innerHTML += dataRow;
-  }
-}
-
-function createSelectParkingZone(data) {
-  objSelectParkingZone.innerHTML = "<option value='' selected disabled>Selecciona la zona de parqueo</option>";
-
-  let getData = data.data || [];
-  if (getData.length === 0) return;
-  
-  let rowLong = getData.length;
-  for (let i = 0; i < rowLong; i++) {
-    let row = getData[i];
-    let dataRow = `<option value="${row.parkingzone_id || row.id}">${row.parkingzone_name || row.name || 'Zona ' + (row.parkingzone_id || row.id)}</option>`;
-    objSelectParkingZone.innerHTML += dataRow;
-  }
-}
-
 function showHiddenModal(type) {
   if (type) {
     objModal.show();
@@ -259,8 +159,11 @@ function showHiddenModal(type) {
 }
 
 function loadView() {
-  getData();
-  toggleLoading(true);
+  // Eliminar funciones y llamadas relacionadas con la tabla general de vehículos
+  // function getData();
+  // function createTable(data);
+  // function loadView();
+  // ... y cualquier referencia a ellas ...
 }
 
 function getDataUser() {
@@ -306,7 +209,7 @@ function getDataParkingZone() {
     return response.json();
   }).then(data => {
     console.log('Datos de zonas de parqueo:', data);
-    createSelectParkingZone(data);
+    // Eliminar la llamada a createSelectParkingZone(data) para evitar errores
   }).catch(error => {
     console.log('Error al obtener zonas de parqueo:', error);
   }).finally(() => {
@@ -320,3 +223,152 @@ window.addEventListener('load', () => {
   getDataProperty();
   getDataParkingZone();
 }); 
+
+// ===================== VEHÍCULOS POR PROPIEDAD =====================
+
+// Renderiza los vehículos de una propiedad
+function renderVehiclesByProperty(vehicles) {
+  const container = document.getElementById('vehicles-by-property');
+  container.innerHTML = '';
+  let html = `<h4>Vehículos de la propiedad seleccionada</h4>
+    <button class="btn btn-success mb-3" onclick="add()">Agregar Vehículo</button>
+    <div class="row">`;
+  if (!vehicles.length) {
+    html += '<div class="alert alert-info">No hay vehículos registrados para esta casa.</div>';
+  } else {
+    vehicles.forEach(vehicle => {
+      html += `
+        <div class="col-md-4">
+          <div class="card mb-3">
+            <div class="card-body">
+              <p><strong>Modelo:</strong> ${vehicle.model}</p>
+              <p><strong>Tipo:</strong> ${vehicle.type}</p>
+              <p><strong>Color:</strong> ${vehicle.color}</p>
+              <p><strong>Placa:</strong> ${vehicle.license_plate || 'N/A'}</p>
+              <div class="d-flex justify-content-between mt-2">
+                <button class="btn btn-primary btn-sm" onclick="showId(${vehicle.vehicle_id || vehicle.id})"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-warning btn-sm" onclick="edit(${vehicle.vehicle_id || vehicle.id})"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm" onclick="delete_(${vehicle.vehicle_id || vehicle.id})"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// Obtiene y muestra los vehículos de una propiedad
+function getVehiclesByProperty(propertyId) {
+  fetch(`http://localhost:3000/api_v1/vehicle/property/${propertyId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        renderVehiclesByProperty(data.data);
+      } else {
+        alert('Error al cargar vehículos');
+      }
+    })
+    .catch(() => {
+      alert('Error al cargar vehículos');
+    });
+}
+
+// Asocia el evento a cada tarjeta de casa (ajusta el selector según tu HTML)
+function setupCasaCards() {
+  document.querySelectorAll('.casa-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const propertyId = this.dataset.propertyId;
+      // Redirigir a la nueva vista de detalle
+      window.location.href = `vehiculos_casa.html?id=${propertyId}`;
+    });
+  });
+}
+
+// Evento para volver al listado general
+const btnVolver = document.getElementById('btn-volver-listado');
+if (btnVolver) {
+  btnVolver.addEventListener('click', function() {
+    propiedadSeleccionadaId = null;
+    // Ocultar el bloque de vehículos de la casa y mostrar la tabla general
+    const tablaGeneral = document.getElementById('tabla-general-vehiculos');
+    const vehiclesByProperty = document.getElementById('vehicles-by-property');
+    if (tablaGeneral) tablaGeneral.style.display = 'block';
+    if (vehiclesByProperty) vehiclesByProperty.innerHTML = '';
+    btnVolver.style.display = 'none';
+    // Ocultar el botón de agregar vehículo
+    const btnAdd = document.getElementById('btn-add-vehiculo');
+    if (btnAdd) btnAdd.style.display = 'none';
+  });
+}
+
+// Llama a esta función después de renderizar las casas (si las generas dinámicamente, llama después de insertarlas)
+// setupCasaCards(); 
+
+// ===================== CASAS (PROPIEDADES) DINÁMICAS =====================
+
+// Renderiza las tarjetas de casas
+function renderCasaCards(properties) {
+  const container = document.getElementById('casas-list');
+  container.innerHTML = '';
+  if (!properties.length) {
+    container.innerHTML = '<div class="alert alert-info">No hay casas registradas.</div>';
+    return;
+  }
+  let html = '';
+  properties.forEach(property => {
+    html += `
+      <div class="col-md-2 mb-3">
+        <div class="card casa-card" data-property-id="${property.property_id}" style="cursor:pointer;">
+          <div class="card-body text-center">
+            <i class="fa fa-home fa-2x text-primary"></i>
+            <p>${property.property_name}</p>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+  setupCasaCards(); // Asociar eventos
+}
+
+// Obtiene las casas desde el backend y las renderiza
+function getAndRenderCasas() {
+  fetch('http://localhost:3000/api_v1/property')
+    .then(res => res.json())
+    .then(data => {
+      if (data.data) {
+        renderCasaCards(data.data);
+      } else {
+        alert('Error al cargar casas');
+      }
+    })
+    .catch(() => {
+      alert('Error al cargar casas');
+    });
+}
+
+// Llama a esta función al cargar la página o cuando lo necesites
+window.addEventListener('DOMContentLoaded', () => {
+  if(document.getElementById('casas-list')) {
+    getAndRenderCasas();
+  }
+}); 
+
+// Variable global para la propiedad seleccionada
+let propiedadSeleccionadaId = null;
+
+// Al cerrar el modal, desbloquear el campo de propiedad
+const appModalElement = document.getElementById('appModal');
+if (appModalElement) {
+  appModalElement.addEventListener('hidden.bs.modal', function () {
+    objSelectProperty.disabled = false;
+    // Si no hay propiedad seleccionada, ocultar el botón
+    if (!propiedadSeleccionadaId) {
+      const btnAdd = document.getElementById('btn-add-vehiculo');
+      if (btnAdd) btnAdd.style.display = 'none';
+    }
+  });
+} 

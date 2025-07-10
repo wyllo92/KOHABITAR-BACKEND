@@ -64,8 +64,8 @@ class VehicleController {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
 
-      // Verify if the Vehicle already exists  
-      const existingVehicle = await VehicleModel.findByIdActive(id);
+      // Buscar el vehículo por ID sin importar el estado
+      const existingVehicle = await VehicleModel.findById(id);
       if (!existingVehicle) {
         return res.status(409).json({ data: '', error: 'The Vehicle no already exists' });
       }
@@ -123,8 +123,8 @@ class VehicleController {
       if (!id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the Vehicle already exists
-      const existingVehicleModel = await VehicleModel.findByIdActive(id);
+      // Buscar el vehículo por ID sin importar el estado
+      const existingVehicleModel = await VehicleModel.findById(id);
       if (!existingVehicleModel) {
         return res.status(409).json({ error: 'The Vehicle No already exists' });
       }

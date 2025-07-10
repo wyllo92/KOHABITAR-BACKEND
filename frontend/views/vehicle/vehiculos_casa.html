@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehículos de la Casa</title>
+  <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="container mt-4">
+    <button class="btn btn-secondary mb-3" onclick="window.location.href='index.html'">Volver al listado general</button>
+    <h2 id="titulo-casa">Vehículos de la </h2>
+    <button class="btn btn-success mb-3" id="btn-add-vehiculo">Agregar Vehículo</button>
+    <div id="vehicles-by-property"></div>
+  </div>
+
+  <!-- Modal para agregar/editar/ver vehículo -->
+  <div class="modal fade" id="vehiculoModal" tabindex="-1" aria-labelledby="vehiculoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="vehiculoModalLabel">Vehículo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="vehiculoForm">
+            <div class="mb-3">
+              <label for="model" class="form-label">Modelo</label>
+              <input type="text" class="form-control" id="model" name="model" required>
+            </div>
+            <div class="mb-3">
+              <label for="type" class="form-label">Tipo</label>
+              <input type="text" class="form-control" id="type" name="type" required>
+            </div>
+            <div class="mb-3">
+              <label for="color" class="form-label">Color</label>
+              <input type="text" class="form-control" id="color" name="color" required>
+            </div>
+            <div class="mb-3">
+              <label for="license_plate" class="form-label">Placa</label>
+              <input type="text" class="form-control" id="license_plate" name="license_plate" required>
+            </div>
+            <div class="mb-3">
+              <label for="user_id" class="form-label">Propietario</label>
+              <select class="form-select" id="user_id" name="user_id" required></select>
+            </div>
+            <div class="mb-3">
+              <label for="status_id" class="form-label">Estado</label>
+              <select class="form-select" id="status_id" name="status_id" required></select>
+            </div>
+            <input type="hidden" id="vehicle_id" name="vehicle_id">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" id="btn-save-vehiculo">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Obtener el id de la propiedad desde la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const propertyId = urlParams.get('id');
+    let propiedadSeleccionadaId = propertyId;
+    let modoModal = 'crear'; // 'crear', 'editar', 'ver'
+    let vehiculoEditandoId = null;
+
+    // Cambia el título con el nombre de la casa
+    fetch(`http://localhost:3000/api_v1/property/${propertyId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.data && data.data.property_name) {
+          document.getElementById('titulo-casa').innerText = `Vehículos de la  ${data.data.property_name}`;
+        } else {
+          document.getElementById('titulo-casa').innerText = `Vehículos de la `;
+        }
+      })
+      .catch(() => {
+        document.getElementById('titulo-casa').innerText = `Vehículos de la `;
+      });
+
+    // Cargar propietarios (usuarios)
+    function cargarUsuarios() {
+      fetch('http://localhost:3000/api_v1/user')
+        .then(res => res.json())
+        .then(data => {
+          const select = document.getElementById('user_id');
+          select.innerHTML = '<option value="" disabled selected>Seleccione un propietario</option>';
+          (data.data || []).forEach(user => {
+            select.innerHTML += `<option value="${user.user_id}">${user.user_name}</option>`;
+          });
+        });
+    }
+
+    // Cargar estados
+    function cargarEstados() {
+      fetch('http://localhost:3000/api_v1/status')
+        .then(res => res.json())
+        .then(data => {
+          const select = document.getElementById('status_id');
+          select.innerHTML = '<option value="" disabled selected>Seleccione un estado</option>';
+          (data.data || [])
+            .filter(status => status.status_entity && status.status_entity.toLowerCase().normalize('NFD').replace(/[  -]/g, '').includes('vehiculo'))
+            .forEach(status => {
+              select.innerHTML += `<option value="${status.status_id}">${status.status_name}</option>`;
+            });
+        });
+    }
+
+    // Función para renderizar los vehículos
+    function renderVehiclesByProperty(vehicles) {
+      const container = document.getElementById('vehicles-by-property');
+      container.innerHTML = '';
+      let html = '<div class="row">';
+      if (!vehicles.length) {
+        html += '<div class="alert alert-info">No hay vehículos registrados para esta casa.</div>';
+      } else {
+        vehicles.forEach(vehicle => {
+          html += `
+            <div class="col-md-4">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <p><strong>Modelo:</strong> ${vehicle.model}</p>
+                  <p><strong>Tipo:</strong> ${vehicle.type}</p>
+                  <p><strong>Color:</strong> ${vehicle.color}</p>
+                  <p><strong>Placa:</strong> ${vehicle.license_plate || 'N/A'}</p>
+                  <div class="d-flex justify-content-between mt-2">
+                    <button class="btn btn-primary btn-sm" onclick="showId(${vehicle.vehicle_id || vehicle.id})"><i class="fas fa-eye"></i></button>
+                    <button class="btn btn-warning btn-sm" onclick="edit(${vehicle.vehicle_id || vehicle.id})"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-danger btn-sm" onclick="delete_(${vehicle.vehicle_id || vehicle.id})"><i class="fas fa-trash"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      }
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    // Obtener y mostrar los vehículos de la propiedad
+    function getVehiclesByProperty(propertyId) {
+      fetch(`http://localhost:3000/api_v1/vehicle/property/${propertyId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            renderVehiclesByProperty(data.data);
+          } else {
+            alert('Error al cargar vehículos');
+          }
+        })
+        .catch(() => {
+          alert('Error al cargar vehículos');
+        });
+    }
+
+    // Abrir modal para agregar
+    document.getElementById('btn-add-vehiculo').onclick = function() {
+      modoModal = 'crear';
+      vehiculoEditandoId = null;
+      document.getElementById('vehiculoModalLabel').innerText = 'Agregar Vehículo';
+      document.getElementById('vehiculoForm').reset();
+      document.getElementById('vehicle_id').value = '';
+      document.getElementById('model').disabled = false;
+      document.getElementById('type').disabled = false;
+      document.getElementById('color').disabled = false;
+      document.getElementById('license_plate').disabled = false;
+      document.getElementById('user_id').disabled = false;
+      document.getElementById('status_id').disabled = false;
+      document.getElementById('btn-save-vehiculo').style.display = 'inline-block';
+      cargarUsuarios();
+      cargarEstados();
+      new bootstrap.Modal(document.getElementById('vehiculoModal')).show();
+    };
+
+    // Abrir modal para ver
+    window.showId = function(id) {
+      modoModal = 'ver';
+      vehiculoEditandoId = id;
+      fetch(`http://localhost:3000/api_v1/vehicle/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.data) {
+            document.getElementById('vehiculoModalLabel').innerText = 'Ver Vehículo';
+            document.getElementById('model').value = data.data.model;
+            document.getElementById('type').value = data.data.type;
+            document.getElementById('color').value = data.data.color;
+            document.getElementById('license_plate').value = data.data.license_plate;
+            document.getElementById('user_id').value = data.data.user_id;
+            document.getElementById('status_id').value = data.data.status_id;
+            document.getElementById('vehicle_id').value = id;
+            document.getElementById('model').disabled = true;
+            document.getElementById('type').disabled = true;
+            document.getElementById('color').disabled = true;
+            document.getElementById('license_plate').disabled = true;
+            document.getElementById('user_id').disabled = true;
+            document.getElementById('status_id').disabled = true;
+            document.getElementById('btn-save-vehiculo').style.display = 'none';
+            cargarUsuarios();
+            cargarEstados();
+            setTimeout(() => {
+              document.getElementById('user_id').value = data.data.user_id;
+              document.getElementById('status_id').value = data.data.status_id;
+            }, 300);
+            new bootstrap.Modal(document.getElementById('vehiculoModal')).show();
+          }
+        });
+    }
+
+    // Abrir modal para editar
+    window.edit = function(id) {
+      modoModal = 'editar';
+      vehiculoEditandoId = id;
+      fetch(`http://localhost:3000/api_v1/vehicle/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.data) {
+            document.getElementById('vehiculoModalLabel').innerText = 'Editar Vehículo';
+            document.getElementById('model').value = data.data.model;
+            document.getElementById('type').value = data.data.type;
+            document.getElementById('color').value = data.data.color;
+            document.getElementById('license_plate').value = data.data.license_plate;
+            document.getElementById('user_id').value = data.data.user_id;
+            document.getElementById('status_id').value = data.data.status_id;
+            document.getElementById('vehicle_id').value = id;
+            document.getElementById('model').disabled = false;
+            document.getElementById('type').disabled = false;
+            document.getElementById('color').disabled = false;
+            document.getElementById('license_plate').disabled = false;
+            document.getElementById('user_id').disabled = false;
+            document.getElementById('status_id').disabled = false;
+            cargarUsuarios();
+            cargarEstados();
+            setTimeout(() => {
+              document.getElementById('user_id').value = data.data.user_id;
+              document.getElementById('status_id').value = data.data.status_id;
+            }, 300);
+            document.getElementById('btn-save-vehiculo').style.display = 'inline-block';
+            new bootstrap.Modal(document.getElementById('vehiculoModal')).show();
+          }
+        });
+    }
+
+    // Eliminar vehículo
+    window.delete_ = function(id) {
+      if (confirm('¿Seguro que deseas eliminar este vehículo?')) {
+        fetch(`http://localhost:3000/api_v1/vehicle/${id}`, { method: 'DELETE' })
+          .then(res => res.json())
+          .then(data => {
+            alert(data.message || 'Vehículo eliminado');
+            getVehiclesByProperty(propertyId);
+          })
+          .catch(() => alert('Error al eliminar vehículo'));
+      }
+    }
+
+    // Guardar (crear o editar)
+    document.getElementById('btn-save-vehiculo').onclick = function() {
+      const model = document.getElementById('model').value;
+      const type = document.getElementById('type').value;
+      const color = document.getElementById('color').value;
+      const license_plate = document.getElementById('license_plate').value;
+      const user_id = document.getElementById('user_id').value;
+      const status_id = document.getElementById('status_id').value;
+      const vehicle_id = document.getElementById('vehicle_id').value;
+
+      const data = {
+        model,
+        type,
+        color,
+        license_plate,
+        user_id,
+        property_id: propertyId,
+        status_id
+      };
+
+      let url = 'http://localhost:3000/api_v1/vehicle';
+      let method = 'POST';
+
+      if (modoModal === 'editar' && vehicle_id) {
+        url += `/${vehicle_id}`;
+        method = 'PUT';
+      }
+
+      fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+        .then(res => res.json())
+        .then(resp => {
+          alert(resp.message || 'Guardado');
+          getVehiclesByProperty(propertyId);
+          bootstrap.Modal.getInstance(document.getElementById('vehiculoModal')).hide();
+        });
+    };
+
+    // Inicializar
+    getVehiclesByProperty(propertyId);
+  </script>
+</body>
+</html> 

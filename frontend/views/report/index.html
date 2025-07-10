@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Reportes</title>
+  <title>Reportes y Estadísticas</title>
   <!-- Favicon -->
   <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
   <!-- Bootstrap 5 CSS -->
@@ -15,6 +15,10 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
   <!-- Loading -->
   <link rel="stylesheet" href="../../assets/css/loading.css">
+  <style>
+    .stat-card { min-width: 180px; }
+    .chart-container { min-height: 320px; }
+  </style>
 </head>
 
 <body>
@@ -24,39 +28,126 @@
    
     <!--Content data-->
     <main>
-      <h1 class="text-center mb-4">Gestión de Reportes</h1>
-      <button type="button" title="Agregar Reporte" class="btn btn-primary mb-3" onclick="add()">
-        <i class="fa fa-file-alt me-1"></i>Agregar Reporte
-      </button>
+      <h1 class="text-center mb-4">Reportes y Estadísticas</h1>
+      
+      <!-- Estadísticas rápidas -->
+      <div class="row mb-4 g-3 justify-content-center" id="stats-row">
+        <div class="col-auto">
+          <div class="card stat-card text-bg-primary text-center">
+            <div class="card-body">
+              <h5 class="card-title">Total Reportes</h5>
+              <h2 id="stat-total">0</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-auto">
+          <div class="card stat-card text-bg-success text-center">
+            <div class="card-body">
+              <h5 class="card-title">Usuarios</h5>
+              <h2 id="stat-activos">0</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-auto">
+          <div class="card stat-card text-bg-danger text-center">
+            <div class="card-body">
+              <h5 class="card-title">Propiedades</h5>
+              <h2 id="stat-pendientes">0</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-auto">
+          <div class="card stat-card text-bg-secondary text-center">
+            <div class="card-body">
+              <h5 class="card-title">Vehículos</h5>
+              <h2 id="stat-cerrados">0</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-auto">
+          <div class="card stat-card text-bg-info text-center">
+            <div class="card-body">
+              <h5 class="card-title">Reservas</h5>
+              <h2 id="stat-reservas">0</h2>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <!--Table-->
-      <div class="table-responsive">
-        <table class="table table-dark table-hover" id="app-table">
-          <thead>
-            <tr class="table-primary text-center">
-              <th>#</th>
-              <th>Título</th>
-              <th>Tipo</th>
-              <th>Reportado por</th>
-              <th>Estado</th>
-              <th>Fecha</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="app-table-body" class="text-center">
-          </tbody>
-          <tfoot>
-            <tr class="table-primary text-center">
-              <td>#</td>
-              <td>Título</td>
-              <td>Tipo</td>
-              <td>Reportado por</td>
-              <td>Estado</td>
-              <td>Fecha</td>
-              <td>Acciones</td>
-            </tr>
-          </tfoot>
-        </table>
+      <!-- Filtros -->
+      <div class="row mb-4 g-3 align-items-end" id="filters-row">
+        <div class="col-md-3">
+          <label for="filter-type" class="form-label">Tipo de Reporte</label>
+          <select id="filter-type" class="form-select">
+            <option value="">Todos</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="filter-status" class="form-label">Estado</label>
+          <select id="filter-status" class="form-select">
+            <option value="">Todos</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="filter-user" class="form-label">Usuario</label>
+          <select id="filter-user" class="form-select">
+            <option value="">Todos</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="filter-date" class="form-label">Fecha</label>
+          <input type="date" id="filter-date" class="form-control">
+        </div>
+      </div>
+
+      <!-- Gráficos -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">Reportes por Tipo</div>
+            <div class="card-body chart-container">
+              <canvas id="chart-tipo"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">Reportes por Estado</div>
+            <div class="card-body chart-container">
+              <canvas id="chart-estado"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de Reportes -->
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Lista de Reportes</h5>
+          <button type="button" class="btn btn-primary" onclick="add()">
+            <i class="fas fa-plus me-2"></i>Nuevo Reporte
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="app-table" class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Título</th>
+                  <th>Tipo</th>
+                  <th>Usuario</th>
+                  <th>Estado</th>
+                  <th>Fecha</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="app-table-body">
+                <!-- Los datos se cargarán dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       <!-- Modal -->
@@ -64,83 +155,13 @@
         <div class="modal-dialog modal-xl">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="appModalLabel">Reporte</h1>
+              <h1 class="modal-title fs-5" id="appModalLabel">Detalle del Reporte</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <!--Form-->
-              <form id="reportForm">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="report_title" class="form-label required">Título del Reporte</label>
-                      <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Título del reporte" id="report_title" name="report_title" required value="">
-                        <label for="report_title">Título del Reporte</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="report_type" class="form-label required">Tipo de Reporte</label>
-                      <div class="form-floating">
-                        <select class="form-control" id="report_type" name="report_type" required>
-                          <option value="" selected disabled>Selecciona el tipo</option>
-                          <option value="Mantenimiento">Mantenimiento</option>
-                          <option value="Seguridad">Seguridad</option>
-                          <option value="Ruido">Ruido</option>
-                          <option value="Limpieza">Limpieza</option>
-                          <option value="Otro">Otro</option>
-                        </select>
-                        <label for="report_type">Tipo de Reporte</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="report_priority" class="form-label">Prioridad</label>
-                      <div class="form-floating">
-                        <select class="form-control" id="report_priority" name="report_priority">
-                          <option value="" selected disabled>Selecciona la prioridad</option>
-                          <option value="Baja">Baja</option>
-                          <option value="Media">Media</option>
-                          <option value="Alta">Alta</option>
-                          <option value="Urgente">Urgente</option>
-                        </select>
-                        <label for="report_priority">Prioridad</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="report_location" class="form-label">Ubicación</label>
-                      <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Ubicación del problema" id="report_location" name="report_location" value="">
-                        <label for="report_location">Ubicación del Problema</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <label for="report_description" class="form-label required">Descripción</label>
-                  <div class="form-floating">
-                    <textarea class="form-control" placeholder="Descripción detallada del reporte" id="report_description" name="report_description" style="height: 120px" required></textarea>
-                    <label for="report_description">Descripción Detallada del Reporte</label>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                    <button type="reset" class="btn btn-outline-secondary me-md-2">
-                      <i class="fas fa-undo me-1"></i>Limpiar
-                    </button>
-                    <button type="submit" class="btn btn-outline-primary me-md-2">
-                      <i class="fas fa-paper-plane me-1"></i>Enviar
-                    </button>
-                  </div>
-                </div>
-              </form>
+              <div id="report-details">
+                <!-- Los detalles del reporte se mostrarán aquí -->
+              </div>
             </div>
             <div class="modal-footer">
               <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -172,6 +193,7 @@
   <!-- Data table -->
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- JS personalizado -->
   <script src="../../assets/js/app/constants.js"></script>
   <script src="../../assets/js/storage/appStorage.js"></script>

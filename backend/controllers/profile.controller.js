@@ -5,56 +5,35 @@ class ProfileController {
   async register(req, res) {
     try {
       const { user_id, profile_fullName, profile_phone, profile_email, profile_photo, profile_address } = req.body;
-
-      // Basic validation
+      // Validación básica
       if (!user_id || !profile_fullName || !profile_phone || !profile_email) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-
-      // Check if profile for this user already exists
-      const existingProfile = await ProfileModel.findById(user_id);
-      if (existingProfile) {
-        return res.status(409).json({ error: 'Profile for this user already exists' });
-      }
-
-      // Check if email is already in use
-      const existingEmail = await ProfileModel.findByEmail(profile_email);
-      if (existingEmail) {
-        return res.status(409).json({ error: 'Email already in use' });
-      }
-
       const profileId = await ProfileModel.create({
-        user_id,
-        profile_fullName,
-        profile_phone,
-        profile_email,
-        profile_photo,
-        profile_address
+        user_id, profile_fullName, profile_phone, profile_email, profile_photo, profile_address
       });
-
-      if (!profileId) {
-        return res.status(500).json({ error: 'Failed to create profile' });
-      }
-
       res.status(201).json({
         message: 'Profile created successfully',
         id: profileId
       });
     } catch (error) {
-      console.error('Error in profile registration:', error);
+      console.error('Registration error:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
   async show(req, res) {
     try {
-      const profileModel = await ProfileModel.showActive();
-      res.status(201).json({
-        message: 'Profiles retrieved successfully',
+      const profileModel = await ProfileModel.show();
+      if (!profileModel) {
+        return res.status(409).json({ error: 'No profiles found' });
+      }
+      res.status(200).json({
+        message: 'Profiles fetched successfully',
         data: profileModel
       });
     } catch (error) {
-      console.error('Error retrieving profiles:', error);
+      console.error('Error in show:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
@@ -63,36 +42,16 @@ class ProfileController {
     try {
       const { profile_fullName, profile_phone, profile_email, profile_photo, profile_address } = req.body;
       const user_id = req.params.id;
-
-      // Basic validation
-      if (!profile_fullName || !profile_phone || !profile_email || !user_id) {
+      if (!user_id || !profile_fullName || !profile_phone || !profile_email) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-
-      // Verify if the Profile already exists  
-      const existingProfile = await ProfileModel.findByIdActive(user_id);
-      if (!existingProfile) {
-        return res.status(409).json({ data: '', error: 'The Profile does not exist' });
-      }
-
-      const updateProfileModel = await ProfileModel.update(user_id, {
-        profile_fullName,
-        profile_phone,
-        profile_email,
-        profile_photo,
-        profile_address
-      });
-
-      if (!updateProfileModel) {
-        return res.status(500).json({ error: 'Failed to update profile' });
-      }
-
-      res.status(201).json({
+      const updateProfileModel = await ProfileModel.update(user_id, { profile_fullName, profile_phone, profile_email, profile_photo, profile_address });
+      res.status(200).json({
         message: 'Profile updated successfully',
         data: updateProfileModel
       });
     } catch (error) {
-      console.error('Error in profile update:', error);
+      console.error('Error in update:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
@@ -100,18 +59,16 @@ class ProfileController {
   async delete(req, res) {
     try {
       const user_id = req.params.id;
-      // Basic validate
       if (!user_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the Profile already exists
       const deleteProfileModel = await ProfileModel.delete(user_id);
-      res.status(201).json({
+      res.status(200).json({
         message: 'Profile deleted successfully',
         data: deleteProfileModel
       });
     } catch (error) {
-      console.error('Error in profile delete:', error);
+      console.error('Error in delete:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
@@ -119,21 +76,19 @@ class ProfileController {
   async findById(req, res) {
     try {
       const user_id = req.params.id;
-      // Basic validate
       if (!user_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the Profile already exists
-      const profileModel = await ProfileModel.findById(user_id);
-      if (!profileModel) {
+      const existingProfileModel = await ProfileModel.findById(user_id);
+      if (!existingProfileModel) {
         return res.status(404).json({ error: 'Profile not found' });
       }
-      res.status(201).json({
-        message: 'Profile found successfully',
-        data: profileModel
+      res.status(200).json({
+        message: 'Profile fetched successfully',
+        data: existingProfileModel
       });
     } catch (error) {
-      console.error('Error finding profile:', error);
+      console.error('Error in findById:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }

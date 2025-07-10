@@ -126,18 +126,8 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white" href="#profile">
-                <i class="fa fa-id-card me-2"></i> Perfil
-              </a>
-            </li>
-            <li class="nav-item">
               <a class="nav-link text-white" href="#report">
                 <i class="fa fa-file-alt me-2"></i> Reportes
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-white" href="#dashboard">
-                <i class="fa fa-chart-line me-2"></i> Estadísticas
               </a>
             </li>
             <li class="nav-item">
@@ -281,6 +271,9 @@
           const iframe = document.getElementById('contentFrame');
           if (iframe) {
             iframe.src = 'views/profile/edit.html';
+            iframe.onload = function() {
+              // El controlador editProfile.controller.js ya se encarga de cargar los datos del usuario autenticado
+            };
           }
           return;
         }

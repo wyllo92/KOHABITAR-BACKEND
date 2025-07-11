@@ -62,7 +62,7 @@ class UserController {
       // Crear el profile SIEMPRE, usando los datos obligatorios
       await ProfileModel.create({
         user_id: userId,
-        profile_fullName: user_name, // Puedes cambiar esto si tienes otro campo para nombre completo
+        profile_fullName: user_name, 
         profile_phone: profile_phone,
         profile_email: profile_email,
         profile_photo: null,

@@ -49,5 +49,17 @@ class ProfileModel {
       return null;
     }
   }
+
+  static async findByEmail(profile_email) {
+    try {
+      const [rows] = await connect.query(
+        'SELECT * FROM profile WHERE profile_email = ?',
+        [profile_email]
+      );
+      return rows[0];
+    } catch (error) {
+      return null;
+    }
+  }
 }
 export default ProfileModel;

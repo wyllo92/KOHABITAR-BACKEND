@@ -186,26 +186,24 @@ function createTable(data) {
     const statusClass = row.status_name === 'Activo' ? 'text-success' : 'text-danger';
     
     // Formatear fecha
-    const notificationDate = row.notification_created_at || row.created_at || 'N/A';
+    const notificationDate = row.Notification_createAt || row.Notification_create_at || row.created_at || 'N/A';
     const formattedDate = notificationDate !== 'N/A' ? new Date(notificationDate).toLocaleDateString('es-ES') : 'N/A';
     
     let dataRow = `<tr>
-      <td>${row.notification_id || row.id}</td>
-      <td>${row.notification_title || row.title || 'N/A'}</td>
-      <td>${row.notification_type_name || row.type_name || 'N/A'}</td>
+      <td>${row.Notification_id || 'N/A'}</td>
+      <td>${row.Notification_title || 'N/A'}</td>
+      <td>${row.Notification_type_name || 'N/A'}</td>
       <td>${row.user_name || 'N/A'}</td>
-      <td>
-        <span class="${statusClass}">${statusActive}</span>
-      </td>
+      <td><span class="${statusClass}">${statusActive}</span></td>
       <td>${formattedDate}</td>
       <td>
-        <button type="button" title="Ver Notificación" class="btn btn-success btn-sm" onclick="showId(${row.notification_id || row.id})">
+        <button type="button" title="Ver Notificación" class="btn btn-success btn-sm" onclick="showId(${row.Notification_id})">
           <i class='fas fa-eye'></i>
         </button>
-        <button type="button" title="Editar Notificación" class="btn btn-primary btn-sm" onclick="edit(${row.notification_id || row.id})">
+        <button type="button" title="Editar Notificación" class="btn btn-primary btn-sm" onclick="edit(${row.Notification_id})">
           <i class='fas fa-edit'></i>
         </button>
-        <button type="button" title="Eliminar Notificación" class="btn btn-danger btn-sm" onclick="delete_(${row.notification_id || row.id})">
+        <button type="button" title="Eliminar Notificación" class="btn btn-danger btn-sm" onclick="delete_(${row.Notification_id})">
           <i class='fas fa-trash'></i>
         </button>
       </td>

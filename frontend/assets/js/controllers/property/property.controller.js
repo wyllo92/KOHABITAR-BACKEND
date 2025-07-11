@@ -148,13 +148,19 @@ function getData() {
   resultServices.then(response => {
     return response.json();
   }).then(data => {
-    console.log('Datos recibidos del backend:', data);
+    // Destruye la instancia previa de DataTable si existe
+    if ($.fn.DataTable.isDataTable(appTable)) {
+      $(appTable).DataTable().destroy();
+    }
+    const datos= data.data;
+    console.log(datos)
     createTable(data);
+    // Inicializa DataTable solo después de llenar la tabla
+    new DataTable(appTable);
   }).catch(error => {
     console.log('Error al obtener datos:', error);
     alert('Error al cargar los datos de propiedades');
   }).finally(() => {
-    new DataTable(appTable);
     toggleLoading(false);
   });
 }
@@ -180,7 +186,7 @@ function createTable(data) {
     const statusClass = row.status_name === 'Activo' ? 'text-success' : 'text-danger';
     
     let dataRow = `<tr>
-      <td>${row.property_id || row.id}</td>
+      // <td>${row.property_id || row.id}</td>
       <td>${row.property_name || row.name || 'N/A'}</td>
       <td>${row.property_type || row.type || 'N/A'}</td>
       <td>${row.property_description || row.description || 'N/A'}</td>

@@ -82,7 +82,9 @@ const sqlStatements = [
     property_type varchar(25) NOT NULL,
     property_createAt date NOT NULL,
     property_updateAt date NOT NULL,
+   status_id int(11) NOT NULL,
     PRIMARY KEY (property_id),
+    FOREIGN KEY (status_id) REFERENCES status(status_id) ON DELETE RESTRICT ON UPDATE CASCADE,
     UNIQUE KEY property_name (property_name),
     INDEX idx_property_type (property_type)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`,
@@ -593,9 +595,9 @@ const sqlStatements = [
 (3, 'Propietario', 'Dueño de una propiedad', 1, '2025-05-27 16:14:55'),
 (4, 'Vigilante', 'Controla el ingreso', 1, '2025-05-27 16:14:55');`,
 
-  `INSERT INTO property (property_id, property_name, property_description, property_type, property_createAt, property_updateAt) VALUES
-(1, 'Casa 101', 'Casa', 'Casa', '2025-05-27', '2025-05-27'),
-(2, 'Casa 102', 'Casa', 'Casa', '2025-05-27', '2025-05-27');`,
+  `INSERT INTO property (property_id, property_name, property_description, property_type, property_createAt, property_updateAt, status_id) VALUES
+(1, 'Casa 101', 'Casa', 'Casa', '2025-05-27', '2025-05-27', 1),
+(2, 'Casa 102', 'Casa', 'Casa', '2025-05-27', '2025-05-27', 1);`,
 
   `INSERT INTO tariff (tariff_id, type, description, amount, surcharge_amount, surcharge_status, due_date, status_id, created_at, updated_at) VALUES
 (1, 'Fija', 'Tarifa mensual', 50000, NULL, NULL, NULL, 1, '2025-05-27 16:17:01', '2025-05-27 16:17:01'),

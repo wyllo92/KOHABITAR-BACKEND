@@ -128,13 +128,20 @@ function getDataId(id) {
     console.log('Datos de la amenidad:', data);
     if (data.data) {
       let getData = data.data;
+      // Mapear los datos del backend a los nombres del formulario
+      getData.amenity_name = getData.name;
+      getData.amenity_capacity = getData.capacity;
+      getData.amenity_description = getData.description;
+      getData.amenity_location = getData.location; // Si existe en backend
+      getData.amenity_type_id = getData.amenity_type_id || getData.Amenity_Type_id;
+      // Agrega más mapeos si tienes más campos
       objForm.setDataFormJson(getData);
     } else {
-      alert('Error: No se encontraron datos de la amenidad');
+      alert('Error: No se encontraron datos de la zona común');
     }
   }).catch(error => {
     console.log('Error al obtener datos:', error);
-    alert('Error al obtener los datos de la amenidad');
+    alert('Error al obtener los datos de la zona común');
   }).finally(() => {
     showHiddenModal(true);
   });
@@ -192,13 +199,13 @@ function createTable(data) {
       <td>${row.capacity || 'N/A'}</td>
       <td><span class="${statusClass}">${statusActive}</span></td>
       <td>
-        <button type="button" title="Ver Amenidad" class="btn btn-success btn-sm" onclick="showId(${row.amenity_id || row.id})">
+        <button type="button" title="Ver Zona comun" class="btn btn-success btn-sm" onclick="showId(${row.amenity_id || row.id})">
           <i class='fas fa-eye'></i>
         </button>
-        <button type="button" title="Editar Amenidad" class="btn btn-primary btn-sm" onclick="edit(${row.amenity_id || row.id})">
+        <button type="button" title="Editar Zona comun" class="btn btn-primary btn-sm" onclick="edit(${row.amenity_id || row.id})">
           <i class='fas fa-edit'></i>
         </button>
-        <button type="button" title="Eliminar Amenidad" class="btn btn-danger btn-sm" onclick="delete_(${row.amenity_id || row.id})">
+        <button type="button" title="Eliminar Zona comun" class="btn btn-danger btn-sm" onclick="delete_(${row.amenity_id || row.id})">
           <i class='fas fa-trash'></i>
         </button>
       </td>

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Amenidades</title>
+  <title>Gestión de Zonas Comunes</title>
   <!-- Favicon -->
   <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
   <!-- Bootstrap 5 CSS -->
@@ -24,36 +24,36 @@
    
     <!--Content data-->
     <main>
-      <h1 class="text-center mb-4">Gestión de Amenidades</h1>
-      <button type="button" title="Agregar Amenidad" class="btn btn-primary mb-3" onclick="add()">
-        <i class="fa fa-swimming-pool me-1"></i>Agregar Amenidad
+      <h1 class="text-center mb-4">Gestión de Zonas Comunes</h1>
+      <button type="button" title="Agregar Zona Común" class="btn btn-primary mb-3" onclick="add()">
+        <i class="fa fa-swimming-pool me-1"></i>Agregar Zona Común
       </button>
 
       <!--Table-->
       <div class="table-responsive">
-        <table class="table table-dark table-hover" id="app-table">
+        <table class="table table-secondary table-hover" id="app-table">
           <thead>
             <tr class="table-primary text-center">
-              <th>#</th>
-              <th>Nombre</th>
-              <th>Tipo</th>
-              <th>Propiedad</th>
-              <th>Capacidad</th>
-              <th>Estado</th>
-              <th>Acciones</th>
+              <th class="text-center">#</th>
+              <th class="text-center">Nombre</th>
+              <th class="text-center">Tipo</th>
+              <th class="text-center">Propiedad</th>
+              <th class="text-center">Capacidad</th>
+              <th class="text-center">Estado</th>
+              <th class="text-center">Acciones</th>
             </tr>
           </thead>
           <tbody id="app-table-body" class="text-center">
           </tbody>
           <tfoot>
             <tr class="table-primary text-center">
-              <td>#</td>
-              <td>Nombre</td>
-              <td>Tipo</td>
-              <td>Propiedad</td>
-              <td>Capacidad</td>
-              <td>Estado</td>
-              <td>Acciones</td>
+              <td class="text-center">#</td>
+              <td class="text-center">Nombre</td>
+              <td class="text-center">Tipo</td>
+              <td class="text-center">Propiedad</td>
+              <td class="text-center">Capacidad</td>
+              <td class="text-center">Estado</td>
+              <td class="text-center">Acciones</td>
             </tr>
           </tfoot>
         </table>
@@ -64,7 +64,7 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="appModalLabel">Amenidad</h1>
+              <h1 class="modal-title fs-5" id="appModalLabel">Zona Común</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -73,16 +73,16 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label for="amenity_name" class="form-label required">Nombre de la Amenidad</label>
+                      <label for="amenity_name" class="form-label required">Nombre de la Zona Común</label>
                       <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Nombre de la amenidad" id="amenity_name" name="amenity_name" required value="">
-                        <label for="amenity_name">Nombre de la Amenidad</label>
+                        <input type="text" class="form-control" placeholder="Nombre de la zona común" id="amenity_name" name="amenity_name" required value="">
+                        <label for="amenity_name">Nombre de la Zona Común</label>
                       </div>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label for="amenity_type_id" class="form-label required">Tipo de Amenidad</label>
+                      <label for="amenity_type_id" class="form-label required">Tipo de Zona Común</label>
                       <select class="form-select" id="amenity_type_id" name="amenity_type_id" required>
                         <option value="" selected disabled>Selecciona el tipo</option>
                       </select>
@@ -94,8 +94,8 @@
                     <div class="mb-3">
                       <label for="amenity_location" class="form-label required">Ubicación</label>
                       <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Ubicación de la amenidad" id="amenity_location" name="amenity_location" required value="">
-                        <label for="amenity_location">Ubicación de la Amenidad</label>
+                        <input type="text" class="form-control" placeholder="Ubicación de la zona común" id="amenity_location" name="amenity_location" required value="">
+                        <label for="amenity_location">Ubicación de la Zona Común</label>
                       </div>
                     </div>
                   </div>
@@ -112,8 +112,8 @@
                 <div class="mb-3">
                   <label for="amenity_description" class="form-label">Descripción</label>
                   <div class="form-floating">
-                    <textarea class="form-control" placeholder="Descripción de la amenidad" id="amenity_description" name="amenity_description" style="height: 100px"></textarea>
-                    <label for="amenity_description">Descripción de la Amenidad</label>
+                    <textarea class="form-control" placeholder="Descripción de la zona común" id="amenity_description" name="amenity_description" style="height: 100px"></textarea>
+                    <label for="amenity_description">Descripción de la Zona Común</label>
                   </div>
                 </div>
                 <div class="mb-3">

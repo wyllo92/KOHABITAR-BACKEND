@@ -15,6 +15,7 @@ const objTableBody = document.getElementById('app-table-body');
 const objSelectUser = document.getElementById('user_id');
 const objSelectProperty = document.getElementById('property_id');
 const objSelectParkingZone = document.getElementById('parkingZone_id');
+const objSelectStatus = document.getElementById('status_id');
 const myForm = objForm.getForm();
 const textConfirm = "¿Estás seguro de que deseas eliminar este vehículo?";
 const appTable = "#app-table";
@@ -43,6 +44,19 @@ myForm.addEventListener('submit', (e) => {
   }
   documentData = objForm.getDataForm();
   console.log('Datos del formulario:', documentData);
+
+  // Validación previa al envío para mostrar qué campos faltan
+  const requiredFields = ['license_plate','model','type','color','user_id','property_id','status_id'];
+  const missing = requiredFields.filter(f => {
+    const v = documentData[f];
+    return v === undefined || v === null || (typeof v === 'string' && v.trim() === '');
+  });
+
+  if (missing.length > 0) {
+    toggleLoading(false);
+    alert('Faltan campos obligatorios: ' + missing.join(', '));
+    return;
+  }
 
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
   resultServices.then(response => {
@@ -245,8 +259,34 @@ function createSelectParkingZone(data) {
   let rowLong = getData.length;
   for (let i = 0; i < rowLong; i++) {
     let row = getData[i];
-    let dataRow = `<option value="${row.parkingzone_id || row.id}">${row.parkingzone_name || row.name || 'Zona ' + (row.parkingzone_id || row.id)}</option>`;
+    // Build a readable label using the fields the backend actually returns
+    const id = row.parkingZone_id || row.parkingzone_id || row.id;
+    const property = row.property_name || '';
+    const type = row.type || '';
+    const capacity = row.capacity || '';
+    let labelParts = [];
+    if (property) labelParts.push(property);
+    if (type) labelParts.push(`Tipo: ${type}`);
+    if (capacity) labelParts.push(`Capacidad: ${capacity}`);
+    const label = labelParts.length ? labelParts.join(' - ') : `Zona ${id}`;
+
+    let dataRow = `<option value="${id}">${label}</option>`;
     objSelectParkingZone.innerHTML += dataRow;
+  }
+}
+
+function createSelectStatus(data) {
+  objSelectStatus.innerHTML = "<option value='' selected disabled>Selecciona el estado</option>";
+
+  let getData = data.data || [];
+  if (getData.length === 0) return;
+
+  for (let i = 0; i < getData.length; i++) {
+    let row = getData[i];
+    let id = row.status_id || row.id;
+    let name = row.status_name || row.name || `Estado ${id}`;
+    let option = `<option value="${id}">${name}</option>`;
+    objSelectStatus.innerHTML += option;
   }
 }
 
@@ -314,9 +354,26 @@ function getDataParkingZone() {
   });
 }
 
+function getDataStatus() {
+  documentData = "";
+  httpMethod = METHODS[0]; // GET
+  endpointUrl = URL_STATUS + "entity/Vehiculo";
+  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
+  resultServices.then(response => response.json())
+    .then(data => {
+      console.log('Datos de estados:', data);
+      createSelectStatus(data);
+    }).catch(error => {
+      console.log('Error al obtener estados:', error);
+    }).finally(() => {
+      toggleLoading(false);
+    });
+}
+
 window.addEventListener('load', () => {
   loadView();
   getDataUser();
   getDataProperty();
   getDataParkingZone();
-}); 
+  getDataStatus();
+});

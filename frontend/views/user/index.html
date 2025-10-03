@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Formulario de Usuarios</title>
+  <title>Usuarios</title>
   <!-- Favicon -->
   <link rel="icon" href="../../assets//img/logos/logo.png" type="image/png">
   <!-- Bootstrap 5 CSS -->
@@ -21,104 +21,130 @@
 
   <!--Container -->
   <div class="container-fluid">
-    
+
     <!--Content data-->
     <main>
       <h1 class="text-center">Gestion de Usuarios</h1>
       <button type="button" title="Add User" class="btn btn-primary" onclick="add()"> <i
-          class="fa fa-user-plus me-1"></i>Agregar Usuario</button>
+          class="fa fa-user-plus me-1"></i> Agregar Usuario</button>
 
       <!--Table-->
       <div class="table-responsive">
-        <table class="table table-dark table-hover" id="app-table">
-          <thead class=" ">
-            <tr class="table-primary text-center">
-              <th>#</th>
-              <th>Nombre de Usuario</th>
-              <th>Rol</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="app-table-body" class="text-center">
+  <table class="table table-bordered table-hover bg-white shadow-sm text-center" id="app-table">
+    
+    <!-- Encabezado -->
+    <thead class="thead-dark">
+      <tr class="table-secondary text-center">
+        <th class="text-center">#</th>
+        <th class="text-center">Nombre de Usuario</th>
+        <th class="text-center">Rol</th>
+        <th class="text-center">Estado</th>
+        <th class="text-center">Acciones</th>
+      </tr>
+    </thead>
 
-          </tbody>
-          <tfoot>
-            <tr class="table-primary text-center">
-              <td>#</td>
-              <td>Nombre de Usuario</td>
-              <td>Rol</td>
-              <td>Estado</td>
-              <td>Acciones</td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+    <!-- Cuerpo -->
+    <tbody id="app-table-body" class="text-center">
+      <tr>
+        <td class="text-center"></td>
+        <td class="text-center"></td>
+        <td class="text-center"></td>
+        <td class="text-center"></td>
+        <td class="text-center"></td>
+      </tr>
+    </tbody>
+
+    <!-- Pie -->
+    <tfoot>
+      <tr class="table-secondary text-center">
+        <td class="text-center">#</td>
+        <td class="text-center">Nombre de Usuario</td>
+        <td class="text-center">Rol</td>
+        <td class="text-center">Estado</td>
+        <td class="text-center">Acciones</td>
+      </tr>
+    </tfoot>
+
+  </table>
+</div>
+
 
       <!-- Modal -->
+      <!-- Modal -->
       <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="appModalLabel">Usuario</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <!--Form-->
-              <form id="userForm">
+        <div class="modal-dialog modal-lg" style="margin-top: 2rem;">
+          <div class="modal-content shadow-lg border-0 rounded-4">
 
-                <div class="mb-3">
-                  <label for="user_name" class="form-label required"></label>
+            <!-- Header -->
+            <div class="modal-header bg-primary text-white rounded-top-4">
+              <h5 class="modal-title d-flex align-items-center" id="appModalLabel">
+                <i class="bi bi-person-plus me-2"></i> Usuario
+              </h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                aria-label="Close"></button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+              <form id="userForm" class="row g-3">
+
+                <!-- Usuario -->
+                <div class="col-md-6">
                   <div class="form-floating">
-                    <input type="text" class="form-control " placeholder="Usuario" id="user_name" name="user_name" required
-                      value="">
+                    <input type="text" class="form-control" id="user_name" name="user_name"
+                      placeholder="Nombre de Usuario" required>
                     <label for="user_name">Nombre de Usuario</label>
                   </div>
                 </div>
-                <div class="mb-3">
-                  <label for="user_password" class="form-label required"></label>
+
+                <!-- Contraseña -->
+                <div class="col-md-6">
                   <div class="form-floating">
-                    <input type="password" class="form-control edit-input" placeholder="Contraseña" id="user_password"
-                      name="user_password" required value="">
+                    <input type="password" class="form-control" id="user_password" name="user_password"
+                      placeholder="Contraseña" required>
                     <label for="user_password">Contraseña</label>
                   </div>
                 </div>
-                <div class="mb-3">
-                  <label for="role_id">Seleccionar Rol</label>
-                  <select class="form-select form-select-sm" id="role_id" name="role_id"
-                    aria-label=".form-select-sm example" required>
 
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="status_id">Seleccionar Estado</label>
-                  <select class="form-select form-select-sm" id="status_id" name="status_id"
-                    aria-label=".form-select-sm example" required>
-
+                <!-- Rol -->
+                <div class="col-md-6">
+                  <label for="role_id" class="form-label fw-semibold">Seleccionar Rol</label>
+                  <select class="form-select" id="role_id" name="role_id" required>
+                    <option value="">-- Seleccione --</option>
                   </select>
                 </div>
 
-                <div class="mb-1 col-12">
-                  <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                    <button type="reset" class="btn btn-outline-secondary me-md-2"><i class="fas fa-undo me-1"></i>Reset
-                      Form</button>
-                    <button type="submit" class="btn btn-outline-primary me-md-2"><i
-                        class="fas fa-paper-plane me-1"></i> Enviar</button>
-                  </div>
+                <!-- Estado -->
+                <div class="col-md-6">
+                  <label for="status_id" class="form-label fw-semibold">Seleccionar Estado</label>
+                  <select class="form-select" id="status_id" name="status_id" required>
+                    <option value="">-- Seleccione --</option>
+                  </select>
                 </div>
+
+                <!-- Botones -->
+                <div class="col-12 d-flex justify-content-between mt-3">
+                  <button type="reset" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Resetear
+                  </button>
+                  <button type="submit" class="btn btn-success">
+                    <i class="bi bi-send-fill me-1"></i> Enviar
+                  </button>
+                </div>
+
               </form>
             </div>
-            <div class="modal-footer">
-              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-              </div>
-            </div>
+
+            <!-- Footer -->
+
           </div>
         </div>
       </div>
+  </div>
 
-    </main>
-    <!--End Content data-->
+
+  </main>
+  <!--End Content data-->
 
   </div>
   <!--End Container -->

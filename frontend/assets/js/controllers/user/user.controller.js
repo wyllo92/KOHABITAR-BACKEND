@@ -209,21 +209,20 @@ function loadView() {
 function getDataStatus() {
   documentData = "";
   httpMethod = METHODS[0]; // GET method
-  endpointUrl = URL_STATUS;
+  endpointUrl = URL_STATUS + "entity/usuarios";  // 👈 Cambié aquí, ahora trae solo los estados de usuarios
+
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
   resultServices.then(response => {
     return response.json();
   }).then(data => {
-    //Create table 
-    //console.log(data['data']);
-    createSelectStatus(data);
+    createSelectStatus(data); // ✅ ya solo carga estados de usuarios
   }).catch(error => {
     console.log(error);
   }).finally(() => {
-    //console.log("finally");
     toggleLoading(false);
   });
 }
+
 
 function getDataRole() {
   documentData = "";

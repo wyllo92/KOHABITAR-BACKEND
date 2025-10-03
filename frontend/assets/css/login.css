@@ -1,0 +1,84 @@
+body {
+    background: #f8f9fa;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #2C6E7F;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-weight: bold;
+}
+
+.form-control {
+    border-radius: 25px;
+    box-shadow: none;
+    padding-left: 40px;
+}
+
+.form-control:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 5px rgba(108, 99, 255, 0.5);
+}
+
+.btn-primary {
+    background-color: #2C6E7F;
+    border-color: #2C6E7F;
+    border-radius: 25px;
+}
+
+.btn-primary:hover {
+    background-color: #84b1ab;
+    border-color: #84b1ab;
+}
+
+.input-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c63ff;
+}
+
+.mb-3 {
+    position: relative;
+}
+
+#errorMsg,
+#passwordStrengthError,
+#usernameError,
+#passwordError {
+    transition: all 0.3s ease-in-out;
+}
+
+.text-danger {
+    display: none;
+    font-size: 0.875rem;
+}
+
+.text-warning {
+    display: none;
+    font-size: 0.875rem;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.card-footer {
+    text-align: center;
+}
+
+.card-footer a {
+    text-decoration: none;
+    color: #6c63ff;
+}
+
+.card-footer a:hover {
+    text-decoration: underline;
+}

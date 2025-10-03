@@ -4,24 +4,27 @@ const router = Router();
 const name = '/property';
 const nameSearch = '/property/search';
 const nameType = '/property/type';
-// Public route
+// Debug: ensure controller exported correctly
+console.log('Property router loading - PropertyController keys:', Object.keys(PropertyController || {}));
+console.log('PropertyController.show type:', typeof (PropertyController && PropertyController.show));
 
+// Public route
 router.route(name)
-    .post(PropertyController.register) // Register a new property
-    .get(PropertyController.show);// Show all properties
+    .post((req, res) => PropertyController.register(req, res)) // Register a new property
+    .get((req, res) => PropertyController.show(req, res)); // Show all properties
 
 // Search route - Must come before /:id route to avoid conflicts
 router.route(nameSearch)
-    .get(PropertyController.searchPropertiesByName);// Search properties by name
+    .get((req, res) => PropertyController.searchPropertiesByName ? PropertyController.searchPropertiesByName(req, res) : res.status(501).json({ error: 'Not implemented' })); // Search properties by name
 
 // Type route - Must come before /:id route to avoid conflicts
 router.route(`${nameType}/:type`)
-    .get(PropertyController.getPropertiesByType);// Get properties by type
+    .get((req, res) => PropertyController.getPropertiesByType ? PropertyController.getPropertiesByType(req, res) : res.status(501).json({ error: 'Not implemented' })); // Get properties by type
 
 // ID-based routes - Must come last to avoid conflicts with specific routes
 router.route(`${name}/:id`)
-    .get(PropertyController.findById)// Show a property by ID
-    .put(PropertyController.update)// Update a property by ID
-    .delete(PropertyController.delete);// Delete a property by ID
+    .get((req, res) => PropertyController.findById(req, res))// Show a property by ID
+    .put((req, res) => PropertyController.update(req, res))// Update a property by ID
+    .delete((req, res) => PropertyController.delete(req, res));// Delete a property by ID
 
 export default router;

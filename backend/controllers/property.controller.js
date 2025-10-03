@@ -4,14 +4,14 @@ class PropertyController {
 
   async register(req, res) {
     try {
-      const { property_name, property_description, property_type } = req.body;
+      const { property_name, property_description, property_type, status_id } = req.body;
 
-      // Basic validation
-      if (!property_name || !property_type) {
+      // Validación básica
+      if (!property_name || !property_type || !status_id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
 
-      // Check if property with same name already exists
+      // Verificar si ya existe propiedad con ese nombre
       const existingProperty = await PropertyModel.findByName(property_name);
       if (existingProperty) {
         return res.status(409).json({ error: 'Property with this name already exists' });
@@ -23,7 +23,8 @@ class PropertyController {
         property_description,
         property_type,
         property_createAt: currentDate,
-        property_updateAt: currentDate
+        property_updateAt: currentDate,
+        status_id
       });
 
       if (!propertyId) {
@@ -42,8 +43,8 @@ class PropertyController {
 
   async show(req, res) {
     try {
-      const propertyModel = await PropertyModel.showActive();
-      res.status(201).json({
+      const propertyModel = await PropertyModel.show();
+      res.status(200).json({
         message: 'Properties retrieved successfully',
         data: propertyModel
       });
@@ -55,18 +56,18 @@ class PropertyController {
 
   async update(req, res) {
     try {
-      const { property_name, property_description, property_type } = req.body;
+      const { property_name, property_description, property_type, status_id } = req.body;
       const id = req.params.id;
 
-      // Basic validation
-      if (!property_name || !property_type || !id) {
+      // Validación básica
+      if (!property_name || !property_type || !status_id || !id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
 
-      // Verify if the Property already exists  
+      // Verificar si existe la propiedad
       const existingProperty = await PropertyModel.findByIdActive(id);
       if (!existingProperty) {
-        return res.status(409).json({ data: '', error: 'The Property does not exist' });
+        return res.status(404).json({ error: 'The Property does not exist' });
       }
 
       const currentDate = new Date().toISOString().split('T')[0];
@@ -74,14 +75,15 @@ class PropertyController {
         property_name,
         property_description,
         property_type,
-        property_updateAt: currentDate
+        property_updateAt: currentDate,
+        status_id
       });
 
       if (!updatePropertyModel) {
         return res.status(500).json({ error: 'Failed to update property' });
       }
 
-      res.status(201).json({
+      res.status(200).json({
         message: 'Property updated successfully',
         data: updatePropertyModel
       });
@@ -94,13 +96,12 @@ class PropertyController {
   async delete(req, res) {
     try {
       const id = req.params.id;
-      // Basic validate
       if (!id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the Property already exists
+
       const deletePropertyModel = await PropertyModel.delete(id);
-      res.status(201).json({
+      res.status(200).json({
         message: 'Property deleted successfully',
         data: deletePropertyModel
       });
@@ -113,59 +114,21 @@ class PropertyController {
   async findById(req, res) {
     try {
       const id = req.params.id;
-      // Basic validate
       if (!id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the Property already exists
+
       const propertyModel = await PropertyModel.findById(id);
       if (!propertyModel) {
         return res.status(404).json({ error: 'Property not found' });
       }
-      res.status(201).json({
+
+      res.status(200).json({
         message: 'Property found successfully',
         data: propertyModel
       });
     } catch (error) {
       console.error('Error finding property:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  }
-
-  async searchPropertiesByName(req, res) {
-    try {
-      const { name } = req.query;
-      if (!name) {
-        return res.status(400).json({ error: 'Name parameter is required' });
-      }
-      
-      const property = await PropertyModel.findByName(name);
-      if (!property) {
-        return res.status(404).json({ error: 'Property not found' });
-      }
-      
-      res.status(200).json({
-        message: 'Property found successfully',
-        data: property
-      });
-    } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  }
-
-  async getPropertiesByType(req, res) {
-    try {
-      const { type } = req.params;
-      if (!type) {
-        return res.status(400).json({ error: 'Type parameter is required' });
-      }
-      
-      const properties = await PropertyModel.findByType(type);
-      res.status(200).json({
-        message: 'Properties retrieved successfully',
-        data: properties
-      });
-    } catch (error) {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }

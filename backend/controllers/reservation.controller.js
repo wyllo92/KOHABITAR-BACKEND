@@ -1,7 +1,5 @@
 import ReservationModel from "../models/reservation.model.js";
 
-
-
 class ReservationController {
   // Obtener todas las reservas
   async getAll(req, res) {
@@ -9,7 +7,11 @@ class ReservationController {
       const reservations = await ReservationModel.show();
       res.status(200).json(reservations);
     } catch (error) {
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({
+        error: "Internal Server Error",
+        details: error.message,
+        stack: error.stack
+      });
     }
   }
 
@@ -23,7 +25,11 @@ class ReservationController {
       }
       res.status(200).json(reservation);
     } catch (error) {
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({
+        error: "Internal Server Error",
+        details: error.message,
+        stack: error.stack
+      });
     }
   }
 
@@ -46,7 +52,9 @@ class ReservationController {
         reservation_capacity
       });
       if (!reservationId) {
-        return res.status(500).json({ error: "No se pudo crear la reserva. Verifica los datos y las claves foráneas." });
+        return res.status(500).json({
+          error: "No se pudo crear la reserva. Verifica los datos y las claves foráneas."
+        });
       }
       res.status(201).json({ message: "Reservation created", id: reservationId });
     } catch (error) {
@@ -81,7 +89,11 @@ class ReservationController {
       }
       res.status(200).json({ message: "Reservation updated", data: updated });
     } catch (error) {
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({
+        error: "Internal Server Error",
+        details: error.message,
+        stack: error.stack
+      });
     }
   }
 
@@ -98,7 +110,11 @@ class ReservationController {
       }
       res.status(200).json({ message: "Reservation deleted" });
     } catch (error) {
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({
+        error: "Internal Server Error",
+        details: error.message,
+        stack: error.stack
+      });
     }
   }
 }

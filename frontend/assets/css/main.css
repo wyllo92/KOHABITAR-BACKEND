@@ -14,14 +14,14 @@ header {
   right: 0;
   z-index: 1030;
   width: 100%;
-  background-color: #392759;
+  background-color: #dfdddb;
 }
 
 /* Sidebar */
 .sidebar {
   width: 250px;
   height: calc(100vh - 56px);
-  background-color: #545F66;
+  background-color: #2c3e50;
   color: #000;
   position: fixed;
   left: 0;
@@ -227,7 +227,7 @@ footer {
 }
 .table-hover > tbody > tr:hover {
   background-color: var(--main-olive) !important;
-  color: #fff !important;
+  color: #ffffffdc !important;
 }
 
 /* Encabezados y fondo */
@@ -242,3 +242,12 @@ a {
 a:hover {
   color: var(--main-yellow);
 }
+
+.nav-link.dropdown-toggle {
+  color:#2c3e50;          /* color texto normal */
+  border:#2c3e50; /* fondo si quieres */
+  border-radius: 6px;
+  padding: 5px 10px;
+  transition: all 0.3s ease;
+}
+

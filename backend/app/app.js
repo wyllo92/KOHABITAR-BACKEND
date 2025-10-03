@@ -29,6 +29,7 @@ import tariffRouter from '../routers/tariff.router.js';
 import notificationRouter from '../routers/notification.router.js';
 import reportRouter from '../routers/report.router.js';
 import amenityTypeRouter from '../routers/amenityType.router.js';
+import cpcgRouter from '../routers/cpcg.router.js';
 
 const app = express();
 
@@ -65,6 +66,8 @@ app.use('/api_v1', tariffRouter);
 app.use('/api_v1', notificationRouter);
 app.use('/api_v1', reportRouter);
 app.use('/api_v1', amenityTypeRouter);
+app.use('/api_v1', cpcgRouter);
+
 
 // Add a test route to verify the server is working
 app.get('/health', (req, res) => {

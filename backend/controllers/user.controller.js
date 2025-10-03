@@ -3,6 +3,7 @@ import { encryptPassword, comparePassword } from '../library/appBcrypt.js';
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 dotenv.config();
+
 class UserController {
 
   async register(req, res) {
@@ -44,8 +45,8 @@ class UserController {
 
   async show(req, res) {
     try {
-      // Get all active users
-      const userModel = await UserModel.showActive();
+      // Get all users (active and inactive)
+      const userModel = await UserModel.show();
       res.status(200).json({
         message: 'Users retrieved successfully',
         data: userModel || []
@@ -65,7 +66,7 @@ class UserController {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
       // Verify if the User exists  
-      const existingUser = await UserModel.findByIdActive(id);
+      const existingUser = await UserModel.findById(id);
       if (!existingUser) {
         return res.status(404).json({ error: 'User not found' });
       }
@@ -115,7 +116,7 @@ class UserController {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
       // Get user by ID
-      const existingUserModel = await UserModel.findByIdActive(id);
+      const existingUserModel = await UserModel.findById(id);
       if (!existingUserModel) {
         return res.status(404).json({ error: 'User not found' });
       }

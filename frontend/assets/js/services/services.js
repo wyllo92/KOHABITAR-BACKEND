@@ -1,4 +1,3 @@
-
 /**
  * The function `getDataServices` is an asynchronous function that sends a request to a specified URL
  * with optional data using the specified method.

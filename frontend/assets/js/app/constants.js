@@ -18,6 +18,7 @@ const URL_PARKINGZONE=HOST+"/parkingzone/";
 const URL_AMENITY=HOST+"/amenity/";
 const URL_RESERVATION=HOST+"/reservation/";
 const URL_VISITOR=HOST+"/visitor/";
+const URL_PQRS=HOST+"/pqrs/";
 const URL_INVOICE=HOST+"/invoice/";
 const URL_PAYMENT=HOST+"/payment/";
 const URL_TARIFF=HOST+"/tariff/";

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Espacios de Parqueo</title>
+  <title>Espacios de Parqueo</title>
   <!-- Favicon -->
   <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
   <!-- Bootstrap 5 CSS -->
@@ -31,106 +31,115 @@
 
       <!--Table-->
       <div class="table-responsive">
-        <table class="table table-dark table-hover" id="app-table">
-          <thead>
-            <tr class="table-primary text-center">
-              <th>#</th>
-              <th>Código</th>
-              <th>Tipo de Zona</th>
-              <th>Propiedad</th>
-              <th>Estado</th>
-              <th>Disponibilidad</th>
-              <th>Acciones</th>
+        <table class="table table-bordered table-hover bg-white shadow-sm text-center" id="app-table">
+          <thead class="thead-dark">
+            <tr class="table-secondary text-center">
+              <th class="text-center">#</th>
+              <th class="text-center">Código</th>
+              <th class="text-center">Tipo de Zona</th>
+              <th class="text-center">Propiedad</th>
+              <th class="text-center">Estado</th>
+              <th class="text-center">Disponibilidad</th>
+              <th class="text-center">Acciones</th>
             </tr>
           </thead>
           <tbody id="app-table-body" class="text-center">
           </tbody>
           <tfoot>
-            <tr class="table-primary text-center">
-              <td>#</td>
-              <td>Código</td>
-              <td>Tipo de Zona</td>
-              <td>Propiedad</td>
-              <td>Estado</td>
-              <td>Disponibilidad</td>
-              <td>Acciones</td>
+            <tr class="table-secondary text-center">
+              <td class="text-center">#</td>
+              <td class="text-center">Código</td>
+              <td class="text-center">Tipo de Zona</td>
+              <td class="text-center">Propiedad</td>
+              <td class="text-center">Estado</td>
+              <td class="text-center">Disponibilidad</td>
+              <td class="text-center">Acciones</td>
             </tr>
           </tfoot>
         </table>
       </div>
 
-      <!-- Modal -->
-      <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="appModalLabel">Espacio de Parqueo</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+     <!-- Modal Espacio de Parqueo -->
+<div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg custom-modal">
+    <div class="modal-content shadow-lg border-0 rounded-4">
+
+      <div class="modal-header bg-primary text-white rounded-top-4">
+        <h1 class="modal-title fs-5" id="appModalLabel">
+          <i class="fas fa-parking me-2"></i>Espacio de Parqueo
+        </h1>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!--Form-->
+        <form id="parkingslotForm">
+          <div class="row">
+            <!-- Código del espacio -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="code" class="form-label required">Código del Espacio</label>
+                <div class="form-floating">
+                  <input type="text" class="form-control" placeholder="Código del espacio" id="code" name="code" required>
+                  <label for="code">Código del Espacio</label>
+                </div>
+              </div>
             </div>
-            <div class="modal-body">
-              <!--Form-->
-              <form id="parkingslotForm">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="code" class="form-label required">Código del Espacio</label>
-                      <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Código del espacio" id="code" name="code" required value="">
-                        <label for="code">Código del Espacio</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="parkingZone_id" class="form-label required">Zona de Parqueo</label>
-                      <select class="form-select" id="parkingZone_id" name="parkingZone_id" required>
-                        <option value="" selected disabled>Selecciona la zona</option>
-                      </select>
-                    </div>
-                  </div>
+
+            <!-- Zona de parqueo -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="parkingZone_id" class="form-label required">Zona de Parqueo</label>
+                <div class="form-floating">
+                  <select class="form-control" id="parkingZone_id" name="parkingZone_id" required>
+                    <option value="" selected disabled>Selecciona la zona</option>
+                  </select>
+                  <label for="parkingZone_id">Zona de Parqueo</label>
                 </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="is_reserved" class="form-label">Estado de Reserva</label>
-                      <div class="form-floating">
-                        <select class="form-control" id="is_reserved" name="is_reserved">
-                          <option value="0" selected>Disponible</option>
-                          <option value="1">Reservado</option>
-                        </select>
-                        <label for="is_reserved">Estado de Reserva</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="status_id" class="form-label required">Estado</label>
-                      <select class="form-select" id="status_id" name="status_id" required>
-                        <option value="1" selected>Activo</option>
-                        <option value="2">Inactivo</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                    <button type="reset" class="btn btn-outline-secondary me-md-2">
-                      <i class="fas fa-undo me-1"></i>Limpiar
-                    </button>
-                    <button type="submit" class="btn btn-outline-primary me-md-2">
-                      <i class="fas fa-paper-plane me-1"></i>Enviar
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-            <div class="modal-footer">
-              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
               </div>
             </div>
           </div>
-        </div>
+
+          <div class="row">
+            <!-- Estado de reserva -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="is_reserved" class="form-label">Estado de Reserva</label>
+                <div class="form-floating">
+                  <select class="form-control" id="is_reserved" name="is_reserved">
+                    <option value="0" selected>Disponible</option>
+                    <option value="1">Reservado</option>
+                  </select>
+                  <label for="is_reserved">Estado de Reserva</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Estado -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="status_id" class="form-label required">Estado</label>
+                <div class="form-floating">
+                  <select class="form-control" id="status_id" name="status_id" required>
+                    <option value="1" selected>Activo</option>
+                    <option value="2">Inactivo</option>
+                  </select>
+                  <label for="status_id">Estado</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones -->
+          <div class="col-12 d-flex justify-content-between mt-3">
+            <button type="reset" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Resetear
+            </button>
+            <button type="submit" class="btn btn-success ">
+              <i class="bi bi-send-fill me-1"></i> Enviar
+            </button>
+            </div>
+          </div>
+        </form>
       </div>
 
     </main>

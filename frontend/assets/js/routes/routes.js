@@ -17,16 +17,22 @@ const routes = {
   '#parkingslot': 'views/parkingslot/index.html',
   '#parkingzone': 'views/parkingzone/index.html',
   '#amenity': 'views/amenity/index.html',
-  '#notification': 'views/notification/index.html',
+  '#notification': 'viens/notf_report/index.html',
   '#documentType': 'views/documentType/index.html',
   '#profile': 'views/profile/index.html',
   '#status': 'views/status/index.html',
-  '#report': 'views/report/index.html'
+  '#report': 'viens/notf_report/index.html',
+  '#visitor': 'views/visitor/index.html',
+  '#payment': 'views/payment/index.html',
+  '#cpcg': 'views/cpcg/index.html',
+
+
 };
 
 function loadContent() {
   const hash = window.location.hash || '#dashboard';
   const viewPath = routes[hash] || routes['#dashboard'];
+  console.log('loadContent: requested hash=', hash, ' viewPath=', viewPath);
   
   // Agregar efecto de transición al cambiar vista
   const cardBody = document.querySelector('.card-body');
@@ -37,7 +43,15 @@ function loadContent() {
   
   // Cambiar la fuente después de un pequeño delay
   setTimeout(() => {
-    contentFrame.src = viewPath;
+    // Resolver viewPath como URL absoluta relativa a la ubicación actual
+    try {
+      const resolved = new URL(viewPath, window.location.href).href;
+      console.log('Setting iframe src to', resolved);
+      contentFrame.src = resolved;
+    } catch (err) {
+      console.error('Error resolving viewPath', viewPath, err);
+      contentFrame.src = viewPath; // fallback
+    }
     cardBody.classList.remove('content-loading');
   }, 50);
   

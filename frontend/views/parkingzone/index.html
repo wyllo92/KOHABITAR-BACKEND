@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Zonas de Parqueo</title>
+  <title>Zonas de Parqueo</title>
   <!-- Favicon -->
   <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
   <!-- Bootstrap 5 CSS -->
@@ -18,10 +18,10 @@
 </head>
 
 <body>
- 
+
   <!--Container -->
   <div class="container-fluid d-flex flex-column min-vh-100">
-   
+
     <!--Content data-->
     <main>
       <h1 class="text-center mb-4">Gestión de Zonas de Parqueo</h1>
@@ -31,73 +31,88 @@
 
       <!--Table-->
       <div class="table-responsive">
-        <table class="table table-dark table-hover" id="app-table">
-          <thead>
-            <tr class="table-primary text-center">
-              <th>#</th>
-              <th>Propiedad</th>
-              <th>Tipo</th>
-              <th>Capacidad</th>
-              <th>Estado</th>
-              <th>Acciones</th>
+        <table class="table table-bordered table-hover bg-white shadow-sm text-center" id="app-table">
+          <thead class="thead-dark">
+            <tr class="table-secondary text-center">
+              <th class="text-center">#</th>
+              <th class="text-center">Propiedad</th>
+              <th class="text-center">Tipo</th>
+              <th class="text-center">Capacidad</th>
+              <th class="text-center">Estado</th>
+              <th class="text-center">Acciones</th>
             </tr>
           </thead>
           <tbody id="app-table-body" class="text-center">
           </tbody>
           <tfoot>
-            <tr class="table-primary text-center">
-              <td>#</td>
-              <td>Propiedad</td>
-              <td>Tipo</td>
-              <td>Capacidad</td>
-              <td>Estado</td>
-              <td>Acciones</td>
+            <tr class="table-secondary text-center">
+              <td class="text-center">#</td>
+              <td class="text-center">Propiedad</td>
+              <td class="text-center">Tipo</td>
+              <td class="text-center">Capacidad</td>
+              <td class="text-center">Estado</td>
+              <td class="text-center">Acciones</td>
             </tr>
           </tfoot>
         </table>
       </div>
 
-      <!-- Modal -->
+      <!-- Modal Zona de Parqueo -->
       <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-dialog modal-lg custom-modal">
+          <div class="modal-content shadow-lg border-0 rounded-4">
+
+            <!-- Header -->
+            <div class="modal-header bg-primary text-white rounded-top-4">
               <h1 class="modal-title fs-5" id="appModalLabel">Zona de Parqueo</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-              <!--Form-->
+
+            <!-- Body -->
+            <div class="modal-body p-4">
+              <!-- Form -->
               <form id="parkingzoneForm">
-                <div class="row">
+                <div class="row g-3">
+                  <!-- Nombre de la zona -->
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="parkingzone_name" class="form-label required">Nombre de la Zona</label>
                       <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Nombre de la zona" id="parkingzone_name" name="parkingzone_name" required value="">
+                        <input type="text" class="form-control" placeholder="Nombre de la zona" id="parkingzone_name"
+                          name="parkingzone_name" required>
                         <label for="parkingzone_name">Nombre de la Zona</label>
                       </div>
                     </div>
                   </div>
+
+                  <!-- Ubicación -->
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="parkingzone_location" class="form-label required">Ubicación</label>
                       <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Ubicación de la zona" id="parkingzone_location" name="parkingzone_location" required value="">
+                        <input type="text" class="form-control" placeholder="Ubicación de la zona"
+                          id="parkingzone_location" name="parkingzone_location" required>
                         <label for="parkingzone_location">Ubicación de la Zona</label>
                       </div>
                     </div>
                   </div>
                 </div>
+
                 <div class="row">
+                  <!-- Capacidad -->
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="parkingzone_capacity" class="form-label required">Capacidad</label>
                       <div class="form-floating">
-                        <input type="number" class="form-control" placeholder="Capacidad de vehículos" id="parkingzone_capacity" name="parkingzone_capacity" required value="">
+                        <input type="number" class="form-control" placeholder="Capacidad de vehículos"
+                          id="parkingzone_capacity" name="parkingzone_capacity" required>
                         <label for="parkingzone_capacity">Capacidad de Vehículos</label>
                       </div>
                     </div>
                   </div>
+
+                  <!-- Tipo de zona -->
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="parkingzone_type" class="form-label">Tipo de Zona</label>
@@ -114,40 +129,37 @@
                     </div>
                   </div>
                 </div>
+
+                <!-- Descripción -->
                 <div class="mb-3">
                   <label for="parkingzone_description" class="form-label">Descripción</label>
                   <div class="form-floating">
-                    <textarea class="form-control" placeholder="Descripción de la zona" id="parkingzone_description" name="parkingzone_description" style="height: 100px"></textarea>
+                    <textarea class="form-control" placeholder="Descripción de la zona" id="parkingzone_description"
+                      name="parkingzone_description" style="height: 100px"></textarea>
                     <label for="parkingzone_description">Descripción de la Zona</label>
                   </div>
                 </div>
-                <div class="mb-3">
-                  <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                    <button type="reset" class="btn btn-outline-secondary me-md-2">
-                      <i class="fas fa-undo me-1"></i>Limpiar
-                    </button>
-                    <button type="submit" class="btn btn-outline-primary me-md-2">
-                      <i class="fas fa-paper-plane me-1"></i>Enviar
-                    </button>
-                  </div>
+
+                <!-- Botones -->
+                <div class="col-12 d-flex justify-content-between mt-3">
+                  <button type="reset" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Resetear
+                  </button>
+                  <button type="submit" class="btn btn-success ">
+                    <i class="bi bi-send-fill me-1"></i> Enviar
+                  </button>
                 </div>
-              </form>
             </div>
-            <div class="modal-footer">
-              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-              </div>
-            </div>
+            </form>
           </div>
-        </div>
-      </div>
+
 
     </main>
     <!--End Content data-->
 
   </div>
   <!--End Container -->
- 
+
 
   <!--Loading -->
   <div id="loading-screen">
@@ -166,11 +178,11 @@
   <!-- JS personalizado -->
   <script src="../../assets/js/app/constants.js"></script>
   <script src="../../assets/js/storage/appStorage.js"></script>
-  <script src="../../assets/js/services/services.js"></script> 
+  <script src="../../assets/js/services/services.js"></script>
   <script src="../../assets/js/app/app.js"></script>
   <script src="../../assets/js/utils/Form.js"></script>
   <script src="../../assets/js/controllers/parkingzone/parkingzone.controller.js"></script>
 
 </body>
 
-</html> 
+</html>

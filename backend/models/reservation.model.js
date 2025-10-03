@@ -5,13 +5,24 @@ class ReservationModel {
   // CREATE
   static async create({ amenity_id, user_id, status_id, tariff_id, reservation_createAt, reservation_start_time, reservation_end_time, reservation_time_unit, reservation_capacity }) {
     try {
-      const sqlQuery = `INSERT INTO reservation (amenity_id, user_id, status_id, tariff_id, reservation_createAt, reservation_start_time, reservation_end_time, reservation_time_unit, reservation_capacity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-      const [result] = await connect.query(sqlQuery, [amenity_id, user_id, status_id, tariff_id, reservation_createAt, reservation_start_time, reservation_end_time, reservation_time_unit, reservation_capacity]);
+      const sqlQuery = `
+      INSERT INTO reservation (
+        amenity_id, user_id, status_id, tariff_id, reservation_createAt,
+        reservation_start_time, reservation_end_time, reservation_time_unit, reservation_capacity
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+      const [result] = await connect.query(sqlQuery, [
+        amenity_id, user_id, status_id, tariff_id,
+        reservation_createAt, reservation_start_time, reservation_end_time,
+        reservation_time_unit, reservation_capacity
+      ]);
       return result.insertId;
     } catch (error) {
-      return null;
+      console.error("Error en ReservationModel.create:", error); // 👈 log en consola
+      throw error; // 👈 lanzamos el error al controlador
     }
   }
+
 
   // READ ALL
   static async show() {
@@ -58,4 +69,4 @@ class ReservationModel {
   }
 }
 
-export default ReservationModel; 
+export default ReservationModel;

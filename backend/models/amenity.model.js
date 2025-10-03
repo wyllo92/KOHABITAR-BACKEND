@@ -2,13 +2,15 @@ import { connect } from '../config/db/connectMysql.js';
 
 class AmenityModel {
 
-  static async create({ name, capacity, description, time_unit, total, status_id, tariff_id, property_id, amenity_type_id, created_at, updated_at }) {
+  static async create({ name, capacity, description, time_unit, total, status_id, tariff_id, property_id, amenity_type_id }) {
     try {
-      let sqlQuery = "INSERT INTO amenity (name, capacity, description, time_unit, total, status_id, tariff_id, property_id, amenity_type_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-      const [result] = await connect.query(sqlQuery, [name, capacity, description, time_unit, total, status_id, tariff_id, property_id, amenity_type_id, created_at, updated_at]);
+      let sqlQuery = "INSERT INTO amenity (name, capacity, description, time_unit, total, status_id, tariff_id, property_id, amenity_type_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW());";
+      const [result] = await connect.query(sqlQuery, [name, capacity, description, time_unit, total, status_id, tariff_id, property_id, amenity_type_id]);
+      console.log("Insert result:", result); // Debug log
       return result.insertId;
     } catch (error) {
-      return null;
+      console.error("Error in AmenityModel.create:", error); // Better error logging
+      throw error; // Re-throw the error instead of returning null
     }
   }
 
@@ -18,6 +20,7 @@ class AmenityModel {
       const [result] = await connect.query(sqlQuery);
       return result;
     } catch (error) {
+      console.error("Error in AmenityModel.show:", error);
       return [];
     }
   }
@@ -28,6 +31,7 @@ class AmenityModel {
       const [result] = await connect.query(sqlQuery);
       return result;
     } catch (error) {
+      console.error("Error in AmenityModel.showActive:", error);
       return [];
     }
   }
@@ -38,6 +42,7 @@ class AmenityModel {
       const [result] = await connect.query(sqlQuery, [name, capacity, description, time_unit, total, status_id, tariff_id, property_id, amenity_type_id, updated_at, id]);
       return result.affectedRows > 0 ? this.findById(id) : null;
     } catch (error) {
+      console.error("Error in AmenityModel.update:", error);
       return null;
     }
   }
@@ -48,6 +53,7 @@ class AmenityModel {
       const [result] = await connect.query(sqlQuery, [id]);
       return result.affectedRows > 0;
     } catch (error) {
+      console.error("Error in AmenityModel.delete:", error);
       return false;
     }
   }
@@ -58,6 +64,7 @@ class AmenityModel {
       const [result] = await connect.query(sqlQuery, [id]);
       return result[0];
     } catch (error) {
+      console.error("Error in AmenityModel.findById:", error);
       return null;
     }
   }
@@ -68,6 +75,7 @@ class AmenityModel {
       const [result] = await connect.query(sqlQuery, [id]);
       return result[0];
     } catch (error) {
+      console.error("Error in AmenityModel.findByIdActive:", error);
       return null;
     }
   }
@@ -78,6 +86,7 @@ class AmenityModel {
       const [result] = await connect.query(sqlQuery, [name]);
       return result[0];
     } catch (error) {
+      console.error("Error in AmenityModel.findByName:", error);
       return null;
     }
   }
@@ -88,6 +97,7 @@ class AmenityModel {
       const [result] = await connect.query(sqlQuery, [property_id]);
       return result;
     } catch (error) {
+      console.error("Error in AmenityModel.findByPropertyId:", error);
       return [];
     }
   }
@@ -98,6 +108,7 @@ class AmenityModel {
       const [result] = await connect.query(sqlQuery, [amenity_type_id]);
       return result;
     } catch (error) {
+      console.error("Error in AmenityModel.findByType:", error);
       return [];
     }
   }
@@ -108,6 +119,7 @@ class AmenityModel {
       const [result] = await connect.query(sqlQuery);
       return result;
     } catch (error) {
+      console.error("Error in AmenityModel.findActive:", error);
       return [];
     }
   }

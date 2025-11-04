@@ -7,8 +7,8 @@ dotenv.config();
 const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'conjunto_residencial',
+  password: process.env.DB_PASSWORD || '1234',
+  database: process.env.DB_NAME || 'conjunto_residencial2',
   multipleStatements: true
 };
 
@@ -58,8 +58,6 @@ const sqlStatements = [
     INDEX idx_status_entity (status_entity)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`,
 
-
-
   // Create role table
   `CREATE TABLE IF NOT EXISTS role (
     role_id int(11) NOT NULL AUTO_INCREMENT,
@@ -82,8 +80,11 @@ const sqlStatements = [
     property_type varchar(25) NOT NULL,
     property_createAt date NOT NULL,
     property_updateAt date NOT NULL,
+    status_id int(11) NOT NULL,
     PRIMARY KEY (property_id),
     UNIQUE KEY property_name (property_name),
+    KEY status_id (status_id),
+    FOREIGN KEY (status_id) REFERENCES status(status_id) ON DELETE RESTRICT ON UPDATE CASCADE,
     INDEX idx_property_type (property_type)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`,
 
@@ -151,28 +152,20 @@ const sqlStatements = [
     INDEX idx_amenity_type_name (Amenity_Type_name)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`,
 
-  // Create amenity table
+  // Create amenity table (SIN property_id, tariff_id, time_unit, total)
   `CREATE TABLE IF NOT EXISTS amenity (
     amenity_id int(11) NOT NULL AUTO_INCREMENT,
     name varchar(25) NOT NULL,
     capacity int(11) DEFAULT NULL,
     description varchar(500) DEFAULT NULL,
-    time_unit int(10) DEFAULT NULL,
-    total double DEFAULT NULL,
     status_id int(11) DEFAULT NULL,
-    tariff_id int(11) DEFAULT NULL,
-    property_id int(11) DEFAULT NULL,
     amenity_type_id int(11) DEFAULT NULL,
     created_at date DEFAULT NULL,
     updated_at date DEFAULT NULL,
     PRIMARY KEY (amenity_id),
     KEY status_id (status_id),
-    KEY tariff_id (tariff_id),
-    KEY property_id (property_id),
     KEY amenity_type_id (amenity_type_id),
     FOREIGN KEY (status_id) REFERENCES status(status_id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (tariff_id) REFERENCES tariff(tariff_id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (property_id) REFERENCES property(property_id) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (amenity_type_id) REFERENCES amenity_type(Amenity_Type_id) ON DELETE SET NULL ON UPDATE CASCADE,
     INDEX idx_amenity_name (name)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`,
@@ -268,27 +261,23 @@ const sqlStatements = [
     INDEX idx_invoice_due_date (due_date)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`,
 
-  // Create reservation table
+  // Create reservation table (SIN tariff_id y reservation_time_unit)
   `CREATE TABLE IF NOT EXISTS reservation (
     reservation_id int(11) NOT NULL AUTO_INCREMENT,
     amenity_id int(11) NOT NULL,
     user_id int(11) NOT NULL,
     status_id int(11) DEFAULT NULL,
-    tariff_id int(11) DEFAULT NULL,
     reservation_createAt datetime DEFAULT current_timestamp(),
     reservation_start_time datetime DEFAULT NULL,
     reservation_end_time datetime DEFAULT NULL,
-    reservation_time_unit int(10) DEFAULT NULL,
     reservation_capacity int(11) DEFAULT NULL,
     PRIMARY KEY (reservation_id),
     KEY amenity_id (amenity_id),
     KEY user_id (user_id),
     KEY status_id (status_id),
-    KEY tariff_id (tariff_id),
     FOREIGN KEY (amenity_id) REFERENCES amenity(amenity_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (status_id) REFERENCES status(status_id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (tariff_id) REFERENCES tariff(tariff_id) ON DELETE SET NULL ON UPDATE CASCADE,
     INDEX idx_reservation_start_time (reservation_start_time),
     INDEX idx_reservation_end_time (reservation_end_time)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`,
@@ -590,9 +579,9 @@ const sqlStatements = [
 (3, 'Propietario', 'Dueño de una propiedad', 1, '2025-05-27 16:14:55'),
 (4, 'Vigilante', 'Controla el ingreso', 1, '2025-05-27 16:14:55');`,
 
-  `INSERT INTO property (property_id, property_name, property_description, property_type, property_createAt, property_updateAt) VALUES
-(1, 'Casa 101', 'Casa', 'Casa', '2025-05-27', '2025-05-27'),
-(2, 'Casa 102', 'Casa', 'Casa', '2025-05-27', '2025-05-27');`,
+  `INSERT INTO property (property_id, property_name, property_description, property_type, property_createAt, property_updateAt, status_id) VALUES
+(1, 'Casa 101', 'Casa', 'Casa', '2025-05-27', '2025-05-27', 1),
+(2, 'Casa 102', 'Casa', 'Casa', '2025-05-27', '2025-05-27', 1);`,
 
   `INSERT INTO tariff (tariff_id, type, description, amount, surcharge_amount, surcharge_status, due_date, status_id, created_at, updated_at) VALUES
 (1, 'Fija', 'Tarifa mensual', 50000, NULL, NULL, NULL, 1, '2025-05-27 16:17:01', '2025-05-27 16:17:01'),

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservas</title>
+  <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
+  <link rel="stylesheet" href="../../assets/css/loading.css">
+</head>
+
+<body>
+  <div class="container-fluid d-flex flex-column min-vh-100">
+
+    <main>
+      <h1 class="text-center mb-4">Gestión de Reservas</h1>
+
+      <button type="button" title="Agregar Reserva" class="btn btn-primary mb-3" onclick="addReservation()">
+        <i class="fa fa-calendar-plus me-1"></i> Agregar Reserva
+      </button>
+
+      <!-- Tabla -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover bg-white shadow-sm text-center" id="reservation-table">
+          <thead>
+            <tr class="table-secondary text-center">
+              <th>#</th>
+              <th>Zona Común</th>
+              <th>Usuario</th>
+              <th>Estado</th>
+              <th>Inicio</th>
+              <th>Fin</th>
+              <th>Capacidad</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="reservation-table-body" class="text-center"></tbody>
+          <tfoot>
+            <tr class="table-secondary text-center">
+              <th>#</th>
+              <th>Zona Común</th>
+              <th>Usuario</th>
+              <th>Estado</th>
+              <th>Inicio</th>
+              <th>Fin</th>
+              <th>Capacidad</th>
+              <th>Acciones</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="reservationModal" tabindex="-1" aria-labelledby="reservationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="reservationModalLabel">Reserva</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="reservationForm">
+                <input type="hidden" id="reservation_id" name="reservation_id" value="">
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="amenity_id" class="form-label required">Zona Común</label>
+                    <select class="form-select" id="amenity_id" name="amenity_id" required>
+                      <option value="" disabled selected>Seleccione una zona común</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="user_id" class="form-label required">Usuario</label>
+                    <select class="form-select" id="user_id" name="user_id" required>
+                      <option value="" disabled selected>Seleccione un usuario</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="reservation_start_time" class="form-label required">Hora de Inicio</label>
+                    <input type="datetime-local" class="form-control" id="reservation_start_time" name="reservation_start_time" required>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="reservation_end_time" class="form-label required">Hora de Fin</label>
+                    <input type="datetime-local" class="form-control" id="reservation_end_time" name="reservation_end_time" required>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="reservation_capacity" class="form-label">Capacidad</label>
+                  <input type="number" class="form-control" id="reservation_capacity" name="reservation_capacity" placeholder="Cantidad de personas">
+                </div>
+
+                <div class="mb-3">
+                  <label for="status_id" class="form-label required">Estado</label>
+                  <select class="form-select" id="status_id" name="status_id" required>
+                    <option value="1">Activa</option>
+                    <option value="2">Cancelada</option>
+                    <option value="3">Finalizada</option>
+                  </select>
+                </div>
+
+                <div class="col-12 d-flex justify-content-between mt-3">
+                  <button type="reset" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Resetear
+                  </button>
+                  <button type="submit" class="btn btn-success">
+                    <i class="bi bi-send-fill me-1"></i> Guardar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading-screen">
+    <div class="spinner-border text-light spinner" role="status">
+      <span class="visually-hidden">Loading ...</span>
+    </div>
+    <p class="mt-3">Cargando datos, por favor espera...</p>
+  </div>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+
+  <!-- Archivos personalizados -->
+  <script src="../../assets/js/app/constants.js"></script>
+  <script src="../../assets/js/storage/appStorage.js"></script>
+  <script src="../../assets/js/services/services.js"></script>
+  <script src="../../assets/js/app/app.js"></script>
+  <script src="../../assets/js/utils/Form.js"></script>
+  <script src="../../assets/js/controllers/reservation/reservation.controller.js"></script>
+</body>
+
+</html>

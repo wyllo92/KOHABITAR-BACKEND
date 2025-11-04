@@ -10,7 +10,7 @@
     "migrate": "node migrations/migrate.js"
   },
   "keywords": [],
-  "author": "Diego Casallas",
+  "author": "kohabitar cloud",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",

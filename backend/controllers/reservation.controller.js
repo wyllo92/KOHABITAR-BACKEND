@@ -8,9 +8,8 @@ class ReservationController {
       res.status(200).json(reservations);
     } catch (error) {
       res.status(500).json({
-        error: "Internal Server Error",
+        error: "Error interno del servidor al obtener las reservas",
         details: error.message,
-        stack: error.stack
       });
     }
   }
@@ -19,49 +18,68 @@ class ReservationController {
   async getById(req, res) {
     try {
       const { id } = req.params;
+
+      if (!id) {
+        return res.status(400).json({ error: "El ID de la reserva es obligatorio" });
+      }
+
       const reservation = await ReservationModel.findById(id);
       if (!reservation) {
-        return res.status(404).json({ error: "Reservation not found" });
+        return res.status(404).json({ error: "Reserva no encontrada" });
       }
+
       res.status(200).json(reservation);
     } catch (error) {
       res.status(500).json({
-        error: "Internal Server Error",
+        error: "Error interno del servidor al obtener la reserva",
         details: error.message,
-        stack: error.stack
       });
     }
   }
 
-  // Crear una reserva
+  // Crear una nueva reserva
   async create(req, res) {
     try {
-      const { amenity_id, user_id, status_id, tariff_id, reservation_createAt, reservation_start_time, reservation_end_time, reservation_time_unit, reservation_capacity } = req.body;
-      if (!amenity_id || !user_id) {
-        return res.status(400).json({ error: "Required fields are missing" });
-      }
-      const reservationId = await ReservationModel.create({
+      const {
         amenity_id,
         user_id,
         status_id,
-        tariff_id,
-        reservation_createAt,
         reservation_start_time,
         reservation_end_time,
-        reservation_time_unit,
         reservation_capacity
+      } = req.body;
+
+      // Validación de campos requeridos
+      if (!amenity_id || !user_id || !reservation_start_time || !reservation_end_time) {
+        return res.status(400).json({
+          error: "Los campos amenity_id, user_id, reservation_start_time y reservation_end_time son obligatorios"
+        });
+      }
+
+      // Insertar nueva reserva
+      const reservationId = await ReservationModel.create({
+        amenity_id,
+        user_id,
+        status_id: status_id || null,
+        reservation_start_time,
+        reservation_end_time,
+        reservation_capacity: reservation_capacity || null,
       });
+
       if (!reservationId) {
         return res.status(500).json({
           error: "No se pudo crear la reserva. Verifica los datos y las claves foráneas."
         });
       }
-      res.status(201).json({ message: "Reservation created", id: reservationId });
+
+      res.status(201).json({
+        message: "Reserva creada exitosamente",
+        reservation_id: reservationId,
+      });
     } catch (error) {
       res.status(500).json({
-        error: "Internal Server Error",
+        error: "Error interno del servidor al crear la reserva",
         details: error.message,
-        stack: error.stack
       });
     }
   }
@@ -70,29 +88,47 @@ class ReservationController {
   async update(req, res) {
     try {
       const { id } = req.params;
-      const { amenity_id, user_id, status_id, tariff_id, reservation_start_time, reservation_end_time, reservation_time_unit, reservation_capacity } = req.body;
-      if (!id || !amenity_id || !user_id) {
-        return res.status(400).json({ error: "Required fields are missing" });
-      }
-      const updated = await ReservationModel.update(id, {
+      const {
         amenity_id,
         user_id,
         status_id,
-        tariff_id,
         reservation_start_time,
         reservation_end_time,
-        reservation_time_unit,
         reservation_capacity
-      });
-      if (!updated) {
-        return res.status(404).json({ error: "Reservation not found or not updated" });
+      } = req.body;
+
+      if (!id) {
+        return res.status(400).json({ error: "El ID de la reserva es obligatorio" });
       }
-      res.status(200).json({ message: "Reservation updated", data: updated });
+
+      // Validación mínima
+      if (!amenity_id || !user_id) {
+        return res.status(400).json({
+          error: "Los campos amenity_id y user_id son obligatorios para actualizar"
+        });
+      }
+
+      const updated = await ReservationModel.update(id, {
+        amenity_id,
+        user_id,
+        status_id: status_id || null,
+        reservation_start_time,
+        reservation_end_time,
+        reservation_capacity,
+      });
+
+      if (!updated) {
+        return res.status(404).json({ error: "Reserva no encontrada o no actualizada" });
+      }
+
+      res.status(200).json({
+        message: "Reserva actualizada exitosamente",
+        data: updated,
+      });
     } catch (error) {
       res.status(500).json({
-        error: "Internal Server Error",
+        error: "Error interno del servidor al actualizar la reserva",
         details: error.message,
-        stack: error.stack
       });
     }
   }
@@ -101,19 +137,22 @@ class ReservationController {
   async delete(req, res) {
     try {
       const { id } = req.params;
+
       if (!id) {
-        return res.status(400).json({ error: "Reservation id is required" });
+        return res.status(400).json({ error: "El ID de la reserva es obligatorio" });
       }
+
       const deleted = await ReservationModel.delete(id);
+
       if (!deleted) {
-        return res.status(404).json({ error: "Reservation not found or not deleted" });
+        return res.status(404).json({ error: "Reserva no encontrada o no eliminada" });
       }
-      res.status(200).json({ message: "Reservation deleted" });
+
+      res.status(200).json({ message: "Reserva eliminada exitosamente" });
     } catch (error) {
       res.status(500).json({
-        error: "Internal Server Error",
+        error: "Error interno del servidor al eliminar la reserva",
         details: error.message,
-        stack: error.stack
       });
     }
   }

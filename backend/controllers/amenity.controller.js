@@ -7,18 +7,15 @@ class AmenityController {
         name,
         capacity,
         description,
-        time_unit,
-        total,
         status_id,
-        tariff_id,
-        property_id,
         amenity_type_id,
       } = req.body;
 
-      // Basic validation
-      if (!name || !status_id) {
-        return res.status(400).json({ error: "Required fields are missing" });
+      // Basic validation: name required. status_id optional (default to 1)
+      if (!name) {
+        return res.status(400).json({ error: "The field 'name' is required" });
       }
+      const statusIdToUse = status_id || 1;
 
       console.log("Creating amenity with data:", req.body); // Debug log
 
@@ -26,26 +23,22 @@ class AmenityController {
         name,
         capacity,
         description,
-        time_unit,
-        total,
-        status_id,
-        tariff_id,
-        property_id,
+        status_id: statusIdToUse,
         amenity_type_id,
       });
 
-      console.log("Amenity created with ID:", amenityId); // Debug log
+      console.log('Amenity created with ID:', amenityId);
 
-      // Verificar que el ID se creó correctamente
       if (!amenityId) {
-        return res.status(500).json({ 
-          error: "Failed to create amenity - no ID returned" 
-        });
+        return res.status(500).json({ error: 'Failed to create amenity' });
       }
 
+      // Fetch the created row to return a consistent payload
+      const created = await AmenityModel.findById(amenityId);
+
       res.status(201).json({
-        message: "Amenity created successfully",
-        id: amenityId,
+        message: 'Amenity created successfully',
+        data: created,
       });
     } catch (error) {
       console.error("Error creating amenity:", error); // Mejor logging
@@ -76,18 +69,14 @@ class AmenityController {
         name,
         capacity,
         description,
-        time_unit,
-        total,
         status_id,
-        tariff_id,
-        property_id,
         amenity_type_id,
       } = req.body;
       
       const id = req.params.id;
 
       // Validación básica
-      if (!name || !status_id || !id) {
+      if (!name || !id) {
         return res.status(400).json({ error: "Required fields are missing" });
       }
 
@@ -100,16 +89,12 @@ class AmenityController {
       // Preparar fecha de actualización
       const updated_at = new Date();
 
-      // Ejecutar update
+      // Ejecutar update (solo campos existentes en la tabla)
       const updatedAmenity = await AmenityModel.update(id, {
         name,
         capacity,
         description,
-        time_unit,
-        total,
-        status_id,
-        tariff_id,
-        property_id,
+        status_id: status_id || existingAmenity.status_id,
         amenity_type_id,
         updated_at,
       });

@@ -1,16 +1,23 @@
 import { Router } from "express";
 import NotificationController from '../controllers/notification.controller.js';
 const router = Router();
-const name = '/notification';
-// Public route
 
-router.route(name)
-    .post(NotificationController.register) // Register a new notification
-    .get(NotificationController.show);// Show all notifications
+// Obtener todas las notificaciones
+router.get("/", NotificationController.getAllNotifications);
 
-router.route(`${name}/:id`)
-    .get(NotificationController.findById)// Show a notification by ID
-    .put(NotificationController.update)// Update a notification by ID
-    .delete(NotificationController.delete);// Delete a notification by ID
+// Obtener notificaciones por usuario
+router.get("/user/:userId", NotificationController.getNotificationsByUser);
+
+// Crear una nueva notificación
+router.post("/", NotificationController.createNotification);
+
+// Marcar una notificación como leída
+router.put("/:id/read", NotificationController.markAsRead);
+
+// Actualizar una notificación (por ejemplo, cambiar título, mensaje o prioridad)
+router.put("/:id", NotificationController.updateNotification);
+
+// Eliminar una notificación
+router.delete("/:id", NotificationController.deleteNotification);
 
 export default router;

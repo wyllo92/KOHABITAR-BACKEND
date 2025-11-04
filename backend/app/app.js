@@ -1,8 +1,3 @@
-/**
- * Author:Diego Casallas
- * Date: 2025-05-27
- * Description: 
-*/
 import express from 'express';
 import cors from 'cors';
 /* The routers are imported to handle specific routes in the application.*/

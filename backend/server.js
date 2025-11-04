@@ -1,6 +1,4 @@
 /**
- * Author:Diego Casallas
- * Date: 2025-05-19
  * Description: This is the main server file for the backend of the application.
 */
 import app from './app/app.js';

@@ -9,22 +9,18 @@ class VisitorController {
         visitor_name,
         Visitor_id_document,
         visitor_document,
-        Visitor_visit_reason,
-        visitor_purpose,
         Visitor_entry_time,
         visitor_entry_date,
         visitor_entry_time,
         Visitor_exit_time,
         visitor_exit_date,
         visitor_exit_time,
-        Visitor_authorized_by,
-        host_user_id,
         Property_id,
         property_id,
-        Status_id,
-        status_id,
         Vehicle_id,
+        vehicle_id,
         parkingSlot_id,
+        parking_slot_id,
         // Additional fields from JSON
         visitor_phone,
         visitor_document_type,
@@ -33,15 +29,18 @@ class VisitorController {
 
       const fullName = Visitor_full_name || visitor_name;
       const document = Visitor_id_document || visitor_document;
-      const reason = Visitor_visit_reason || visitor_purpose;
-      const authorizedBy = Visitor_authorized_by || host_user_id;
       const propertyId = Property_id || property_id;
-      const statusId = Status_id || status_id;
+      const vehicleId = Vehicle_id || vehicle_id;
+      const parkingSlotId = parkingSlot_id || parking_slot_id;
 
       // Handling datetime formats
       let entryTime = Visitor_entry_time;
       if (!entryTime && visitor_entry_date && visitor_entry_time) {
         entryTime = `${visitor_entry_date}T${visitor_entry_time}`;
+      }
+      // If no entry time provided, use current time
+      if (!entryTime) {
+        entryTime = new Date();
       }
 
       let exitTime = Visitor_exit_time;
@@ -50,50 +49,54 @@ class VisitorController {
       }
 
       // Basic validation
-      if (!fullName || !document || !reason || !entryTime || !authorizedBy || !propertyId || !statusId) {
+      if (!fullName || !document || !propertyId) {
         return res.status(400).json({ 
           error: 'Required fields are missing',
-          required: ['visitor_name/Visitor_full_name', 'visitor_document/Visitor_id_document', 'visitor_purpose/Visitor_visit_reason', 'visitor_entry_time/Visitor_entry_time', 'host_user_id/Visitor_authorized_by', 'property_id/Property_id', 'status_id/Status_id'],
+          required: ['visitor_name/Visitor_full_name', 'visitor_document/Visitor_id_document', 'property_id/Property_id'],
           received: Object.keys(req.body)
         });
       }
 
-      // Check if visitor with same document already exists and is active
+      // Check if visitor with same document is currently in the property (no exit time)
       const existingVisitor = await VisitorModel.findByDocument(document);
-      if (existingVisitor && existingVisitor.Status_id === 1) {
-        return res.status(409).json({ error: 'Visitor with this document is already registered and active' });
+      if (existingVisitor && !existingVisitor.Visitor_exit_time) {
+        return res.status(409).json({ 
+          error: 'Visitor with this document is already registered and has not checked out',
+          data: existingVisitor
+        });
       }
 
       const visitorId = await VisitorModel.create({
         Visitor_full_name: fullName,
         Visitor_id_document: document,
-        Visitor_visit_reason: reason,
         Visitor_entry_time: entryTime,
         Visitor_exit_time: exitTime,
-        Visitor_authorized_by: authorizedBy,
         Property_id: propertyId,
-        Status_id: statusId,
-        Vehicle_id,
-        parkingSlot_id
+        Vehicle_id: vehicleId,
+        parkingSlot_id: parkingSlotId
       });
 
       if (!visitorId) {
         return res.status(500).json({ error: 'Failed to create visitor' });
       }
 
+      const newVisitor = await VisitorModel.findById(visitorId);
+
       res.status(201).json({
         message: 'Visitor created successfully',
-        id: visitorId
+        id: visitorId,
+        data: newVisitor
       });
     } catch (error) {
+      console.error('Error in visitor register:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
   async show(req, res) {
     try {
-      const visitorModel = await VisitorModel.showActive();
-      res.status(201).json({
+      const visitorModel = await VisitorModel.show();
+      res.status(200).json({
         message: 'Visitors retrieved successfully',
         data: visitorModel
       });
@@ -110,22 +113,18 @@ class VisitorController {
         visitor_name,
         Visitor_id_document,
         visitor_document,
-        Visitor_visit_reason,
-        visitor_purpose,
         Visitor_entry_time,
         visitor_entry_date,
         visitor_entry_time: visitor_entry_time_alt,
         Visitor_exit_time,
         visitor_exit_date,
         visitor_exit_time,
-        Visitor_authorized_by,
-        host_user_id,
         Property_id,
         property_id,
-        Status_id,
-        status_id,
         Vehicle_id,
+        vehicle_id,
         parkingSlot_id,
+        parking_slot_id,
         // Additional fields from JSON
         visitor_phone,
         visitor_document_type,
@@ -135,10 +134,9 @@ class VisitorController {
 
       const fullName = Visitor_full_name || visitor_name;
       const document = Visitor_id_document || visitor_document;
-      const reason = Visitor_visit_reason || visitor_purpose;
-      const authorizedBy = Visitor_authorized_by || host_user_id;
       const propertyId = Property_id || property_id;
-      const statusId = Status_id || status_id;
+      const vehicleId = Vehicle_id || vehicle_id;
+      const parkingSlotId = parkingSlot_id || parking_slot_id;
 
       // Handle datetime formats
       let entryTime = Visitor_entry_time;
@@ -153,32 +151,29 @@ class VisitorController {
       }
 
       // Basic validation
-      if (!fullName || !document || !reason || !entryTime || !authorizedBy || !propertyId || !statusId || !id) {
+      if (!fullName || !document || !entryTime || !propertyId || !id) {
         console.log('Validation failed - missing required fields');
         return res.status(400).json({ 
           error: 'Required fields are missing',
-          required: ['visitor_name/Visitor_full_name', 'visitor_document/Visitor_id_document', 'visitor_purpose/Visitor_visit_reason', 'visitor_entry_time/Visitor_entry_time', 'host_user_id/Visitor_authorized_by', 'property_id/Property_id', 'status_id/Status_id'],
+          required: ['visitor_name/Visitor_full_name', 'visitor_document/Visitor_id_document', 'visitor_entry_time/Visitor_entry_time', 'property_id/Property_id'],
           received: Object.keys(req.body)
         });
       }
 
       // Verify if the Visitor already exists  
-      const existingVisitor = await VisitorModel.findByIdActive(id);
+      const existingVisitor = await VisitorModel.findById(id);
       if (!existingVisitor) {
-        return res.status(409).json({ data: '', error: 'The Visitor does not exist' });
+        return res.status(404).json({ error: 'The Visitor does not exist' });
       }
 
       const updateData = {
         Visitor_full_name: fullName,
         Visitor_id_document: document,
-        Visitor_visit_reason: reason,
         Visitor_entry_time: entryTime,
         Visitor_exit_time: exitTime,
-        Visitor_authorized_by: authorizedBy,
         Property_id: propertyId,
-        Status_id: statusId,
-        Vehicle_id,
-        parkingSlot_id
+        Vehicle_id: vehicleId,
+        parkingSlot_id: parkingSlotId
       };
 
       const updateVisitorModel = await VisitorModel.update(id, updateData);
@@ -187,7 +182,7 @@ class VisitorController {
         return res.status(500).json({ error: 'Failed to update visitor' });
       }
 
-      res.status(201).json({
+      res.status(200).json({
         message: 'Visitor updated successfully',
         data: updateVisitorModel
       });
@@ -204,9 +199,20 @@ class VisitorController {
       if (!id) {
         return res.status(400).json({ error: 'Required fields are missing' });
       }
-      // Verify if the Visitor already exists
+      
+      // Verify if the Visitor exists
+      const existingVisitor = await VisitorModel.findById(id);
+      if (!existingVisitor) {
+        return res.status(404).json({ error: 'Visitor not found' });
+      }
+
       const deleteVisitorModel = await VisitorModel.delete(id);
-      res.status(201).json({
+      
+      if (!deleteVisitorModel) {
+        return res.status(500).json({ error: 'Failed to delete visitor' });
+      }
+
+      res.status(200).json({
         message: 'Visitor deleted successfully',
         data: deleteVisitorModel
       });
@@ -228,12 +234,166 @@ class VisitorController {
       if (!visitorModel) {
         return res.status(404).json({ error: 'Visitor not found' });
       }
-      res.status(201).json({
+      res.status(200).json({
         message: 'Visitor found successfully',
         data: visitorModel
       });
     } catch (error) {
       console.error('Error finding visitor:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async getCurrentVisitors(req, res) {
+    try {
+      const visitors = await VisitorModel.findCurrentVisitors();
+      res.status(200).json({
+        message: 'Current visitors retrieved successfully',
+        data: visitors
+      });
+    } catch (error) {
+      console.error('Error getting current visitors:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async checkOut(req, res) {
+    try {
+      const id = req.params.id;
+      const { exit_time } = req.body;
+
+      if (!id) {
+        return res.status(400).json({ error: 'Visitor ID is required' });
+      }
+
+      // Verify if the Visitor exists
+      const existingVisitor = await VisitorModel.findById(id);
+      if (!existingVisitor) {
+        return res.status(404).json({ error: 'Visitor not found' });
+      }
+
+      // Check if visitor already checked out
+      if (existingVisitor.Visitor_exit_time) {
+        return res.status(409).json({ 
+          error: 'Visitor has already checked out',
+          exit_time: existingVisitor.Visitor_exit_time
+        });
+      }
+
+      const checkOutSuccess = await VisitorModel.checkOut(id, exit_time);
+
+      if (!checkOutSuccess) {
+        return res.status(500).json({ error: 'Failed to check out visitor' });
+      }
+
+      const updatedVisitor = await VisitorModel.findById(id);
+
+      res.status(200).json({
+        message: 'Visitor checked out successfully',
+        data: updatedVisitor
+      });
+    } catch (error) {
+      console.error('Error checking out visitor:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async getTodayVisitors(req, res) {
+    try {
+      const visitors = await VisitorModel.getTodayVisitors();
+      res.status(200).json({
+        message: 'Today\'s visitors retrieved successfully',
+        data: visitors
+      });
+    } catch (error) {
+      console.error('Error getting today visitors:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async getStatistics(req, res) {
+    try {
+      const statistics = await VisitorModel.getVisitorStatistics();
+      res.status(200).json({
+        message: 'Visitor statistics retrieved successfully',
+        data: statistics
+      });
+    } catch (error) {
+      console.error('Error getting visitor statistics:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async getFrequentVisitors(req, res) {
+    try {
+      const limit = parseInt(req.query.limit) || 10;
+      const frequentVisitors = await VisitorModel.getFrequentVisitors(limit);
+      res.status(200).json({
+        message: 'Frequent visitors retrieved successfully',
+        data: frequentVisitors
+      });
+    } catch (error) {
+      console.error('Error getting frequent visitors:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async getVisitorHistory(req, res) {
+    try {
+      const { document } = req.params;
+      
+      if (!document) {
+        return res.status(400).json({ error: 'Visitor document is required' });
+      }
+
+      const history = await VisitorModel.getVisitorHistory(document);
+      res.status(200).json({
+        message: 'Visitor history retrieved successfully',
+        data: history
+      });
+    } catch (error) {
+      console.error('Error getting visitor history:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async findByPropertyId(req, res) {
+    try {
+      const { propertyId } = req.params;
+      
+      if (!propertyId) {
+        return res.status(400).json({ error: 'Property ID is required' });
+      }
+
+      const visitors = await VisitorModel.findByPropertyId(propertyId);
+      res.status(200).json({
+        message: 'Visitors by property retrieved successfully',
+        data: visitors
+      });
+    } catch (error) {
+      console.error('Error getting visitors by property:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  async findByDateRange(req, res) {
+    try {
+      const { start_date, end_date } = req.query;
+      
+      if (!start_date || !end_date) {
+        return res.status(400).json({ 
+          error: 'Start date and end date are required',
+          format: 'YYYY-MM-DD HH:mm:ss'
+        });
+      }
+
+      const visitors = await VisitorModel.findByDateRange(start_date, end_date);
+      res.status(200).json({
+        message: 'Visitors by date range retrieved successfully',
+        data: visitors
+      });
+    } catch (error) {
+      console.error('Error getting visitors by date range:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }

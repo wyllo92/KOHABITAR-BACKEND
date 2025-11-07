@@ -19,7 +19,13 @@ class UserModel {
 
   static async showActive() {
     const [rows] = await connect.query(
-      'SELECT u.*, r.role_name, s.status_name FROM user u LEFT JOIN role r ON u.role_id = r.role_id LEFT JOIN status s ON u.status_id = s.status_id WHERE u.status_id = 1 ORDER BY u.user_id'
+      `SELECT 
+        user_id,
+        COALESCE(p.profile_fullName, u.user_name) as user_name
+      FROM user u 
+      LEFT JOIN profile p ON u.user_id = p.user_id
+      WHERE u.status_id = 1 
+      ORDER BY user_name`
     );
     return rows;
   }

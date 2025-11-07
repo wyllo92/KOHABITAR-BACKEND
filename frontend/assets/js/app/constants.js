@@ -25,6 +25,7 @@ const URL_TARIFF=HOST+"/tariff/";
 const URL_NOTIFICATION=HOST+"/notification/";
 const URL_NOTIFICATION_TYPE=HOST+"/notificationType/";
 const URL_AMENITY_TYPE=HOST+"/amenityType/";
+const URL_CPCG_TYPE=HOST+"/cpcgType/";
 const URL_REPORT=HOST+"/report/";
 const URL_LOGIN=HOST+"/login/";
 const URL_PROFILE=HOST+"/profile/";

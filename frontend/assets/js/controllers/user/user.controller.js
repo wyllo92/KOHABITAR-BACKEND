@@ -168,16 +168,24 @@ function createTable(data) {
 }
 
 function createSelectStatus(data) {
+  if (!objSelectStatus) {
+    console.error('Status select element not found');
+    return;
+  }
+  
   objSelectStatus.innerHTML = "<option value='' selected disabled>Seleccione un estado</option>";
 
-  let getData = data['data'];
-  if (getData.length === 0) return;//Validate if the data is empty
-  let rowLong = getData.length;
-  for (let i = 0; i < rowLong; i++) {
-    let row = getData[i];
-    let dataRow = `<option value="${row.status_id}">${row.status_name}</option>`;
-    objSelectStatus.innerHTML += dataRow;
+  if (!data || !data.data || !Array.isArray(data.data)) {
+    console.warn('Invalid or empty status data');
+    return;
   }
+
+  data.data.forEach(row => {
+    if (row && row.status_id && row.status_name) {
+      let dataRow = `<option value="${row.status_id}">${row.status_name}</option>`;
+      objSelectStatus.innerHTML += dataRow;
+    }
+  });
 }
 
 function createSelectRole(data) {
@@ -207,17 +215,35 @@ function loadView() {
 }
 
 function getDataStatus() {
+  toggleLoading(true);
   documentData = "";
   httpMethod = METHODS[0]; // GET method
-  endpointUrl = URL_STATUS + "entity/usuarios";  // 👈 Cambié aquí, ahora trae solo los estados de usuarios
+  endpointUrl = URL_STATUS;  // Remove entity filter for now to see all statuses
 
+  console.log('Fetching statuses from:', endpointUrl);
+  
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
   resultServices.then(response => {
+    console.log('Raw response:', response);
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
+    }
     return response.json();
   }).then(data => {
-    createSelectStatus(data); // ✅ ya solo carga estados de usuarios
+    console.log('Status data received:', data);
+    if (!data || !data.data || !Array.isArray(data.data)) {
+      throw new Error('Invalid data format received from server');
+    }
+    if (data.data.length === 0) {
+      console.warn('No status data available from server');
+      objSelectStatus.innerHTML = "<option value='' selected disabled>No hay estados disponibles</option>";
+      return;
+    }
+    createSelectStatus(data);
   }).catch(error => {
-    console.log(error);
+    console.error('Error fetching status:', error);
+    console.error('Error details:', error.stack);
+    objSelectStatus.innerHTML = "<option value='' selected disabled>Error al cargar estados: " + error.message + "</option>";
   }).finally(() => {
     toggleLoading(false);
   });

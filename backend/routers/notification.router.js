@@ -1,23 +1,25 @@
 import { Router } from "express";
-import NotificationController from '../controllers/notification.controller.js';
+import NotificationController from "../controllers/notification.controller.js";
+
 const router = Router();
+const name = "/notification"; // prefijo base opcional, depende cómo montes el router en app.js
 
-// Obtener todas las notificaciones
-router.get("/", NotificationController.getAllNotifications);
+// 📩 Crear una nueva notificación
+router.post(name, NotificationController.createNotification);
 
-// Obtener notificaciones por usuario
-router.get("/user/:userId", NotificationController.getNotificationsByUser);
+// 📋 Obtener todas las notificaciones
+router.get(name, NotificationController.getAllNotifications);
 
-// Crear una nueva notificación
-router.post("/", NotificationController.createNotification);
+// 👤 Obtener notificaciones por usuario
+router.get(`${name}/user/:userId`, NotificationController.getNotificationsByUser);
 
-// Marcar una notificación como leída
-router.put("/:id/read", NotificationController.markAsRead);
+// ✅ Marcar una notificación como leída
+router.put(`${name}/:id/read`, NotificationController.markAsRead);
 
-// Actualizar una notificación (por ejemplo, cambiar título, mensaje o prioridad)
-router.put("/:id", NotificationController.updateNotification);
+// ✏️ Actualizar una notificación
+router.put(`${name}/:id`, NotificationController.updateNotification);
 
-// Eliminar una notificación
-router.delete("/:id", NotificationController.deleteNotification);
+// 🗑️ Eliminar una notificación
+router.delete(`${name}/:id`, NotificationController.deleteNotification);
 
 export default router;

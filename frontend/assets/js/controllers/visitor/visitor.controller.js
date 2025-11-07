@@ -5,13 +5,11 @@ document.addEventListener('DOMContentLoaded', async ()=> {
   await checkAuth();
   console.log('visitor controller has been loaded');
   fadeInElement(document.querySelector('body'), 1000);
-  // Initialize the loading screen
 });
 
 const objForm = new Form('visitorForm', 'edit-input');
 const objModal = new bootstrap.Modal(document.getElementById('appModal'));
 const objTableBody = document.getElementById('app-table-body');
-const objSelectStatus = document.getElementById('Status_id');
 const objSelectProperty = document.getElementById('Property_id');
 const objSelectVehicle = document.getElementById('Vehicle_id');
 const objSelectParking = document.getElementById('parkingSlot_id');
@@ -40,6 +38,7 @@ myForm.addEventListener('submit', (e) => {
     endpointUrl = URL_VISITOR + keyId;
   }
   documentData = objForm.getDataForm();
+  
   // If entry date and time provided as separate fields, combine
   if (documentData.visitor_entry_date && documentData.visitor_entry_time) {
     documentData.Visitor_entry_time = `${documentData.visitor_entry_date}T${documentData.visitor_entry_time}`;
@@ -57,7 +56,7 @@ myForm.addEventListener('submit', (e) => {
   console.log('Sending visitor payload:', documentData, 'to', endpointUrl, 'method:', httpMethod);
 
   // Normalize empty strings to null for numeric/optional ids
-  ['Vehicle_id', 'parkingSlot_id'].forEach(k => {
+  ['Vehicle_id', 'parkingSlot_id', 'Property_id'].forEach(k => {
     if (k in documentData) {
       if (documentData[k] === "" || documentData[k] === undefined) {
         documentData[k] = null;
@@ -98,9 +97,9 @@ myForm.addEventListener('submit', (e) => {
     // Success
     let successMsg = '';
     if (result.data && typeof result.data === 'object') {
-      successMsg = result.data.message || 'Visitante creado correctamente';
+      successMsg = result.data.message || (insertUpdate ? 'Visitante creado correctamente' : 'Visitante actualizado correctamente');
     } else {
-      successMsg = 'Visitante creado correctamente';
+      successMsg = insertUpdate ? 'Visitante creado correctamente' : 'Visitante actualizado correctamente';
     }
     console.log('Visitor saved OK:', successMsg);
     alert(successMsg);
@@ -121,18 +120,15 @@ function add() {
   objForm.enabledForm();
   objForm.enabledButton();
   objForm.showButton();
-  // Autofill authorized_by with current user if available
-  try {
-    const storage = window.localStorage;
-    const currentUserId = storage.getItem('user_id') || storage.getItem('userId');
-    const currentUserName = storage.getItem('user_name') || storage.getItem('userName');
-    const authInput = document.getElementById('Visitor_authorized_by');
-    if (authInput && !authInput.value) {
-      authInput.value = currentUserId || currentUserName || '';
-    }
-  } catch (err) {
-    console.warn('Could not autofill Visitor_authorized_by from storage', err);
-  }
+  
+  // Set default entry time to now
+  const now = new Date();
+  const dateStr = now.toISOString().split('T')[0];
+  const timeStr = now.toTimeString().split(' ')[0].slice(0,5);
+  const dateInput = document.getElementById('visitor_entry_date');
+  const timeInput = document.getElementById('visitor_entry_time');
+  if (dateInput) dateInput.value = dateStr;
+  if (timeInput) timeInput.value = timeStr;
 }
 
 function showId(id) {
@@ -165,14 +161,34 @@ function delete_(id) {
     const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
     resultServices.then(response => response.json())
     .then(data => {
-      //console.log(data);
+      console.log('Delete response:', data);
+      alert(data.message || 'Visitante eliminado correctamente');
     }).catch(error => {
-      console.log(error);
+      console.log('Delete error:', error);
+      alert('Error al eliminar visitante');
     }).finally(() => {
       loadView();
     });
   } else {
     console.log("cancel");
+  }
+}
+
+function checkOut(id) {
+  if (confirm('¿Desea registrar la salida de este visitante?')) {
+    documentData = { exit_time: new Date().toISOString() };
+    httpMethod = METHODS[2]; // PUT
+    endpointUrl = URL_VISITOR + id + '/checkout';
+    const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
+    resultServices.then(response => response.json())
+    .then(data => {
+      console.log('Checkout response:', data);
+      alert(data.message || 'Salida registrada correctamente');
+      loadView();
+    }).catch(error => {
+      console.log('Checkout error:', error);
+      alert('Error al registrar salida');
+    });
   }
 }
 
@@ -207,6 +223,7 @@ function getDataId(id) {
     }
   }).catch(error => {
     console.log(error);
+    alert('Error al cargar datos del visitante');
   }).finally(() => {
     showHiddenModal(true);
   });
@@ -222,6 +239,7 @@ function getData() {
     createTable(data);
   }).catch(error => {
     console.log(error);
+    alert('Error al cargar visitantes');
   }).finally(() => {
     new DataTable(appTable);
     toggleLoading(false);
@@ -231,37 +249,43 @@ function getData() {
 function createTable(data) {
   objTableBody.innerHTML = "";
   let getData = data['data'];
-  if (!getData || getData.length === 0) return;
+  if (!getData || getData.length === 0) {
+    objTableBody.innerHTML = "<tr><td colspan='8' class='text-center'>No hay visitantes registrados</td></tr>";
+    return;
+  }
   let rowLong = getData.length;
   for (let i = 0; i < rowLong; i++) {
     let row = getData[i];
-    const vehicleInfo = row.vehicle_model ? `${row.vehicle_model} (${row.vehicle_type || ''})` : '';
+    const vehicleInfo = row.vehicle_model ? `${row.vehicle_model} (${row.vehicle_type || ''})` : 'Sin vehículo';
+    const parkingInfo = row.parking_slot_code || 'Sin parqueadero';
+    const entryTime = row.Visitor_entry_time ? new Date(row.Visitor_entry_time).toLocaleString('es-CO') : '';
+    const exitTime = row.Visitor_exit_time ? new Date(row.Visitor_exit_time).toLocaleString('es-CO') : '';
+    const isActive = !row.Visitor_exit_time;
+    const statusBadge = isActive ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Finalizado</span>';
+    
+    let checkoutButton = '';
+    if (isActive) {
+      checkoutButton = `<button type="button" title="Registrar Salida" class="btn btn-warning btn-sm" onclick="checkOut(${row.Visitor_id})"><i class='fas fa-sign-out-alt'></i></button>`;
+    }
+    
     let dataRow = `<tr>
 <td>${row.Visitor_id}</td>
 <td>${row.Visitor_full_name}</td>
 <td>${row.Visitor_id_document}</td>
 <td>${vehicleInfo}</td>
+<td>${parkingInfo}</td>
 <td>${row.property_name || 'N/A'}</td>
-<td>${row.status_name || 'N/A'}</td>
-<td>${row.Visitor_entry_time || ''}</td>
-<td>${row.Visitor_exit_time || ''}</td>
+<td>${statusBadge}</td>
+<td>${entryTime}</td>
+<td>${exitTime}</td>
 <td>
-<button type="button" title="Button Show"class="btn btn-success" onclick="showId(${row.Visitor_id})"><i class='fas fa-eye'></i></button>
-<button type="button"title="Button Edit" class="btn btn-primary" onclick="edit(${row.Visitor_id})"><i class='fas fa-edit' ></i></button>
-<button type="button" title="Button Delete" class="btn btn-danger" onclick="delete_(${row.Visitor_id})"><i class='fas fa-trash' ></i></button>
-`;
+<button type="button" title="Ver" class="btn btn-success btn-sm" onclick="showId(${row.Visitor_id})"><i class='fas fa-eye'></i></button>
+<button type="button" title="Editar" class="btn btn-primary btn-sm" onclick="edit(${row.Visitor_id})"><i class='fas fa-edit'></i></button>
+<button type="button" title="Eliminar" class="btn btn-danger btn-sm" onclick="delete_(${row.Visitor_id})"><i class='fas fa-trash'></i></button>
+${checkoutButton}
+</td>
+</tr>`;
     objTableBody.innerHTML += dataRow;
-  }
-}
-
-function createSelectStatus(data) {
-  objSelectStatus.innerHTML = "<option value='' selected disabled>Seleccione un estado</option>";
-  let getData = data['data'];
-  if (!getData || getData.length === 0) return;
-  for (let i = 0; i < getData.length; i++) {
-    let row = getData[i];
-    let dataRow = `<option value="${row.status_id}">${row.status_name}</option>`;
-    objSelectStatus.innerHTML += dataRow;
   }
 }
 
@@ -293,7 +317,8 @@ function createSelectParking(data) {
   if (!getData || getData.length === 0) return;
   for (let i = 0; i < getData.length; i++) {
     let row = getData[i];
-    let dataRow = `<option value="${row.parkingSlot_id}">${row.code} </option>`;
+    const isAvailable = row.is_available ? '' : ' (Ocupado)';
+    let dataRow = `<option value="${row.parkingSlot_id}">${row.code}${isAvailable}</option>`;
     objSelectParking.innerHTML += dataRow;
   }
 }
@@ -311,17 +336,6 @@ function loadView() {
   toggleLoading(true);
 }
 
-function getDataStatus() {
-  documentData = "";
-  httpMethod = METHODS[0];
-  endpointUrl = URL_STATUS;
-  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
-  resultServices.then(response => response.json())
-  .then(data => createSelectStatus(data))
-  .catch(error => console.log(error))
-  .finally(() => toggleLoading(false));
-}
-
 function getDataProperty() {
   documentData = "";
   httpMethod = METHODS[0];
@@ -329,7 +343,7 @@ function getDataProperty() {
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
   resultServices.then(response => response.json())
   .then(data => createSelectProperty(data))
-  .catch(error => console.log(error))
+  .catch(error => console.log('Error loading properties:', error))
   .finally(() => toggleLoading(false));
 }
 
@@ -340,7 +354,7 @@ function getDataVehicle() {
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
   resultServices.then(response => response.json())
   .then(data => createSelectVehicle(data))
-  .catch(error => console.log(error))
+  .catch(error => console.log('Error loading vehicles:', error))
   .finally(() => toggleLoading(false));
 }
 
@@ -351,15 +365,40 @@ function getDataParking() {
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
   resultServices.then(response => response.json())
   .then(data => createSelectParking(data))
-  .catch(error => console.log(error))
+  .catch(error => console.log('Error loading parking slots:', error))
   .finally(() => toggleLoading(false));
+}
+
+// Additional utility functions for visitor management
+function getCurrentVisitors() {
+  documentData = "";
+  httpMethod = METHODS[0];
+  endpointUrl = URL_VISITOR + 'current';
+  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
+  resultServices.then(response => response.json())
+  .then(data => {
+    console.log('Current visitors:', data);
+    createTable(data);
+  })
+  .catch(error => console.log('Error loading current visitors:', error));
+}
+
+function getTodayVisitors() {
+  documentData = "";
+  httpMethod = METHODS[0];
+  endpointUrl = URL_VISITOR + 'today';
+  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
+  resultServices.then(response => response.json())
+  .then(data => {
+    console.log('Today visitors:', data);
+    createTable(data);
+  })
+  .catch(error => console.log('Error loading today visitors:', error));
 }
 
 window.addEventListener('load', () => {
   loadView();
-  getDataStatus();
   getDataProperty();
   getDataVehicle();
   getDataParking();
 });
-

@@ -187,8 +187,8 @@ function getDataProperties() {
 }
 
 function getDataTypes() {
-  // Assuming there is an endpoint for cpcg types
-  getDataServices('', METHODS[0], HOST + '/cpcgType/').then(r=>r.json()).then(d=>createSelectType(d)).catch(e=>console.log(e));
+  // Load CPCG types from API
+  getDataServices('', METHODS[0], URL_CPCG_TYPE).then(r=>r.json()).then(d=>createSelectType(d)).catch(e=>console.log(e));
 }
 
 function getDataStatus() {

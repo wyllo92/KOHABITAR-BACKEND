@@ -4,13 +4,18 @@ const NotificationModel = {
   // Obtener todas las notificaciones
   async getAll() {
     const [rows] = await connect.query(`
-      SELECT n.*, u.username, p.property_name, s.status_name, nt.notification_type_name
+      SELECT 
+        n.*,
+        u.username, 
+        p.property_name, 
+        s.status_name, 
+        nt.notification_type_name
       FROM notification n
-      JOIN user u ON n.User_id = u.user_id
-      JOIN property p ON n.Property_id = p.property_id
-      JOIN status s ON n.Status_id = s.status_id
-      JOIN notification_type nt ON n.Notification_type_id = nt.Notification_type_id
-      ORDER BY n.Notification_createAt DESC
+      JOIN user u ON n.user_id = u.user_id
+      JOIN property p ON n.property_id = p.property_id
+      JOIN status s ON n.status_id = s.status_id
+      JOIN notification_type nt ON n.notification_type_id = nt.notification_type_id
+      ORDER BY n.notification_created_at DESC
     `);
     return rows;
   },
@@ -19,12 +24,15 @@ const NotificationModel = {
   async getByUser(userId) {
     const [rows] = await connect.query(
       `
-      SELECT n.*, nt.notification_type_name, s.status_name
+      SELECT 
+        n.*, 
+        nt.notification_type_name, 
+        s.status_name
       FROM notification n
-      JOIN notification_type nt ON n.Notification_type_id = nt.Notification_type_id
-      JOIN status s ON n.Status_id = s.status_id
-      WHERE n.User_id = ?
-      ORDER BY n.Notification_createAt DESC
+      JOIN notification_type nt ON n.notification_type_id = nt.notification_type_id
+      JOIN status s ON n.status_id = s.status_id
+      WHERE n.user_id = ?
+      ORDER BY n.notification_created_at DESC
       `,
       [userId]
     );
@@ -34,39 +42,41 @@ const NotificationModel = {
   // Crear una nueva notificación
   async create(data) {
     const {
-      User_id,
-      Property_id,
-      Notification_type_id,
-      Notification_title,
-      Notification_message,
-      Status_id,
-      Notification_priority,
+      user_id,
+      property_id,
+      notification_type_id,
+      notification_title,
+      notification_message,
+      status_id
     } = data;
 
     const [result] = await connect.query(
       `
       INSERT INTO notification 
-      (User_id, Property_id, Notification_type_id, Notification_title, Notification_message, Status_id, Notification_priority)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      (user_id, property_id, notification_type_id, notification_title, notification_message, status_id)
+      VALUES (?, ?, ?, ?, ?, ?)
       `,
       [
-        User_id,
-        Property_id,
-        Notification_type_id,
-        Notification_title,
-        Notification_message,
-        Status_id,
-        Notification_priority,
+        user_id,
+        property_id,
+        notification_type_id,
+        notification_title,
+        notification_message,
+        status_id
       ]
     );
 
-    return { id: result.insertId, ...data }; // 🔹 Retorna el ID y los datos
+    return { notification_id: result.insertId, ...data };
   },
 
   // Marcar notificación como leída
   async markAsRead(notificationId) {
     const [result] = await connect.query(
-      `UPDATE notification SET Status_id = 2, Notification_updateAt = NOW() WHERE Notification_id = ?`,
+      `
+      UPDATE notification 
+      SET status_id = 2, notification_updated_at = CURRENT_TIMESTAMP
+      WHERE notification_id = ?
+      `,
       [notificationId]
     );
     return result.affectedRows > 0;
@@ -78,19 +88,17 @@ const NotificationModel = {
       `
       UPDATE notification 
       SET 
-        Notification_title = ?, 
-        Notification_message = ?, 
-        Notification_priority = ?, 
-        Status_id = ?, 
-        Notification_updateAt = NOW()
-      WHERE Notification_id = ?
+        notification_title = ?, 
+        notification_message = ?, 
+        status_id = ?, 
+        notification_updated_at = CURRENT_TIMESTAMP
+      WHERE notification_id = ?
       `,
       [
-        data.Notification_title,
-        data.Notification_message,
-        data.Notification_priority,
-        data.Status_id,
-        notificationId,
+        data.notification_title,
+        data.notification_message,
+        data.status_id,
+        notificationId
       ]
     );
     return result.affectedRows > 0;
@@ -99,11 +107,11 @@ const NotificationModel = {
   // Eliminar notificación
   async delete(notificationId) {
     const [result] = await connect.query(
-      `DELETE FROM notification WHERE Notification_id = ?`,
+      `DELETE FROM notification WHERE notification_id = ?`,
       [notificationId]
     );
     return result.affectedRows > 0;
-  },
+  }
 };
 
 export default NotificationModel;

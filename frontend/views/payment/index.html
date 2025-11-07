@@ -37,10 +37,6 @@
               <th>Fecha</th>
               <th>Método</th>
               <th>Referencia</th>
-              <th>Factura</th>
-              <th>Reserva</th>
-              <th>Cajón</th>
-              <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -54,10 +50,6 @@
               <td>Fecha</td>
               <td>Método</td>
               <td>Referencia</td>
-              <td>Factura</td>
-              <td>Reserva</td>
-              <td>Cajón</td>
-              <td>Estado</td>
               <td>Acciones</td>
             </tr>
           </tfoot>
@@ -78,77 +70,66 @@
               <form id="paymentForm">
                 <div class="row g-3">
 
+                  <!-- Usuario (Requerido) -->
                   <div class="col-md-6">
-                    <label for="user_id" class="form-label">Usuario</label>
+                    <label for="user_id" class="form-label fw-semibold">
+                      Usuario <span class="text-danger">*</span>
+                    </label>
                     <select class="form-select" id="user_id" name="user_id" required>
                       <option value="" selected disabled>Seleccione un usuario</option>
                     </select>
                   </div>
 
+                  <!-- Monto (Requerido) -->
                   <div class="col-md-6">
-                    <div class="form-floating">
-                      <input type="number" step="0.01" class="form-control" id="amount_paid" name="amount_paid" placeholder="Monto" required>
-                      <label for="amount_paid">Monto</label>
+                    <label for="amount_paid" class="form-label fw-semibold">
+                      Monto <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text">$</span>
+                      <input type="number" step="0.01" min="0.01" class="form-control" id="amount_paid" name="amount_paid" placeholder="0.00" required>
                     </div>
+                    <small class="form-text text-muted">Debe ser mayor a 0</small>
                   </div>
 
+                  <!-- Fecha de pago (Requerido) -->
                   <div class="col-md-6">
-                    <div class="form-floating">
-                      <input type="datetime-local" class="form-control" id="payment_date" name="payment_date" placeholder="Fecha de pago" required>
-                      <label for="payment_date">Fecha de pago</label>
-                    </div>
+                    <label for="payment_date" class="form-label fw-semibold">
+                      Fecha de pago <span class="text-danger">*</span>
+                    </label>
+                    <input type="datetime-local" class="form-control" id="payment_date" name="payment_date" required>
                   </div>
 
+                  <!-- Método (Opcional) -->
                   <div class="col-md-6">
-                    <div class="form-floating">
-                      <input type="text" class="form-control" id="method" name="method" placeholder="Método">
-                      <label for="method">Método</label>
-                    </div>
-                  </div>
-
-                  <div class="col-md-6">
-                    <div class="form-floating">
-                      <input type="text" class="form-control" id="reference" name="reference" placeholder="Referencia">
-                      <label for="reference">Referencia</label>
-                    </div>
-                  </div>
-
-                  <div class="col-md-6">
-                    <label for="invoice_id" class="form-label">Factura</label>
-                    <select class="form-select" id="invoice_id" name="invoice_id">
-                      <option value="" selected>Sin factura</option>
+                    <label for="method" class="form-label fw-semibold">Método de pago</label>
+                    <select class="form-select" id="method" name="method">
+                      <option value="">Seleccione un método</option>
+                      <option value="Efectivo">Efectivo</option>
+                      <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+                      <option value="Tarjeta de Débito">Tarjeta de Débito</option>
+                      <option value="Transferencia">Transferencia Bancaria</option>
+                      <option value="PayPal">PayPal</option>
+                      <option value="Otro">Otro</option>
                     </select>
                   </div>
 
-                  <div class="col-md-6">
-                    <label for="reservation_id" class="form-label">Reserva</label>
-                    <select class="form-select" id="reservation_id" name="reservation_id">
-                      <option value="" selected>Sin reserva</option>
-                    </select>
-                  </div>
-
-                  <div class="col-md-6">
-                    <label for="parking_assignment_id" class="form-label">Cajón</label>
-                    <select class="form-select" id="parking_assignment_id" name="parking_assignment_id">
-                      <option value="" selected>Sin cajón</option>
-                    </select>
-                  </div>
-
-                  <div class="col-md-6">
-                    <label for="status_id" class="form-label">Estado</label>
-                    <select class="form-select" id="status_id" name="status_id" required>
-                      <option value="" selected disabled>Seleccione estado</option>
-                    </select>
+                  <!-- Referencia (Opcional) -->
+                  <div class="col-md-12">
+                    <label for="reference" class="form-label fw-semibold">Referencia / Número de transacción</label>
+                    <input type="text" class="form-control" id="reference" name="reference" placeholder="Ej: TRX123456789" maxlength="100">
+                    <small class="form-text text-muted">Opcional: Ingrese el número de referencia o código de transacción</small>
                   </div>
 
                 </div>
 
-                <div class="col-12 d-flex justify-content-between mt-3">
+                <!-- Botones de acción -->
+                <div class="col-12 d-flex justify-content-between mt-4">
                   <button type="reset" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-counterclockwise me-1"></i> Resetear
+                    <i class="fas fa-redo me-1"></i> Limpiar
                   </button>
-                  <button type="submit" class="btn btn-success ">
-                    <i class="bi bi-send-fill me-1"></i> Enviar
+                  <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save me-1"></i> Guardar
                   </button>
                 </div>
               </form>
@@ -161,6 +142,7 @@
     </main>
   </div>
 
+  <!-- Loading Screen -->
   <div id="loading-screen">
     <div class="spinner-border text-light spinner" role="status">
       <span class="visually-hidden">Cargando...</span>
@@ -168,6 +150,7 @@
     <p class="mt-3">Cargando datos, por favor espera...</p>
   </div>
 
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>

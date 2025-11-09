@@ -284,7 +284,7 @@ function loadView() {
 function getDataStatus() {
   documentData = "";
   httpMethod = METHODS[0]; // GET
-  endpointUrl = URL_STATUS + "entity/propiedades";  // ✅ solo estados de propiedades
+  endpointUrl = URL_STATUS + "entity/property";  // ✅ solo estados de propiedades
 
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
   resultServices.then(response => response.json())

@@ -41,7 +41,7 @@ class AmenityController {
         data: created,
       });
     } catch (error) {
-      console.error("Error creating amenity:", error); // Mejor logging
+      console.error("Error creating amenity:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
@@ -86,17 +86,13 @@ class AmenityController {
         return res.status(404).json({ error: "Amenity not found" });
       }
 
-      // Preparar fecha de actualización
-      const updated_at = new Date();
-
-      // Ejecutar update (solo campos existentes en la tabla)
+      // Ejecutar update (la fecha se maneja automáticamente en el modelo)
       const updatedAmenity = await AmenityModel.update(id, {
         name,
         capacity,
         description,
         status_id: status_id || existingAmenity.status_id,
         amenity_type_id,
-        updated_at,
       });
 
       if (!updatedAmenity) {

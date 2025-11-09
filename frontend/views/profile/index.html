@@ -4,178 +4,237 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Perfiles</title>
+  <title>Mi Perfil</title>
   <!-- Favicon -->
   <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome para iconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Data table -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
   <!-- Loading -->
   <link rel="stylesheet" href="../../assets/css/loading.css">
+  <style>
+    /* Header con ancho limitado */
+    .profile-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 3rem 1rem 6rem; /* más espacio abajo para la tarjeta flotante */
+      text-align: center;
+    }
+
+    .profile-header .container {
+      max-width: 900px;
+    }
+
+    .profile-photo-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 1rem;
+    }
+
+    .profile-photo,
+    .profile-photo-placeholder {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 5px solid white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      object-fit: cover;
+    }
+
+    .profile-photo-placeholder {
+      background: #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .profile-photo-placeholder i {
+      font-size: 3.5rem;
+      color: #6c757d;
+    }
+
+    /* Tarjeta principal centrada con efecto flotante */
+    .profile-card {
+      max-width: 900px;
+      margin: -80px auto 50px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .card-body {
+      padding: 2.5rem;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #6c757d;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .info-value {
+      font-size: 1.05rem;
+      color: #212529;
+      margin-bottom: 1.2rem;
+    }
+
+    .btn-primary {
+      background-color: #667eea;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #5a6fd6;
+    }
+
+    hr {
+      margin: 1.5rem 0;
+    }
+  </style>
 </head>
 
 <body>
- 
-  <!--Container -->
-  <div class="container-fluid d-flex flex-column min-vh-100">
-  
-    <!--Content data-->
-    <main>
-      <h1 class="text-center mb-4">Gestión de Perfiles</h1>
-      <button type="button" title="Agregar Perfil" class="btn btn-primary mb-3" onclick="add()">
-        <i class="fa fa-address-card me-1"></i>Agregar Perfil
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-user-circle"></i> Perfil de Usuario
+      </a>
+      <button class="btn btn-outline-light btn-sm" onclick="window.history.back()">
+        <i class="fas fa-arrow-left"></i> Volver
       </button>
+    </div>
+  </nav>
 
-      <!--Table-->
-      <div class="table-responsive">
-        <table class="table table-dark table-hover" id="app-table">
-          <thead>
-            <tr class="table-primary text-center">
-              <th>#</th>
-              <th>Usuario</th>
-              <th>Nombre Completo</th>
-              <th>Teléfono</th>
-              <th>Email</th>
-              <th>Dirección</th>
-              <th>Rol</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="app-table-body" class="text-center">
-          </tbody>
-          <tfoot>
-            <tr class="table-primary text-center">
-              <td>#</td>
-              <td>Usuario</td>
-              <td>Nombre Completo</td>
-              <td>Teléfono</td>
-              <td>Email</td>
-              <td>Dirección</td>
-              <td>Rol</td>
-              <td>Estado</td>
-              <td>Acciones</td>
-            </tr>
-          </tfoot>
-        </table>
+  <!-- Encabezado del perfil -->
+  <header class="profile-header">
+    <div class="container">
+      <div class="profile-photo-container">
+        <div class="profile-photo-placeholder" id="headerPhotoContainer">
+          <i class="fas fa-user"></i>
+        </div>
+      </div>
+      <h2 id="headerName" class="fw-bold">Cargando...</h2>
+      <p class="mb-0" id="headerEmail">---</p>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="profile-card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 text-primary">
+          <i class="fas fa-user-circle"></i> <span id="cardTitle">Información del Perfil</span>
+        </h4>
+        <button class="btn btn-primary" id="btnToggleEdit" onclick="toggleEditMode()">
+          <i class="fas fa-edit"></i> Editar Perfil
+        </button>
       </div>
 
-      <!-- Modal -->
-      <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="appModalLabel">Perfil de Usuario</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <form id="profileForm">
+        <input type="hidden" id="user_id" name="user_id">
+
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <div class="view-mode">
+              <div class="info-label"><i class="fas fa-user"></i> Nombre Completo</div>
+              <div class="info-value" id="view_fullName">---</div>
             </div>
-            <div class="modal-body">
-              <!--Form-->
-              <form id="profileForm">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="user_id" class="form-label required">Usuario</label>
-                      <select class="form-select" id="user_id" name="user_id" required>
-                        <option value="" selected disabled>Selecciona un usuario</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="profile_fullName" class="form-label required">Nombre Completo</label>
-                      <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Nombre completo" id="profile_fullName" name="profile_fullName" required value="">
-                        <label for="profile_fullName">Nombre Completo</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="profile_phone" class="form-label required">Teléfono</label>
-                      <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Teléfono" id="profile_phone" name="profile_phone" required value="">
-                        <label for="profile_phone">Teléfono</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="profile_email" class="form-label required">Email</label>
-                      <div class="form-floating">
-                        <input type="email" class="form-control" placeholder="Email" id="profile_email" name="profile_email" required value="">
-                        <label for="profile_email">Email</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <label for="profile_address" class="form-label">Dirección</label>
-                  <div class="form-floating">
-                    <textarea class="form-control" placeholder="Dirección" id="profile_address" name="profile_address" style="height: 80px"></textarea>
-                    <label for="profile_address">Dirección</label>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <label for="profile_photo" class="form-label">Foto de Perfil</label>
-                  <div class="form-floating">
-                    <input type="text" class="form-control edit-input" placeholder="URL de la foto" id="profile_photo" name="profile_photo" value="">
-                    <label for="profile_photo">URL de la Foto</label>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                    <button type="reset" class="btn btn-outline-secondary me-md-2">
-                      <i class="fas fa-undo me-1"></i>Limpiar
-                    </button>
-                    <button type="submit" class="btn btn-outline-primary me-md-2">
-                      <i class="fas fa-paper-plane me-1"></i>Enviar
-                    </button>
-                  </div>
-                </div>
-              </form>
+            <div class="edit-mode d-none">
+              <label for="profile_fullName" class="form-label">
+                <i class="fas fa-user"></i> Nombre Completo *
+              </label>
+              <input type="text" class="form-control" id="profile_fullName" name="profile_fullName" required>
             </div>
-            <div class="modal-footer">
-              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="view-mode">
+              <div class="info-label"><i class="fas fa-phone"></i> Teléfono</div>
+              <div class="info-value" id="view_phone">---</div>
+            </div>
+            <div class="edit-mode d-none">
+              <label for="profile_phone" class="form-label"><i class="fas fa-phone"></i> Teléfono *</label>
+              <input type="tel" class="form-control" id="profile_phone" name="profile_phone" required>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="view-mode">
+              <div class="info-label"><i class="fas fa-envelope"></i> Correo Electrónico</div>
+              <div class="info-value" id="view_email">---</div>
+            </div>
+            <div class="edit-mode d-none">
+              <label for="profile_email" class="form-label"><i class="fas fa-envelope"></i> Correo Electrónico *</label>
+              <input type="email" class="form-control" id="profile_email" name="profile_email" required>
+            </div>
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <div class="view-mode">
+              <div class="info-label"><i class="fas fa-map-marker-alt"></i> Dirección</div>
+              <div class="info-value" id="view_address">---</div>
+            </div>
+            <div class="edit-mode d-none">
+              <label for="profile_address" class="form-label"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+              <textarea class="form-control" id="profile_address" name="profile_address" rows="2"></textarea>
+            </div>
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <div class="view-mode">
+              <div class="info-label"><i class="fas fa-camera"></i> Foto de Perfil</div>
+              <div id="view_photo"><span class="badge bg-secondary">Sin foto</span></div>
+            </div>
+            <div class="edit-mode d-none">
+              <label for="profile_photo" class="form-label"><i class="fas fa-camera"></i> Foto de Perfil</label>
+              <input type="file" class="form-control" id="profile_photo" name="profile_photo" accept="image/*">
+              <small class="text-muted">Selecciona una imagen de tu computador (JPG, PNG)</small>
+              <div id="photo-preview" class="mt-2 d-none">
+                <img id="preview-image" src="" alt="Vista previa" style="max-width: 200px; border-radius: 10px;">
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-    </main>
-    <!--End Content data-->
+        <div class="edit-mode d-none">
+          <hr>
+          <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-secondary" onclick="cancelEdit()">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+            <button type="submit" class="btn btn-success">
+              <i class="fas fa-save"></i> Guardar Cambios
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </main>
 
-  </div>
-  <!--End Container -->
-
-  <!--Loading -->
+  <!-- Pantalla de carga -->
   <div id="loading-screen">
     <div class="spinner-border text-light spinner" role="status">
-      <span class="visually-hidden">Loading ...</span>
+      <span class="visually-hidden">Loading...</span>
     </div>
     <p class="mt-3">Cargando datos, por favor espera...</p>
   </div>
-  <!--End Loading -->
 
   <!-- Bootstrap 5 JS Bundle con Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Data table -->
-  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
   <!-- JS personalizado -->
   <script src="../../assets/js/app/constants.js"></script>
   <script src="../../assets/js/storage/appStorage.js"></script>
   <script src="../../assets/js/services/services.js"></script>
   <script src="../../assets/js/app/app.js"></script>
   <script src="../../assets/js/utils/Form.js"></script>
+  <script src="../../assets/js/controllers/profile/editProfile.controller.js"></script>
   <script src="../../assets/js/controllers/profile/profile.controller.js"></script>
-
 </body>
 
 </html>

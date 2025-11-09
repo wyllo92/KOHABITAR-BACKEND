@@ -44,8 +44,7 @@
                 <i class="bi bi-person me-1"></i> Perfil
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarProfileDropdown">
-                <li><a class="dropdown-item" href="#profile-edit"><i class="bi bi-pencil-square me-1"></i> Editar
-                    perfil</a></li>
+                <li><a class="dropdown-item" href="#profile-edit"><i class="bi bi-pencil-square me-1"></i> Editar perfil</a></li>
                 <li>
                   <hr class="dropdown-divider">
                 </li>
@@ -109,11 +108,11 @@
               <i class="bi bi-p-square me-2"></i> Espacios de Parqueo
             </a>
           </li>
-          <!--<li class="nav-item">
+          <li class="nav-item">
             <a class="nav-link text-white" href="#parkingzone">
               <i class="bi bi-map me-2"></i> Zonas de Parqueo
             </a>
-          </li>-->
+          </li>
           <li class="nav-item">
             <a class="nav-link text-white" href="#visitor">
               <i class="bi bi-door-open-fill me-2"></i> Visitantes
@@ -210,6 +209,7 @@
     const routeToView = {
       '#dashboard': 'views/dashboard/index.html',
       '#user': 'views/user/index.html',
+      '#profile-edit': 'views/profile/index.html',
       '#visitor': 'views/visitor/index.html',
       '#payment': 'views/payment/index.html',
       '#cpcg': 'views/cpcg/index.html',
@@ -223,7 +223,6 @@
       '#amenity': 'views/amenity/index.html',
       '#reservation': 'views/reservation/index.html',
       '#notification': 'views/notification/index.html',
-      '#profile': 'views/profile/index.html',
       '#report': 'views/report/index.html',
       '#help': 'views/errors/help.html',
     };
@@ -292,16 +291,6 @@
             }
             return;
           }
-        }
-        // Editar perfil (caso especial)
-        const editProfile = e.target.closest('a[href="#profile-edit"]');
-        if (editProfile) {
-          e.preventDefault();
-          const iframe = document.getElementById('contentFrame');
-          if (iframe) {
-            iframe.src = 'views/profile/edit.html';
-          }
-          return;
         }
         // Cerrar sesión
         const logoutTarget = e.target.closest('#logoutBtn');

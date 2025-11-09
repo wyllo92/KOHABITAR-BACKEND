@@ -42,7 +42,6 @@ const sqlStatements = [
   `DROP TABLE IF EXISTS module;`,
   `DROP TABLE IF EXISTS amenity_type;`,
   `DROP TABLE IF EXISTS cpcg_type;`,
-  `DROP TABLE IF EXISTS notification_type;`,
   `DROP TABLE IF EXISTS report_type;`,
 
   // Create status table first (referenced by many tables)
@@ -110,11 +109,11 @@ const sqlStatements = [
   // Create profile table
   `CREATE TABLE IF NOT EXISTS profile (
     user_id int(11) NOT NULL,
-    profile_fullName varchar(50) NOT NULL,
-    profile_phone varchar(10) NOT NULL,
-    profile_email varchar(30) NOT NULL,
-    profile_photo varchar(256) DEFAULT NULL,
-    profile_address varchar(30) DEFAULT NULL,
+    profile_fullName varchar(100) NOT NULL,
+    profile_phone varchar(25) NOT NULL,
+    profile_email varchar(100) NOT NULL,
+    profile_photo varchar(450) DEFAULT NULL,
+    profile_address varchar(150) DEFAULT NULL,
     created_at datetime DEFAULT current_timestamp(),
     updated_at datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
     PRIMARY KEY (user_id),
@@ -323,23 +322,11 @@ const sqlStatements = [
     INDEX idx_payment_date (payment_date)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`,
 
-  // Create notification_type table
-  `CREATE TABLE IF NOT EXISTS notification_type (
-    Notification_type_id int(11) NOT NULL AUTO_INCREMENT,
-    Notification_type_name varchar(50) NOT NULL,
-    Notification_type_description varchar(100) NOT NULL,
-    Notification_type_is_active tinyint(1) NOT NULL DEFAULT 1,
-    Notification_type_created_at datetime NOT NULL DEFAULT current_timestamp(),
-    PRIMARY KEY (Notification_type_id),
-    INDEX idx_notification_type_name (Notification_type_name)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`,
-
   // Create notification table
   `CREATE TABLE IF NOT EXISTS notification (
     notification_id INT(11) NOT NULL AUTO_INCREMENT,
     user_id INT(11) NOT NULL,
     property_id INT(11) NOT NULL,
-    notification_type_id INT(11) NOT NULL,
     notification_title VARCHAR(100) NOT NULL,
     notification_message VARCHAR(500) NOT NULL,
     status_id INT(11) NOT NULL,
@@ -348,11 +335,9 @@ const sqlStatements = [
     PRIMARY KEY (notification_id),
     KEY user_id (user_id),
     KEY property_id (property_id),
-    KEY notification_type_id (notification_type_id),
     KEY status_id (status_id),
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (property_id) REFERENCES property(property_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (notification_type_id) REFERENCES notification_type(notification_type_id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (status_id) REFERENCES status(status_id) ON DELETE RESTRICT ON UPDATE CASCADE
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`,
 
@@ -573,12 +558,6 @@ const sqlStatements = [
 (3, 'mpropietario', 'propietario123', 3, 1),
 (4, 'cvigilante', 'vigilante123', 4, 1);`,
 
-  `INSERT INTO profile (user_id, profile_fullName, profile_phone, profile_email, profile_photo, profile_address) VALUES
-(1, 'Admin General', '3000000001', 'admin@example.com', NULL, 'Oficina'),
-(2, 'Juan Residente', '3000000002', 'juan@example.com', NULL, 'Casa 101'),
-(3, 'Maria Propietaria', '3000000003', 'maria@example.com', NULL, 'Casa 10'),
-(4, 'Carlos Vigilante', '3000000004', 'carlos@example.com', NULL, 'Portería');`,
-
   `INSERT INTO parkingzone (parkingZone_id, type, capacity, property_id, status_id) VALUES
 (1, 1, '10', 1, 1),
 (2, 2, '5', 2, 1);`,
@@ -596,11 +575,6 @@ const sqlStatements = [
 (1, 'Recreativo', 'Zonas para actividades recreativas', 1, '2025-05-27 16:17:01'),
 (2, 'Deportivo', 'Zonas para actividades deportivas', 1, '2025-05-27 16:17:01'),
 (3, 'Social', 'Zonas para eventos sociales', 1, '2025-05-27 16:17:01');`,
-
-  `INSERT INTO notification_type (Notification_type_id, Notification_type_name, Notification_type_description, Notification_type_is_active, Notification_type_created_at) VALUES
-(1, 'Informacion', 'Notificaciones informativas', 1, '2025-05-27 16:17:01'),
-(2, 'Alerta', 'Notificaciones de alerta', 1, '2025-05-27 16:17:01'),
-(3, 'Urgente', 'Notificaciones urgentes', 1, '2025-05-27 16:17:01');`,
 
   `INSERT INTO report_type (report_type_id, report_type_name, report_type_description, report_type_is_active, report_type_created_at) VALUES
 (1, 'Mantenimiento', 'Reportes de mantenimiento', 1, '2025-05-27 16:17:01'),

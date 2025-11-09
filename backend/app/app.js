@@ -1,6 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-/* The routers are imported to handle specific routes in the application.*/
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 import roleRouter from '../routers/role.router.js';
 import userStatusRouter from '../routers/status.router.js';
@@ -24,15 +28,17 @@ import tariffRouter from '../routers/tariff.router.js';
 import notificationRouter from '../routers/notification.router.js';
 import reportRouter from '../routers/report.router.js';
 import amenityTypeRouter from '../routers/amenityType.router.js';
-import notificationTypeRouter from '../routers/notificationType.router.js';
 import cpcgRouter from '../routers/cpcg.router.js';
 import cpcgTypeRouter from '../routers/cpcgType.router.js';
 
 const app = express();
 
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Servir archivos estáticos subidos (ej. /uploads/profiles/...)
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Add request logging middleware
 app.use((req, res, next) => {
@@ -63,7 +69,6 @@ app.use('/api_v1', tariffRouter);
 app.use('/api_v1', notificationRouter);
 app.use('/api_v1', reportRouter);
 app.use('/api_v1', amenityTypeRouter);
-app.use('/api_v1', notificationTypeRouter);
 app.use('/api_v1', cpcgRouter);
 app.use('/api_v1', cpcgTypeRouter);
 

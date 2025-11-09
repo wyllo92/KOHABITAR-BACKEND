@@ -5,8 +5,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   await checkAuth();
   console.log('Amenity controller has been loaded');
   fadeInElement(document.querySelector('body'), 1000);
-  // Initialize the loading screen
-
 });
 
 const objForm = new Form('amenityForm', 'edit-input');
@@ -30,6 +28,7 @@ myForm.addEventListener('submit', (e) => {
     return;
   }
   toggleLoading(true);
+  
   if (insertUpdate) {
     console.log("Insertando nueva amenidad");
     httpMethod = METHODS[1]; // POST method
@@ -39,6 +38,7 @@ myForm.addEventListener('submit', (e) => {
     httpMethod = METHODS[2]; // PUT method
     endpointUrl = URL_AMENITY + keyId;
   }
+  
   documentData = objForm.getDataForm();
   console.log('Datos del formulario:', documentData);
 
@@ -49,15 +49,16 @@ myForm.addEventListener('submit', (e) => {
     console.log('Respuesta del servidor:', data);
     if (data.error) {
       alert('Error: ' + data.error);
+      toggleLoading(false);
     } else {
       alert(data.message || 'Operación completada exitosamente');
+      showHiddenModal(false);
+      loadView(); // Recargar la tabla después del éxito
     }
   }).catch(error => {
     console.log('Error en la operación:', error);
     alert('Error en la operación. Por favor, inténtalo de nuevo.');
-  }).finally(() => {
-    loadView();
-    showHiddenModal(false);
+    toggleLoading(false);
   });
 });
 
@@ -93,6 +94,7 @@ function delete_(id) {
   objForm.enabledForm();
   objForm.enabledButton();
   if (confirm(textConfirm)) {
+    toggleLoading(true);
     documentData = "";
     httpMethod = METHODS[3]; // DELETE method
     endpointUrl = URL_AMENITY + id;
@@ -103,14 +105,15 @@ function delete_(id) {
       console.log('Respuesta de eliminación:', data);
       if (data.error) {
         alert('Error: ' + data.error);
+        toggleLoading(false);
       } else {
         alert(data.message || 'Amenidad eliminada exitosamente');
+        loadView(); // Recargar la tabla después de eliminar
       }
     }).catch(error => {
       console.log('Error al eliminar:', error);
       alert('Error al eliminar. Por favor, inténtalo de nuevo.');
-    }).finally(() => {
-      loadView();
+      toggleLoading(false);
     });
   } else {
     console.log("Operación cancelada");
@@ -118,6 +121,7 @@ function delete_(id) {
 }
 
 function getDataId(id) {
+  toggleLoading(true);
   documentData = "";
   httpMethod = METHODS[0]; // GET method
   endpointUrl = URL_AMENITY + id;
@@ -136,6 +140,7 @@ function getDataId(id) {
     console.log('Error al obtener datos:', error);
     alert('Error al obtener los datos de la amenidad');
   }).finally(() => {
+    toggleLoading(false);
     showHiddenModal(true);
   });
 }
@@ -171,7 +176,7 @@ function createTable(data) {
   
   if (getData.length === 0) {
     console.log('No hay datos para mostrar');
-    objTableBody.innerHTML = '<tr><td colspan="7" class="text-center">No hay amenidades disponibles</td></tr>';
+    objTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No hay amenidades disponibles</td></tr>';
     return;
   }
   
@@ -184,21 +189,26 @@ function createTable(data) {
     const statusActive = row.status_name || 'N/A';
     const statusClass = row.status_name === 'Activo' ? 'text-success' : 'text-danger';
     
+    // Obtener datos de la fila (backend retorna amenity_id, name, amenity_type_name, etc.)
+    const amenityId = row.amenity_id || '';
+    const amenityName = row.name || 'N/A';
+    const amenityTypeLabel = row.amenity_type_name || 'N/A';
+    const capacity = row.capacity || 'N/A';
+
     let dataRow = `<tr>
-      <td>${row.amenity_id || row.id}</td>
-      <td>${row.name || 'N/A'}</td>
-      <td>${row.Amenity_Type_name || 'N/A'}</td>
-      <td>${row.property_name || 'N/A'}</td>
-      <td>${row.capacity || 'N/A'}</td>
+      <td>${amenityId}</td>
+      <td>${amenityName}</td>
+      <td>${amenityTypeLabel}</td>
+      <td>${capacity}</td>
       <td><span class="${statusClass}">${statusActive}</span></td>
       <td>
-        <button type="button" title="Ver Amenidad" class="btn btn-success btn-sm" onclick="showId(${row.amenity_id || row.id})">
+        <button type="button" title="Ver Amenidad" class="btn btn-success btn-sm" onclick="showId(${amenityId})">
           <i class='fas fa-eye'></i>
         </button>
-        <button type="button" title="Editar Amenidad" class="btn btn-primary btn-sm" onclick="edit(${row.amenity_id || row.id})">
+        <button type="button" title="Editar Amenidad" class="btn btn-primary btn-sm" onclick="edit(${amenityId})">
           <i class='fas fa-edit'></i>
         </button>
-        <button type="button" title="Eliminar Amenidad" class="btn btn-danger btn-sm" onclick="delete_(${row.amenity_id || row.id})">
+        <button type="button" title="Eliminar Amenidad" class="btn btn-danger btn-sm" onclick="delete_(${amenityId})">
           <i class='fas fa-trash'></i>
         </button>
       </td>
@@ -209,15 +219,18 @@ function createTable(data) {
 
 function createSelectAmenityType(data) {
   objSelectAmenityType.innerHTML = "<option value='' selected disabled>Selecciona el tipo</option>";
-
-  let getData = data.data || [];
-  if (getData.length === 0) return;
+  let getData = (data && data.data) || [];
   
-  let rowLong = getData.length;
-  for (let i = 0; i < rowLong; i++) {
-    let row = getData[i];
-    let dataRow = `<option value="${row.amenity_type_id || row.id}">${row.amenity_type_name || row.name || 'Tipo ' + (row.amenity_type_id || row.id)}</option>`;
-    objSelectAmenityType.innerHTML += dataRow;
+  if (!Array.isArray(getData) || getData.length === 0) {
+    console.log('No se encontraron tipos de amenidad para el select', data);
+    return;
+  }
+
+  for (const row of getData) {
+    // Backend retorna amenity_type_id y amenity_type_name
+    const optionValue = row.amenity_type_id || row.Amenity_Type_id;
+    const optionLabel = row.amenity_type_name || row.Amenity_Type_name || ('Tipo ' + (optionValue || ''));
+    objSelectAmenityType.innerHTML += `<option value="${optionValue}">${optionLabel}</option>`;
   }
 }
 
@@ -230,14 +243,15 @@ function showHiddenModal(type) {
 }
 
 function loadView() {
-  getData();
   toggleLoading(true);
+  getData();
 }
 
 function getDataAmenityType() {
   documentData = "";
   httpMethod = METHODS[0]; // GET method
-  endpointUrl = URL_AMENITY_TYPE || HOST + "/amenityType/";
+  // Usar el endpoint de tipos activos
+  endpointUrl = URL_AMENITY_TYPE + 'active';
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
   resultServices.then(response => {
     return response.json();
@@ -254,4 +268,4 @@ function getDataAmenityType() {
 window.addEventListener('load', () => {
   loadView();
   getDataAmenityType();
-}); 
+});

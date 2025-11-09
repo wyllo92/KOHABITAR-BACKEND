@@ -4,7 +4,7 @@ class AmenityModel {
 
   static async create({ name, capacity, description, status_id, amenity_type_id }) {
     try {
-      const sqlQuery = `INSERT INTO amenity (name, capacity, description, status_id, amenity_type_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW());`;
+      const sqlQuery = `INSERT INTO amenity (name, capacity, description, status_id, amenity_type_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, CURDATE(), CURDATE());`;
       const [result] = await connect.query(sqlQuery, [name, capacity, description, status_id, amenity_type_id]);
       return result.insertId;
     } catch (error) {
@@ -54,10 +54,10 @@ class AmenityModel {
     }
   }
 
-  static async update(id, { name, capacity, description, status_id, amenity_type_id, updated_at }) {
+  static async update(id, { name, capacity, description, status_id, amenity_type_id }) {
     try {
-      const sqlQuery = `UPDATE amenity SET name = ?, capacity = ?, description = ?, status_id = ?, amenity_type_id = ?, updated_at = ? WHERE amenity_id = ?;`;
-      const [result] = await connect.query(sqlQuery, [name, capacity, description, status_id, amenity_type_id, updated_at, id]);
+      const sqlQuery = `UPDATE amenity SET name = ?, capacity = ?, description = ?, status_id = ?, amenity_type_id = ?, updated_at = CURDATE() WHERE amenity_id = ?;`;
+      const [result] = await connect.query(sqlQuery, [name, capacity, description, status_id, amenity_type_id, id]);
       if (result.affectedRows > 0) {
         return await this.findById(id);
       }

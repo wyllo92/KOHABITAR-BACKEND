@@ -2,132 +2,396 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../../assets/css/loading.css">
-    <style>
-        .stat-card {
-            cursor: pointer;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Kohabitar</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      --secondary-gradient: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      --success-gradient: linear-gradient(135deg, #16a085 0%, #1abc9c 100%);
+      --warning-gradient: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+    }
 
-        .stat-value {
-            font-size: 1.6rem;
-            font-weight: 700;
-        }
+    body {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      min-height: 100vh;
+      padding: 2rem 0;
+    }
 
-        .card-compact {
-            padding: 1rem;
-        }
+    .dashboard-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 2.5rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
 
-        .chart-card {
-            min-height: 320px;
-        }
-    </style>
+    .dashboard-header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 3px solid #f0f0f0;
+    }
+
+    .dashboard-title {
+      font-weight: 700;
+      font-size: 2.5rem;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .dashboard-subtitle {
+      color: #6c757d;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    .module-card {
+      position: relative;
+      height: 100%;
+      border: none;
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: #fff;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: var(--primary-gradient);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .module-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .module-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+    }
+
+    .module-card .card-body {
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    .icon-wrapper {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-gradient);
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .module-card:hover .icon-wrapper {
+      transform: rotate(5deg) scale(1.1);
+    }
+
+    .icon-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 20px;
+      background: inherit;
+      opacity: 0.3;
+      filter: blur(10px);
+      z-index: -1;
+    }
+
+    .icon-wrapper i {
+      font-size: 2.5rem;
+      color: #fff;
+    }
+
+    .module-card:nth-child(4n+1) .icon-wrapper {
+      background: var(--primary-gradient);
+    }
+
+    .module-card:nth-child(4n+2) .icon-wrapper {
+      background: var(--secondary-gradient);
+    }
+
+    .module-card:nth-child(4n+3) .icon-wrapper {
+      background: var(--success-gradient);
+    }
+
+    .module-card:nth-child(4n) .icon-wrapper {
+      background: var(--warning-gradient);
+    }
+
+    .card-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #2d3748;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-description {
+      font-size: 0.875rem;
+      color: #718096;
+      margin: 0;
+    }
+
+    .badge-new {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--secondary-gradient);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        padding: 1.5rem;
+        border-radius: 20px;
+      }
+
+      .dashboard-title {
+        font-size: 2rem;
+      }
+
+      .icon-wrapper {
+        width: 60px;
+        height: 60px;
+      }
+
+      .icon-wrapper i {
+        font-size: 2rem;
+      }
+    }
+
+    .quick-stats {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      flex: 1;
+      min-width: 200px;
+      background: linear-gradient(135deg, rgba(44, 62, 80, 0.1) 0%, rgba(52, 73, 94, 0.1) 100%);
+      border-radius: 15px;
+      padding: 1.25rem;
+      border: 2px solid rgba(44, 62, 80, 0.2);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      color: #6c757d;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="container-fluid py-3">
-        <header class="mb-3">
-            <h2 class="mb-0">Panel de control</h2>
-            <small class="text-muted">Resumen rápido del conjunto residencial</small>
-        </header>
+  <div class="container">
+    <div class="dashboard-container">
+      
+      <!-- Header -->
+      <div class="dashboard-header">
+        <h1 class="dashboard-title">
+          <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+          INICIO
+        </h1>
+        <p class="dashboard-subtitle">Software de gestion de propiedades</p>
+      </div>
 
-        <!-- Top stats -->
-        <div class="row g-3 mb-3">
-            <div class="col-sm-6 col-md-3">
-                <div class="card stat-card" id="card-users" style="background-color:#2c3e50;">
-                    <div class="card-body card-compact text-center">
-                        <div class="text-light">Usuarios</div>
-                        <div class="stat-value text-light" id="stat-users">0</div>
-                        <small class="text-light" id="stat-users-sub">registrados</small>
-                    </div>
-                </div>
+      <!-- Modules Grid -->
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+
+        <!-- Usuarios -->
+        <div class="col">
+          <div class="card module-card" onclick="parent.changeIframeView('user')">
+            <div class="card-body">
+              <div class="icon-wrapper">
+                <i class="bi bi-people-fill"></i>
+              </div>
+              <h5 class="card-title">Usuarios</h5>
+              <p class="card-description">Gestión de residentes</p>
             </div>
-            <div class="col-sm-6 col-md-3">
-                <div class="card stat-card" id="card-parkings" style="background-color: #18bc9c;">
-                    <div class="card-body card-compact text-center">
-                        <div class="text-light">Parqueaderos</div>
-                        <div class="stat-value text-light" id="stat-parkings">0</div>
-                        <small class="text-light" id="stat-parkings-sub">Disponibles</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div class="card stat-card" id="card-properties" style="background-color: #3498db;">
-                    <div class="card-body card-compact text-center">
-                        <div class="text-light">Propiedades</div>
-                        <div class="stat-value text-light" id="stat-properties">0</div>
-                        <small class="text-light">Activas</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div class="card stat-card" id="card-payments" style="background-color: #7b8a8b;">
-                    <div class="card-body card-compact text-center">
-                        <div class="text-light">Pagos</div>
-                        <div class="stat-value text-light" id="stat-payments">$0</div>
-                        <small class="text-light">Total</small>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
 
-        <!-- Charts -->
-        <div class="row g-3">
-            <div class="col-lg-6">
-                <div class="card chart-card">
-                    <div class="card-header bg-primary text-dark">Evolución del Fondo de Reserva</div>
-                    <div class="card-body">
-                        <canvas id="chart-reserve" width="400" height="250"></canvas>
-                    </div>
-                </div>
+        <!-- Propiedades -->
+        <div class="col">
+          <div class="card module-card" onclick="parent.changeIframeView('property')">
+            <div class="card-body">
+              <div class="icon-wrapper">
+                <i class="bi bi-building"></i>
+              </div>
+              <h5 class="card-title">Propiedades</h5>
+              <p class="card-description">Administra inmuebles</p>
             </div>
-            <div class="col-lg-6">
-                <div class="card chart-card">
-                    <div class="card-header bg-danger text-dark">Incidencias Reportadas (PQRS)</div>
-                    <div class="card-body">
-                        <canvas id="chart-incidents" width="400" height="250"></canvas>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
 
-        <!-- Small footer metrics -->
-        <div class="row g-3 mt-3">
-            <div class="col-12 text-end text-muted">
-                <small>Última actualización: <span id="dashboard-updated">—</span></small>
+        <!-- Vehículos -->
+        <div class="col">
+          <div class="card module-card" onclick="parent.changeIframeView('vehicle')">
+            <div class="card-body">
+              <div class="icon-wrapper">
+                <i class="bi bi-car-front-fill"></i>
+              </div>
+              <h5 class="card-title">Vehículos</h5>
+              <p class="card-description">Registro vehicular</p>
             </div>
+          </div>
         </div>
+
+        <!-- Parqueaderos -->
+        <div class="col">
+          <div class="card module-card" onclick="parent.changeIframeView('parkingslot')">
+            <div class="card-body">
+              <div class="icon-wrapper">
+                <i class="bi bi-p-square-fill"></i>
+              </div>
+              <h5 class="card-title">Parqueaderos</h5>
+              <p class="card-description">Espacios de parqueo</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zonas Comunes -->
+        <div class="col">
+          <div class="card module-card" onclick="parent.changeIframeView('amenity')">
+            <div class="card-body">
+              <div class="icon-wrapper">
+                <i class="bi bi-tree-fill"></i>
+              </div>
+              <h5 class="card-title">Zonas Comunes</h5>
+              <p class="card-description">Áreas recreativas</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reservas -->
+        <div class="col">
+          <div class="card module-card" onclick="parent.changeIframeView('reservation')">
+            <div class="card-body">
+              <div class="icon-wrapper">
+                <i class="bi bi-calendar-check-fill"></i>
+              </div>
+              <h5 class="card-title">Reservas</h5>
+              <p class="card-description">Agenda de espacios</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagos -->
+        <div class="col">
+          <div class="card module-card" onclick="parent.changeIframeView('payment')">
+            <div class="card-body">
+              <div class="icon-wrapper">
+                <i class="bi bi-credit-card-fill"></i>
+              </div>
+              <h5 class="card-title">Pagos</h5>
+              <p class="card-description">Gestión financiera</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PQRS -->
+        <div class="col">
+          <div class="card module-card" onclick="parent.changeIframeView('cpcg')">
+            <div class="card-body">
+              <div class="icon-wrapper">
+                <i class="bi bi-chat-square-text-fill"></i>
+              </div>
+              <h5 class="card-title">PQRS</h5>
+              <p class="card-description">Peticiones y quejas</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notificaciones -->
+        <div class="col">
+          <div class="card module-card" onclick="parent.changeIframeView('notification')">
+            <div class="card-body">
+              <div class="icon-wrapper">
+                <i class="bi bi-bell-fill"></i>
+              </div>
+              <h5 class="card-title">Notificaciones</h5>
+              <p class="card-description">Centro de mensajes</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reportes -->
+        <div class="col">
+          <div class="card module-card" onclick="parent.changeIframeView('report')">
+            <div class="card-body">
+              <div class="icon-wrapper">
+                <i class="bi bi-graph-up-arrow"></i>
+              </div>
+              <h5 class="card-title">Reportes</h5>
+              <p class="card-description">Estadísticas e informes</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visitantes -->
+        <div class="col">
+          <div class="card module-card" onclick="parent.changeIframeView('visitor')">
+            <div class="card-body">
+              <div class="icon-wrapper">
+                <i class="bi bi-door-open-fill"></i>
+              </div>
+              <h5 class="card-title">Visitantes</h5>
+              <p class="card-description">Control de acceso</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ayuda -->
+        <div class="col">
+          <div class="card module-card" onclick="parent.changeIframeView('help')">
+            <div class="card-body">
+              <div class="icon-wrapper">
+                <i class="bi bi-question-circle-fill"></i>
+              </div>
+              <h5 class="card-title">Ayuda</h5>
+              <p class="card-description">Soporte técnico</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
+  </div>
 
-    <!-- Loading -->
-    <div id="loading-screen">
-        <div class="spinner-border text-light spinner" role="status">
-            <span class="visually-hidden">Loading ...</span>
-        </div>
-        <p class="mt-3">Cargando datos, por favor espere...</p>
-    </div>
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="../../assets/js/app/constants.js"></script>
-    <script src="../../assets/js/storage/appStorage.js"></script>
-    <script src="../../assets/js/services/services.js"></script>
-    <script src="../../assets/js/app/app.js"></script>
-    <script src="../../assets/js/controllers/dashboard/dashboard.controller.js"></script>
-
-    <script>
-        // Small navigation helpers for cards
-        document.getElementById('card-users').addEventListener('click', () => { if (window.parent && window.parent.changeIframeView) window.parent.changeIframeView('user'); });
-        document.getElementById('card-parkings').addEventListener('click', () => { if (window.parent && window.parent.changeIframeView) window.parent.changeIframeView('parkingslot'); });
-        document.getElementById('card-properties').addEventListener('click', () => { if (window.parent && window.parent.changeIframeView) window.parent.changeIframeView('property'); });
-        document.getElementById('card-payments').addEventListener('click', () => { if (window.parent && window.parent.changeIframeView) window.parent.changeIframeView('payment'); });
-    </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

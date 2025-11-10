@@ -28,15 +28,17 @@ class PaymentModel {
 
       const query = `
         SELECT 
-          payment_id,
-          user_id,
-          amount_paid,
-          payment_date,
-          method,
-          reference,
-          created_at
-        FROM payment
-        ORDER BY payment_date DESC
+          p.payment_id,
+          p.user_id,
+          u.user_name,
+          p.amount_paid,
+          p.payment_date,
+          p.method,
+          p.reference,
+          p.created_at
+        FROM payment p
+        LEFT JOIN user u ON p.user_id = u.user_id
+        ORDER BY p.payment_date DESC
       `;
 
       const [rows] = await connect.query(query);
@@ -53,7 +55,18 @@ class PaymentModel {
     try {
       console.log('PaymentModel.findById: Finding payment ID:', id);
       const [rows] = await connect.query(
-        `SELECT * FROM payment WHERE payment_id = ?`,
+        `SELECT 
+          p.payment_id,
+          p.user_id,
+          u.user_name,
+          p.amount_paid,
+          p.payment_date,
+          p.method,
+          p.reference,
+          p.created_at
+        FROM payment p
+        LEFT JOIN user u ON p.user_id = u.user_id
+        WHERE p.payment_id = ?`,
         [id]
       );
       return rows[0];

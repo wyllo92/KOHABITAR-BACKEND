@@ -10,8 +10,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 const objForm = new Form('notificationForm', 'edit-input');
 const objModal = new bootstrap.Modal(document.getElementById('appModal'));
 const objTableBody = document.getElementById('app-table-body');
-const objSelectNotificationType = document.getElementById('notification_type_id');
 const objSelectUser = document.getElementById('user_id');
+const objSelectProperty = document.getElementById('property_id');
+const objSelectStatus = document.getElementById('status_id');
 const myForm = objForm.getForm();
 const textConfirm = "¿Estás seguro de que deseas eliminar esta notificación?";
 const appTable = "#app-table";
@@ -139,7 +140,7 @@ function getDataId(id) {
     .then(response => response.json())
     .then(data => {
       console.log('Datos de la notificación:', data);
-      const getData = data.data || data; // Manejo flexible de respuesta
+      const getData = data.data || data;
       objForm.setDataFormJson(getData);
     })
     .catch(error => {
@@ -186,7 +187,9 @@ function createTable(data) {
 
   for (let row of getData) {
     const statusText = row.status_name || 'N/A';
-    const statusClass = statusText.toLowerCase().includes('leída') ? 'text-success' : 'text-warning';
+    const statusClass = statusText.toLowerCase().includes('leída') || statusText.toLowerCase().includes('leido') 
+      ? 'text-success' 
+      : 'text-warning';
     const formattedDate = row.notification_created_at
       ? new Date(row.notification_created_at).toLocaleString('es-ES')
       : 'N/A';
@@ -195,8 +198,8 @@ function createTable(data) {
       <tr>
         <td>${row.notification_id}</td>
         <td>${row.notification_title || 'N/A'}</td>
-        <td>${row.notification_type_name || 'N/A'}</td>
-        <td>${row.username || 'N/A'}</td>
+        <td>${row.property_name || 'N/A'}</td>
+        <td>${row.user_name || 'N/A'}</td>
         <td><span class="${statusClass}">${statusText}</span></td>
         <td>${formattedDate}</td>
         <td>
@@ -216,58 +219,13 @@ function createTable(data) {
 }
 
 /* ============================
-   SELECTS (Tipos y Usuarios)
+   SELECTS (Usuarios, Propiedades, Estados)
 ============================ */
-function createSelectNotificationType(data) {
-  try {
-    console.log('Creando select de tipos de notificación:', data);
-    objSelectNotificationType.innerHTML = '<option value="" selected disabled>Selecciona el tipo</option>';
-
-    // Normalize different response shapes: array, { data: [] }, or single object
-    let list = [];
-    if (!data) list = [];
-    else if (Array.isArray(data)) list = data;
-    else if (Array.isArray(data.data)) list = data.data;
-    else if (data.success && Array.isArray(data.data)) list = data.data;
-    else if (typeof data === 'object') {
-      // Sometimes DB returns PascalCase column names or camelCase
-      // If it's a single object, try to transform to array
-      list = [data];
-    }
-
-    if (!Array.isArray(list) || list.length === 0) {
-      console.warn('No hay tipos de notificación para mostrar:', data);
-      objSelectNotificationType.innerHTML += '<option value="" disabled>No hay tipos disponibles</option>';
-      return;
-    }
-
-    list.forEach(type => {
-      const id = type.notification_type_id || type.Notification_type_id || type.Notification_Type_id || type.id || type.ID;
-      const name = type.notification_type_name || type.Notification_type_name || type.Notification_type || type.name || type.Notification_Type_name;
-
-      if (id != null && name != null) {
-        const option = document.createElement('option');
-        option.value = id;
-        option.textContent = name;
-        objSelectNotificationType.appendChild(option);
-      } else {
-        console.warn('Tipo de notificación con campos inesperados:', type);
-      }
-    });
-
-    console.log('Select de tipos de notificación actualizado');
-  } catch (error) {
-    console.error('Error al crear select de tipos:', error);
-    objSelectNotificationType.innerHTML = '<option value="" disabled>Error al cargar tipos</option>';
-  }
-}
-
 function createSelectUser(data) {
   try {
     console.log('Creando select de usuarios con datos:', data);
-    objSelectUser.innerHTML = "<option value='' selected disabled>Selecciona el destinatario</option>";
+    objSelectUser.innerHTML = "<option value='' selected disabled>Selecciona el usuario</option>";
     
-    // Asegurarse de que tenemos un array para trabajar
     const getData = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
     console.log('Datos de usuarios procesados:', getData);
 
@@ -278,7 +236,6 @@ function createSelectUser(data) {
     }
 
     for (let row of getData) {
-      // Verificar que tengamos los campos necesarios y que no sean undefined
       const userId = row.user_id;
       const userName = row.user_name || row.username;
       
@@ -295,92 +252,71 @@ function createSelectUser(data) {
   }
 }
 
-/* ============================
-   UTILITARIOS
-============================ */
-function showHiddenModal(show) {
-  show ? objModal.show() : objModal.hide();
-}
-
-function loadView() {
-  getData();
-  toggleLoading(true);
-}
-
-function getDataNotificationType() {
+function createSelectProperty(data) {
   try {
-    console.log('Obteniendo tipos de notificación...');
-    documentData = "";
-    httpMethod = METHODS[0]; // GET
-    // Try the 'active' endpoint first, then fallback to the general one
-    const tryActive = `${URL_NOTIFICATION_TYPE}active`;
-    const tryAll = URL_NOTIFICATION_TYPE;
+    console.log('Creando select de propiedades con datos:', data);
+    objSelectProperty.innerHTML = "<option value='' selected disabled>Selecciona la propiedad</option>";
+    
+    const getData = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
+    console.log('Datos de propiedades procesados:', getData);
 
-    const handleResponse = async (resp) => {
-      try {
-        const data = await resp.json();
-        console.log('Tipos de notificación recibidos:', data);
-        // Accept different shapes
-        if (Array.isArray(data)) {
-          createSelectNotificationType(data);
-          return true;
-        }
-        if (data && Array.isArray(data.data)) {
-          createSelectNotificationType(data.data);
-          return true;
-        }
-        // If single object with fields, try to use it
-        if (data && typeof data === 'object' && !Array.isArray(data)) {
-          // It might be { success: true, data: [] } handled above, or a single item
-          if (data.success && Array.isArray(data.data)) {
-            createSelectNotificationType(data.data);
-            return true;
-          }
-          // Fallback: try to populate with whatever was returned
-          createSelectNotificationType(data);
-          return true;
-        }
-        return false;
-      } catch (err) {
-        console.error('Error parseando respuesta de tipos:', err);
-        return false;
+    if (getData.length === 0) {
+      console.warn('No hay datos de propiedades para mostrar');
+      objSelectProperty.innerHTML += "<option value='' disabled>No hay propiedades disponibles</option>";
+      return;
+    }
+
+    for (let row of getData) {
+      const propertyId = row.property_id;
+      const propertyName = row.property_name;
+      
+      if (propertyId && propertyName) {
+        console.log(`Agregando propiedad: ${propertyId} - ${propertyName}`);
+        objSelectProperty.innerHTML += `<option value="${propertyId}">${propertyName}</option>`;
+      } else {
+        console.warn('Fila de propiedad con datos incompletos:', row);
       }
-    };
-
-    // First attempt
-    getDataServices(documentData, httpMethod, tryActive)
-      .then(async (response) => {
-        if (!response.ok) {
-          console.warn('Respuesta no OK desde active, intentando endpoint general', response.status);
-          // Try general endpoint
-          return getDataServices(documentData, httpMethod, tryAll);
-        }
-        const ok = await handleResponse(response);
-        if (!ok) {
-          // Try general endpoint
-          return getDataServices(documentData, httpMethod, tryAll);
-        }
-        return null;
-      })
-      .then(async (maybeResponse) => {
-        if (!maybeResponse) return;
-        if (maybeResponse instanceof Response && maybeResponse.ok) {
-          await handleResponse(maybeResponse);
-        } else if (maybeResponse instanceof Response) {
-          console.error('Ambos endpoints devolvieron error', maybeResponse.status);
-          alert('Error al cargar los tipos de notificación.');
-        }
-      })
-      .catch(error => {
-        console.error('Error al obtener tipos de notificación:', error);
-        alert('Error al cargar los tipos de notificación.');
-      });
+    }
   } catch (error) {
-    console.error('Error en getDataNotificationType:', error);
-    alert('Error al procesar los tipos de notificación.');
+    console.error('Error al crear select de propiedades:', error);
+    objSelectProperty.innerHTML = "<option value='' disabled>Error al cargar propiedades</option>";
   }
 }
 
+function createSelectStatus(data) {
+  try {
+    console.log('Creando select de estados con datos:', data);
+    objSelectStatus.innerHTML = "<option value='' selected disabled>Selecciona el estado</option>";
+    
+    const getData = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
+    console.log('Datos de estados procesados:', getData);
+
+    if (getData.length === 0) {
+      console.warn('No hay datos de estados para mostrar');
+      objSelectStatus.innerHTML += "<option value='' disabled>No hay estados disponibles</option>";
+      return;
+    }
+
+    for (let row of getData) {
+      const statusId = row.status_id;
+      const statusName = row.status_name;
+      
+      if (statusId && statusName) {
+        console.log(`Agregando estado: ${statusId} - ${statusName}`);
+        objSelectStatus.innerHTML += `<option value="${statusId}">${statusName}</option>`;
+      } else {
+        console.warn('Fila de estado con datos incompletos:', row);
+      }
+    }
+  } catch (error) {
+    console.error('Error al crear select de estados:', error);
+    objSelectStatus.innerHTML = "<option value='' disabled>Error al cargar estados</option>";
+  }
+}
+
+/* ============================
+   OBTENER DATOS PARA SELECTS
+============================ */
 function getDataUser() {
   try {
     console.log('URL de usuarios:', URL_USER);
@@ -422,8 +358,103 @@ function getDataUser() {
   }
 }
 
+function getDataProperty() {
+  try {
+    console.log('URL de propiedades:', URL_PROPERTY);
+    documentData = "";
+    httpMethod = METHODS[0];
+    endpointUrl = URL_PROPERTY;
+
+    if (!endpointUrl) {
+      console.error('URL_PROPERTY no está definida');
+      return;
+    }
+
+    toggleLoading(true);
+    const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
+    resultServices
+      .then(response => {
+        console.log('Respuesta del servidor:', response);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Datos de propiedades recibidos:', data);
+        if (!data || (Array.isArray(data) && data.length === 0)) {
+          console.warn('No se recibieron datos de propiedades');
+          return;
+        }
+        createSelectProperty(data);
+      })
+      .catch(error => {
+        console.error('Error al obtener propiedades:', error);
+        alert('Error al cargar las propiedades. Por favor, intente nuevamente.');
+      })
+      .finally(() => toggleLoading(false));
+  } catch (error) {
+    console.error('Error en getDataProperty:', error);
+    toggleLoading(false);
+  }
+}
+
+function getDataStatus() {
+  try {
+    console.log('URL de estados:', URL_STATUS);
+    documentData = "";
+    httpMethod = METHODS[0];
+    endpointUrl = URL_STATUS;
+
+    if (!endpointUrl) {
+      console.error('URL_STATUS no está definida');
+      return;
+    }
+
+    toggleLoading(true);
+    const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
+    resultServices
+      .then(response => {
+        console.log('Respuesta del servidor:', response);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Datos de estados recibidos:', data);
+        if (!data || (Array.isArray(data) && data.length === 0)) {
+          console.warn('No se recibieron datos de estados');
+          return;
+        }
+        createSelectStatus(data);
+      })
+      .catch(error => {
+        console.error('Error al obtener estados:', error);
+        alert('Error al cargar los estados. Por favor, intente nuevamente.');
+      })
+      .finally(() => toggleLoading(false));
+  } catch (error) {
+    console.error('Error en getDataStatus:', error);
+    toggleLoading(false);
+  }
+}
+
+/* ============================
+   UTILITARIOS
+============================ */
+function showHiddenModal(show) {
+  show ? objModal.show() : objModal.hide();
+}
+
+function loadView() {
+  getData();
+  toggleLoading(true);
+}
+
 window.addEventListener('load', () => {
   loadView();
-  getDataNotificationType();
   getDataUser();
+  getDataProperty();
+  getDataStatus();
 });

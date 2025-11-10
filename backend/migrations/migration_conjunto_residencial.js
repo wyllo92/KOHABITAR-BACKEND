@@ -1,5 +1,6 @@
 import mysql from "mysql2/promise";
 import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
 
 dotenv.config();
 
@@ -8,9 +9,14 @@ const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '1234',
-  database: process.env.DB_NAME || 'conjunto_residencial3',
+  database: process.env.DB_NAME || 'conjunto_residencial',
   multipleStatements: true
 };
+
+const hashAdmin = await bcrypt.hash('Addmin123#$5', 10);
+const hashResidente = await bcrypt.hash('residente123#$', 10);
+const hashPropietario = await bcrypt.hash('propietario123#$', 10);
+const hashVigilante = await bcrypt.hash('vigilante123#$', 10);
 
 // SQL statements for table creation
 const sqlStatements = [
@@ -553,10 +559,7 @@ const sqlStatements = [
 (2, 'Por hora', 'Visitantes', 2000, NULL, NULL, NULL, 1, '2025-05-27 16:17:01', '2025-05-27 16:17:01');`,
 
   `INSERT INTO user (user_id, user_name, user_password, role_id, status_id) VALUES
-(1, 'admin', 'admin123', 1, 1),
-(2, 'jresidente', 'residente123', 2, 1),
-(3, 'mpropietario', 'propietario123', 3, 1),
-(4, 'cvigilante', 'vigilante123', 4, 1);`,
+(1, 'admin', '${hashAdmin}', 1, 1);`,
 
   `INSERT INTO parkingzone (parkingZone_id, type, capacity, property_id, status_id) VALUES
 (1, 1, '10', 1, 1),
@@ -568,8 +571,7 @@ const sqlStatements = [
 (3, 'M-201', 2, 1, 0, NULL, NULL, NULL, NULL, NULL);`,
 
   `INSERT INTO vehicle (vehicle_id, model, type, color, license_plate, user_id, property_id, parkingZone_id, status_id, vehicle_createAt, vehicle_updateAt) VALUES
-(1, 'Mazda 3', 'Carro', 'Rojo', 'ABC123', 2, 1, NULL, 1, '2025-05-27', '2025-05-27'),
-(2, 'Yamaha FZ', 'Moto', 'Negro', 'XYZ789', 3, 2, NULL, 1, '2025-05-27', '2025-05-27');`,
+(1, 'Mazda 3', 'Carro', 'Rojo', 'ABC123', 1, 1, NULL, 1, '2025-05-27', '2025-05-27');`,
 
   `INSERT INTO amenity_type (Amenity_Type_id, Amenity_Type_name, Amenity_Type_description, Amenity_Type_is_active, Amenity_Type_created_at) VALUES
 (1, 'Recreativo', 'Zonas para actividades recreativas', 1, '2025-05-27 16:17:01'),

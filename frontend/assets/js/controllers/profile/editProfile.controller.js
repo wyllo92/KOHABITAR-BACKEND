@@ -40,71 +40,101 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Intentar obtener el ID del usuario de varias formas
     let userData = null;
 
-    // Método 1: Desde localStorage directamente
+    // Método 1: Desde localStorage directamente (user_id como string o número)
     try {
-      const userDataStr = localStorage.getItem('userData');
-      if (userDataStr) {
-        userData = JSON.parse(userDataStr);
-        console.log('Usuario desde localStorage:', userData);
+      const storedId = localStorage.getItem('user_id');
+      if (storedId) {
+        const parsedId = parseInt(storedId);
+        if (!isNaN(parsedId)) {
+          userData = { user_id: parsedId };
+          console.log('Usuario desde localStorage (user_id):', userData);
+        }
       }
     } catch (e) {
-      console.error('Error al leer localStorage:', e);
+      console.error('Error al leer localStorage user_id:', e);
     }
 
-    // Método 2: Usando getDataUser() si existe
+    // Método 2: Desde sessionStorage (user_id como string o número)
     if (!userData || !userData.user_id) {
       try {
-        if (typeof getDataUser === 'function') {
-          userData = getDataUser();
-          console.log('Usuario desde getDataUser():', userData);
+        const storedId = sessionStorage.getItem('user_id');
+        if (storedId) {
+          const parsedId = parseInt(storedId);
+          if (!isNaN(parsedId)) {
+            userData = { user_id: parsedId };
+            console.log('Usuario desde sessionStorage (user_id):', userData);
+          }
         }
       } catch (e) {
-        console.error('Error al usar getDataUser():', e);
+        console.error('Error al leer sessionStorage user_id:', e);
       }
     }
 
-    // Método 3: Verificar sessionStorage
+    // Método 3: Desde localStorage como objeto JSON
+    if (!userData || !userData.user_id) {
+      try {
+        const userDataStr = localStorage.getItem('userData');
+        if (userDataStr) {
+          const parsed = JSON.parse(userDataStr);
+          if (parsed && parsed.user_id) {
+            userData = parsed;
+            console.log('Usuario desde localStorage (userData):', userData);
+          }
+        }
+      } catch (e) {
+        console.error('Error al leer localStorage userData:', e);
+      }
+    }
+
+    // Método 4: Desde sessionStorage como objeto JSON
     if (!userData || !userData.user_id) {
       try {
         const sessionDataStr = sessionStorage.getItem('userData');
         if (sessionDataStr) {
-          userData = JSON.parse(sessionDataStr);
-          console.log('Usuario desde sessionStorage:', userData);
+          const parsed = JSON.parse(sessionDataStr);
+          if (parsed && parsed.user_id) {
+            userData = parsed;
+            console.log('Usuario desde sessionStorage (userData):', userData);
+          }
         }
       } catch (e) {
-        console.error('Error al leer sessionStorage:', e);
+        console.error('Error al leer sessionStorage userData:', e);
       }
     }
 
-    // Método 4: Fallback - algunos controladores guardan solo 'user_id' como clave plana
-    try {
-      if ((!userData || !userData.user_id) && localStorage.getItem('user_id')) {
-        const storedId = localStorage.getItem('user_id');
-        userData = { user_id: isNaN(parseInt(storedId)) ? storedId : parseInt(storedId) };
-        console.log('Usuario desde localStorage (user_id):', userData);
+    // Método 5: Intentar obtener desde el token si está disponible
+    if (!userData || !userData.user_id) {
+      try {
+        const appStorage = new AppStorage();
+        const token = appStorage.getItem(KEY_TOKEN);
+        if (token) {
+          // El token JWT contiene el ID del usuario, pero necesitaríamos decodificarlo
+          // Por ahora, confiamos en los métodos anteriores
+          console.log('Token encontrado, pero no se puede extraer user_id sin decodificar');
+        }
+      } catch (e) {
+        console.error('Error al leer token:', e);
       }
-    } catch (e) {
-      console.error('Error al leer localStorage user_id fallback:', e);
-    }
-
-    try {
-      if ((!userData || !userData.user_id) && sessionStorage.getItem('user_id')) {
-        const storedId = sessionStorage.getItem('user_id');
-        userData = { user_id: isNaN(parseInt(storedId)) ? storedId : parseInt(storedId) };
-        console.log('Usuario desde sessionStorage (user_id):', userData);
-      }
-    } catch (e) {
-      console.error('Error al leer sessionStorage user_id fallback:', e);
     }
 
     debugLog('Datos de usuario obtenidos', userData);
 
     if (userData && userData.user_id) {
-      currentUserId = userData.user_id;
+      // Asegurar que user_id es un número
+      currentUserId = parseInt(userData.user_id);
+      if (isNaN(currentUserId)) {
+        console.error('user_id no es un número válido:', userData.user_id);
+        alert('Error: El ID de usuario no es válido. Por favor, inicia sesión nuevamente.');
+        return;
+      }
       console.log('ID de usuario actual:', currentUserId);
       await loadCurrentUserProfile();
     } else {
-      console.error('No se pudo obtener el ID del usuario');
+      console.error('No se pudo obtener el ID del usuario de ninguna fuente');
+      console.log('localStorage user_id:', localStorage.getItem('user_id'));
+      console.log('sessionStorage user_id:', sessionStorage.getItem('user_id'));
+      console.log('localStorage userData:', localStorage.getItem('userData'));
+      console.log('sessionStorage userData:', sessionStorage.getItem('userData'));
       alert('No se pudo obtener la información del usuario actual. Por favor, inicia sesión nuevamente.');
     }
 
@@ -150,6 +180,12 @@ async function loadCurrentUserProfile() {
   try {
     console.log('Cargando perfil para usuario ID:', currentUserId);
 
+    if (!currentUserId) {
+      console.error('No hay user_id disponible');
+      alert('Error: No se pudo obtener el ID del usuario. Por favor, inicia sesión nuevamente.');
+      return;
+    }
+
     if (typeof toggleLoading === 'function') {
       toggleLoading(true);
     }
@@ -160,28 +196,91 @@ async function loadCurrentUserProfile() {
     console.log('Endpoint:', endpointUrl);
     debugLog('Endpoint URL', endpointUrl);
 
-    const resultServices = getDataServices("", httpMethod, endpointUrl);
-    const response = await resultServices;
-    const data = await response.json();
+    let response;
+    let data;
+    
+    try {
+      const resultServices = getDataServices("", httpMethod, endpointUrl);
+      response = await resultServices;
+      
+      // Verificar el status de la respuesta
+      console.log('Status de respuesta:', response.status, response.statusText);
+      
+      if (!response.ok) {
+        // Si la respuesta no es OK, intentar parsear el error
+        try {
+          data = await response.json();
+        } catch (parseError) {
+          const text = await response.text();
+          throw new Error(`Error del servidor (${response.status}): ${text || response.statusText}`);
+        }
+        
+        // Si hay un error en la respuesta JSON
+        if (data.error) {
+          // Si el error es que no se encontró el perfil, el backend debería crear uno automáticamente
+          // pero si no lo hace, intentar crear uno básico desde el frontend
+          if (data.error.includes('no encontrado') || data.error.includes('not found') || response.status === 404) {
+            console.log('Perfil no encontrado, el backend debería crear uno automáticamente. Reintentando...');
+            // Esperar un poco y reintentar (el backend debería haber creado el perfil)
+            await new Promise(resolve => setTimeout(resolve, 500));
+            return loadCurrentUserProfile(); // Reintentar
+          }
+          throw new Error(data.error);
+        }
+        throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+      }
+      
+      // Parsear la respuesta JSON
+      data = await response.json();
+    } catch (fetchError) {
+      console.error('Error en la petición:', fetchError);
+      throw fetchError;
+    }
 
     console.log('Respuesta del servidor:', data);
     debugLog('Respuesta del servidor', data);
 
-    if (data.data) {
+    // Verificar si la respuesta tiene la estructura esperada
+    if (data && data.data) {
       originalData = data.data;
       currentPhotoUrl = data.data.profile_photo; // Guardar URL de foto
       displayProfileData(data.data);
-    } else if (data.error) {
+    } else if (data && data.needsCreation) {
+      // El backend indica que necesita crear el perfil
+      console.log('El perfil necesita ser creado. Datos disponibles:', data.data);
+      if (data.data) {
+        // Mostrar los datos disponibles aunque sean básicos
+        originalData = data.data;
+        displayProfileData(data.data);
+        alert('Tu perfil ha sido creado automáticamente. Por favor, completa tu información.');
+      } else {
+        throw new Error('No se pudieron obtener los datos del usuario para crear el perfil');
+      }
+    } else if (data && data.error) {
       console.error('Error del servidor:', data.error);
-      alert('Error: ' + data.error);
+      // Si el error es específico, mostrarlo; si no, mensaje genérico
+      if (data.error.includes('Usuario no encontrado') || data.error.includes('User not found')) {
+        alert('Error: Tu usuario no fue encontrado en el sistema. Por favor, contacta al administrador.');
+      } else {
+        alert('Error: ' + data.error);
+      }
     } else {
-      console.error('Respuesta sin datos:', data);
-      alert('Error: No se encontraron datos del perfil');
+      console.error('Respuesta sin datos válidos:', data);
+      alert('Error: No se encontraron datos del perfil. El servidor puede estar creando tu perfil automáticamente. Por favor, recarga la página.');
     }
   } catch (error) {
     console.error('Error al cargar perfil:', error);
     debugLog('Error al cargar perfil', error);
-    alert('Error al cargar el perfil del usuario: ' + error.message);
+    
+    // Mensaje de error más descriptivo
+    let errorMessage = 'Error al cargar el perfil del usuario';
+    if (error.message) {
+      errorMessage += ': ' + error.message;
+    } else if (error.toString) {
+      errorMessage += ': ' + error.toString();
+    }
+    
+    alert(errorMessage);
   } finally {
     if (typeof toggleLoading === 'function') {
       toggleLoading(false);

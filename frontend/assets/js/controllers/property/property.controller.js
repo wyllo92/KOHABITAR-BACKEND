@@ -13,10 +13,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 const objForm = new Form('propertyForm', 'edit-input');
 const objModal = new bootstrap.Modal(document.getElementById('appModal'));
 const objTableBody = document.getElementById('app-table-body');
-const objSelectStatus = document.getElementById('status_id');
 const myForm = objForm.getForm();
 const textConfirm = "¿Estás seguro de que deseas eliminar esta propiedad?";
 const appTable = "#app-table";
+
+// Función helper para obtener el select de estado dinámicamente
+function getStatusSelect() {
+  return document.getElementById('status_id');
+}
 
 let insertUpdate = true;
 let keyId;
@@ -48,7 +52,10 @@ myForm.addEventListener('submit', (e) => {
 
   documentData = objForm.getDataForm();
   // ✅ aseguramos que el estado se envíe
-  documentData.status_id = objSelectStatus.value;
+  const statusSelect = getStatusSelect();
+  if (statusSelect) {
+    documentData.status_id = statusSelect.value;
+  }
 
   console.log('Datos del formulario:', documentData);
 
@@ -76,13 +83,17 @@ myForm.addEventListener('submit', (e) => {
 // FUNCIONES DE CRUD
 // =======================
 function add() {
-  showHiddenModal(true);
   insertUpdate = true;
   objForm.resetForm();
   objForm.enabledForm();
   objForm.enabledButton();
   objForm.showButton();
-  getDataStatus(); // 🔥 refrescar estados
+  currentStatusId = null; // Reset status ID for new property
+  showHiddenModal(true);
+  // Cargar estados después de que el modal se muestre
+  setTimeout(() => {
+    getDataStatus(); // 🔥 refrescar estados
+  }, 300);
 }
 
 function showId(id) {
@@ -158,7 +169,10 @@ function getDataId(id) {
         // ✅ setear estado actual (guardamos para que createSelectStatus lo aplique si aún no hay opciones)
         if (getData.status_id) {
           currentStatusId = getData.status_id;
-          try { objSelectStatus.value = getData.status_id; } catch(e) {}
+          const statusSelect = getStatusSelect();
+          if (statusSelect) {
+            try { statusSelect.value = getData.status_id; } catch(e) {}
+          }
         }
       } else {
         alert('Error: No se encontraron datos de la propiedad');
@@ -247,16 +261,32 @@ function createTable(data) {
 // CREAR SELECT ESTADOS
 // =======================
 function createSelectStatus(data) {
+  const objSelectStatus = getStatusSelect();
+  if (!objSelectStatus) {
+    console.error('Status select element not found');
+    return;
+  }
+  
   objSelectStatus.innerHTML = "<option value='' selected disabled>Seleccione un estado</option>";
 
-  let getData = data['data'];
-  if (!getData || getData.length === 0) return;
-
-  for (let i = 0; i < getData.length; i++) {
-    let row = getData[i];
-    let dataRow = `<option value="${row.status_id}">${row.status_name}</option>`;
-    objSelectStatus.innerHTML += dataRow;
+  if (!data || !data.data || !Array.isArray(data.data)) {
+    console.warn('Invalid or empty status data:', data);
+    objSelectStatus.innerHTML = "<option value='' selected disabled>No hay estados disponibles</option>";
+    return;
   }
+
+  if (data.data.length === 0) {
+    console.warn('No status data available from server');
+    objSelectStatus.innerHTML = "<option value='' selected disabled>No hay estados disponibles</option>";
+    return;
+  }
+
+  data.data.forEach(row => {
+    if (row && row.status_id && row.status_name) {
+      let dataRow = `<option value="${row.status_id}">${row.status_name}</option>`;
+      objSelectStatus.innerHTML += dataRow;
+    }
+  });
 
   // If we have a currentStatusId (from getDataId) set the select to that value
   if (currentStatusId) {
@@ -282,21 +312,70 @@ function loadView() {
 }
 
 function getDataStatus() {
+  const objSelectStatus = getStatusSelect();
+  if (!objSelectStatus) {
+    console.error('Status select element not found, retrying in 100ms...');
+    setTimeout(() => getDataStatus(), 100);
+    return;
+  }
+
   documentData = "";
   httpMethod = METHODS[0]; // GET
+  // Intentar primero con "property", si no hay resultados usar "General"
   endpointUrl = URL_STATUS + "entity/property";  // ✅ solo estados de propiedades
 
+  console.log('Fetching statuses from:', endpointUrl);
+  
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
-  resultServices.then(response => response.json())
-    .then(data => {
+  resultServices.then(response => {
+    console.log('Raw response:', response);
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  }).then(data => {
+    console.log('Status data received:', data);
+    if (!data || !data.data || !Array.isArray(data.data)) {
+      throw new Error('Invalid data format received from server');
+    }
+    // Si no hay resultados con "property", intentar con "General"
+    if (data.data.length === 0) {
+      console.warn('No status data for "property", trying "General"...');
+      return getDataServices(documentData, httpMethod, URL_STATUS + "entity/General");
+    }
+    createSelectStatus(data);
+  }).then(response => {
+    // Este then solo se ejecuta si el anterior retornó una promesa (fallback a General)
+    if (response) {
+      return response.json();
+    }
+  }).then(data => {
+    // Si llegamos aquí, es porque usamos el fallback a "General"
+    if (data) {
+      console.log('Status data received (General):', data);
+      if (!data || !data.data || !Array.isArray(data.data)) {
+        throw new Error('Invalid data format received from server');
+      }
+      if (data.data.length === 0) {
+        console.warn('No status data available from server');
+        const statusSelect = getStatusSelect();
+        if (statusSelect) {
+          statusSelect.innerHTML = "<option value='' selected disabled>No hay estados disponibles</option>";
+        }
+        return;
+      }
       createSelectStatus(data);
-    })
-    .catch(error => {
-      console.log(error);
-    })
-    .finally(() => {
-      toggleLoading(false);
-    });
+    }
+  }).catch(error => {
+    console.error('Error fetching status:', error);
+    console.error('Error details:', error.stack);
+    const statusSelect = getStatusSelect();
+    if (statusSelect) {
+      statusSelect.innerHTML = "<option value='' selected disabled>Error al cargar estados: " + error.message + "</option>";
+    }
+  }).finally(() => {
+    toggleLoading(false);
+  });
 }
 
 // =======================
@@ -306,3 +385,14 @@ window.addEventListener('load', () => {
   loadView();
   getDataStatus();
 });
+
+// Listener para cuando el modal se muestra
+const modalElement = document.getElementById('appModal');
+if (modalElement) {
+  modalElement.addEventListener('shown.bs.modal', function () {
+    // Si estamos en modo agregar, cargar estados
+    if (insertUpdate && !keyId) {
+      getDataStatus();
+    }
+  });
+}

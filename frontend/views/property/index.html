@@ -94,13 +94,16 @@
                 <label for="property_type">Tipo de Propiedad</label>
               </div>
             </div>
-          </div>
+
                 <!-- Estado -->
           <div class="col-md-6">
-                  <label for="status_id" class="form-label fw-semibold">Seleccionar Estado</label>
-                  <select class="form-select" id="status_id" name="status_id" required>
-                    <option value="">-- Seleccione --</option>
+              <div class="form-floating">
+                <select class="form-select rounded-3" id="status_id" name="status_id" required>
+                  <option value="" selected disabled>Seleccione un estado</option>
                   </select>
+                <label for="status_id">Estado</label>
+              </div>
+            </div>
                 </div>
 
           <!-- Descripción -->

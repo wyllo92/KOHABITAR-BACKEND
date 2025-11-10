@@ -184,7 +184,7 @@
   </main>
 
   <!-- Footer -->
-  <footer class="bg-primary text-white text-center p-3">
+  <footer class="text-center p-3">
     <p class="mb-0">© 2025 Kohabitar. Todos los derechos reservados.</p>
   </footer>
 
@@ -243,34 +243,85 @@
     function fillProfileFormInIframe() {
       const iframe = document.getElementById('contentFrame');
       if (!iframe) return;
-      const user_id = localStorage.getItem('user_id') || sessionStorage.getItem('user_id');
-      if (!user_id) return;
-      fetch(`/api_v1/profile/${user_id}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.data) {
-            const p = data.data;
-            const doc = iframe.contentDocument || iframe.contentWindow.document;
-            if (!doc) return;
-            if (doc.getElementById('profile_fullName')) doc.getElementById('profile_fullName').value = p.profile_fullName || '';
-            if (doc.getElementById('profile_phone')) doc.getElementById('profile_phone').value = p.profile_phone || '';
-            if (doc.getElementById('profile_email')) doc.getElementById('profile_email').value = p.profile_email || '';
-            if (doc.getElementById('profile_address')) doc.getElementById('profile_address').value = p.profile_address || '';
-            if (p.profile_photo && doc.getElementById('profilePhotoPreview')) {
-              const photoPreview = doc.getElementById('profilePhotoPreview');
-              photoPreview.src = p.profile_photo;
-              photoPreview.style.display = 'block';
-            }
+      
+      // Función auxiliar para intentar llenar el formulario
+      const tryFillForm = () => {
+        try {
+          const doc = iframe.contentDocument || iframe.contentWindow.document;
+          if (!doc || !doc.readyState || doc.readyState !== 'complete') {
+            // Si el documento no está listo, intentar de nuevo después de un breve delay
+            setTimeout(tryFillForm, 100);
+            return;
           }
-        });
+
+          const user_id = localStorage.getItem('user_id') || sessionStorage.getItem('user_id');
+          if (!user_id) return;
+
+          fetch(`/api_v1/profile/${user_id}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.data) {
+                const p = data.data;
+                // Esperar un poco más para asegurar que los elementos estén en el DOM
+                setTimeout(() => {
+                  const doc = iframe.contentDocument || iframe.contentWindow.document;
+                  if (!doc) return;
+                  
+                  if (doc.getElementById('profile_fullName')) {
+                    doc.getElementById('profile_fullName').value = p.profile_fullName || '';
+                  }
+                  if (doc.getElementById('profile_phone')) {
+                    doc.getElementById('profile_phone').value = p.profile_phone || '';
+                  }
+                  if (doc.getElementById('profile_email')) {
+                    doc.getElementById('profile_email').value = p.profile_email || '';
+                  }
+                  if (doc.getElementById('profile_address')) {
+                    doc.getElementById('profile_address').value = p.profile_address || '';
+                  }
+                  if (p.profile_photo && doc.getElementById('profilePhotoPreview')) {
+                    const photoPreview = doc.getElementById('profilePhotoPreview');
+                    photoPreview.src = p.profile_photo;
+                    photoPreview.style.display = 'block';
+                  }
+                }, 200);
+              }
+            })
+            .catch(err => {
+              console.error('Error al cargar perfil:', err);
+            });
+        } catch (e) {
+          // Si hay error de acceso cruzado, intentar de nuevo
+          setTimeout(tryFillForm, 100);
+        }
+      };
+
+      // Iniciar el intento de llenar el formulario
+      tryFillForm();
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      // Mostrar dashboard por defecto
+      // Obtener referencia al iframe una sola vez
       const iframe = document.getElementById('contentFrame');
-      if (iframe) {
-        iframe.src = 'views/dashboard/index.html';
-      }
+      if (!iframe) return;
+      
+      // Mostrar dashboard por defecto
+      iframe.src = 'views/dashboard/index.html';
+      
+      // Variable para rastrear la ruta actual
+      let currentRoute = '';
+      
+      // Configurar el listener de carga del iframe una sola vez
+      iframe.addEventListener('load', function() {
+        // Solo llenar el formulario si estamos en la ruta de editar perfil
+        if (currentRoute === '#profile-edit') {
+          // Esperar un poco para asegurar que el contenido del iframe esté completamente cargado
+          setTimeout(() => {
+            fillProfileFormInIframe();
+          }, 300);
+        }
+      });
+
       // Delegación de eventos para navegación
       document.body.addEventListener('click', function (e) {
         // Navegación por sidebar y dashboard
@@ -279,16 +330,9 @@
           const hash = link.getAttribute('href');
           if (routeToView[hash]) {
             e.preventDefault();
-            const iframe = document.getElementById('contentFrame');
-            if (iframe) {
-              iframe.src = routeToView[hash];
-              // Si es editar perfil, espera a cargar y llena el formulario
-              if (hash === '#profile-edit') {
-                iframe.onload = function () {
-                  fillProfileFormInIframe();
-                };
-              }
-            }
+            // Actualizar la ruta actual antes de cambiar el src
+            currentRoute = hash;
+            iframe.src = routeToView[hash];
             return;
           }
         }

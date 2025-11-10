@@ -2,184 +2,181 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Reportes</title>
-  <!-- Favicon -->
-  <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome para iconos -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Data table -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
-  <!-- Loading -->
-  <link rel="stylesheet" href="../../assets/css/loading.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes</title>
+    <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/css/loading.css">
+    <style>
+        .stat-card {
+            cursor: pointer;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .card-compact {
+            padding: 1rem;
+        }
+
+        .chart-card {
+            min-height: 320px;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .btn-group .btn {
+            margin-left: 0.25rem;
+        }
+
+        #btn-refresh.spinning {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 
 <body>
- 
-  <!--Container -->
-  <div class="container-fluid d-flex flex-column min-vh-100">
-   
-    <!--Content data-->
-    <main>
-      <h1 class="text-center mb-4">Gestión de Reportes</h1>
-      <button type="button" title="Agregar Reporte" class="btn btn-primary mb-3" onclick="add()">
-        <i class="fa fa-file-alt me-1"></i>Agregar Reporte
-      </button>
+    <div class="container-fluid py-3">
+        <header class="mb-3 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-0">Reportes Generales</h2>
+                <small class="text-muted">Resumen rápido del conjunto residencial</small>
+            </div>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-success" id="btn-export-pdf" title="Exportar a PDF">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button type="button" class="btn btn-primary" id="btn-export-excel" title="Exportar a Excel">
+                    <i class="fas fa-file-excel"></i> Excel
+                </button>
+                <button type="button" class="btn btn-secondary" id="btn-refresh" title="Actualizar datos">
+                    <i class="fas fa-sync-alt"></i> Actualizar
+                </button>
+            </div>
+        </header>
 
-      <!--Table-->
-      <div class="table-responsive">
-        <table class="table table-dark table-hover" id="app-table">
-          <thead>
-            <tr class="table-primary text-center">
-              <th>#</th>
-              <th>Título</th>
-              <th>Tipo</th>
-              <th>Reportado por</th>
-              <th>Estado</th>
-              <th>Fecha</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="app-table-body" class="text-center">
-          </tbody>
-          <tfoot>
-            <tr class="table-primary text-center">
-              <td>#</td>
-              <td>Título</td>
-              <td>Tipo</td>
-              <td>Reportado por</td>
-              <td>Estado</td>
-              <td>Fecha</td>
-              <td>Acciones</td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-
-      <!-- Modal -->
-      <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="appModalLabel">Reporte</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- Top stats -->
+        <div class="row g-3 mb-3">
+            <div class="col-sm-6 col-md-3">
+                <div class="card stat-card" id="card-users" style="background-color:#2c3e50;">
+                    <div class="card-body card-compact text-center">
+                        <div class="text-light">Usuarios</div>
+                        <div class="stat-value text-light" id="stat-users">0</div>
+                        <small class="text-light" id="stat-users-sub">registrados</small>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-              <!--Form-->
-              <form id="reportForm">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="report_title" class="form-label required">Título del Reporte</label>
-                      <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Título del reporte" id="report_title" name="report_title" required value="">
-                        <label for="report_title">Título del Reporte</label>
-                      </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="card stat-card" id="card-parkings" style="background-color: #18bc9c;">
+                    <div class="card-body card-compact text-center">
+                        <div class="text-light">Parqueaderos</div>
+                        <div class="stat-value text-light" id="stat-parkings">0</div>
+                        <small class="text-light" id="stat-parkings-sub">Disponibles</small>
                     </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="report_type" class="form-label required">Tipo de Reporte</label>
-                      <div class="form-floating">
-                        <select class="form-control" id="report_type" name="report_type" required>
-                          <option value="" selected disabled>Selecciona el tipo</option>
-                          <option value="Mantenimiento">Mantenimiento</option>
-                          <option value="Seguridad">Seguridad</option>
-                          <option value="Ruido">Ruido</option>
-                          <option value="Limpieza">Limpieza</option>
-                          <option value="Otro">Otro</option>
-                        </select>
-                        <label for="report_type">Tipo de Reporte</label>
-                      </div>
-                    </div>
-                  </div>
                 </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="report_priority" class="form-label">Prioridad</label>
-                      <div class="form-floating">
-                        <select class="form-control" id="report_priority" name="report_priority">
-                          <option value="" selected disabled>Selecciona la prioridad</option>
-                          <option value="Baja">Baja</option>
-                          <option value="Media">Media</option>
-                          <option value="Alta">Alta</option>
-                          <option value="Urgente">Urgente</option>
-                        </select>
-                        <label for="report_priority">Prioridad</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="report_location" class="form-label">Ubicación</label>
-                      <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Ubicación del problema" id="report_location" name="report_location" value="">
-                        <label for="report_location">Ubicación del Problema</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <label for="report_description" class="form-label required">Descripción</label>
-                  <div class="form-floating">
-                    <textarea class="form-control" placeholder="Descripción detallada del reporte" id="report_description" name="report_description" style="height: 120px" required></textarea>
-                    <label for="report_description">Descripción Detallada del Reporte</label>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                    <button type="reset" class="btn btn-outline-secondary me-md-2">
-                      <i class="fas fa-undo me-1"></i>Limpiar
-                    </button>
-                    <button type="submit" class="btn btn-outline-primary me-md-2">
-                      <i class="fas fa-paper-plane me-1"></i>Enviar
-                    </button>
-                  </div>
-                </div>
-              </form>
             </div>
-            <div class="modal-footer">
-              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-              </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="card stat-card" id="card-properties" style="background-color: #3498db;">
+                    <div class="card-body card-compact text-center">
+                        <div class="text-light">Propiedades</div>
+                        <div class="stat-value text-light" id="stat-properties">0</div>
+                        <small class="text-light">Activas</small>
+                    </div>
+                </div>
             </div>
-          </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="card stat-card" id="card-payments" style="background-color: #7b8a8b;">
+                    <div class="card-body card-compact text-center">
+                        <div class="text-light">Pagos</div>
+                        <div class="stat-value text-light" id="stat-payments">$0</div>
+                        <small class="text-light">Total</small>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
 
-    </main>
-    <!--End Content data-->
+        <!-- Charts -->
+        <div class="row g-3">
+            <div class="col-lg-6">
+                <div class="card chart-card shadow-sm">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-chart-line me-2"></i>Evolución del Fondo de Reserva</span>
+                        <select class="form-select form-select-sm" id="select-payments-months" style="width: auto;">
+                            <option value="6" selected>Últimos 6 meses</option>
+                            <option value="12">Últimos 12 meses</option>
+                            <option value="24">Últimos 24 meses</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chart-reserve" width="400" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card chart-card shadow-sm">
+                    <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-exclamation-triangle me-2"></i>Incidencias Reportadas (PQRS)</span>
+                        <select class="form-select form-select-sm" id="select-pqrs-months" style="width: auto;">
+                            <option value="6" selected>Últimos 6 meses</option>
+                            <option value="12">Últimos 12 meses</option>
+                            <option value="24">Últimos 24 meses</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chart-incidents" width="400" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  </div>
-  <!--End Container -->
- 
-
-  <!--Loading -->
-  <div id="loading-screen">
-    <div class="spinner-border text-light spinner" role="status">
-      <span class="visually-hidden">Loading ...</span>
+        <!-- Small footer metrics -->
+        <div class="row g-3 mt-3">
+            <div class="col-12 text-end text-muted">
+                <small>Última actualización: <span id="dashboard-updated">—</span></small>
+            </div>
+        </div>
     </div>
-    <p class="mt-3">Cargando datos, por favor espera...</p>
-  </div>
-  <!--End Loading -->
 
-  <!-- Bootstrap 5 JS Bundle con Popper -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Data table -->
-  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
-  <!-- JS personalizado -->
-  <script src="../../assets/js/app/constants.js"></script>
-  <script src="../../assets/js/storage/appStorage.js"></script>
-  <script src="../../assets/js/services/services.js"></script> 
-  <script src="../../assets/js/app/app.js"></script>
-  <script src="../../assets/js/utils/Form.js"></script>
-  <script src="../../assets/js/controllers/report/report.controller.js"></script>
+    <!-- Loading -->
+    <div id="loading-screen">
+        <div class="spinner-border text-light spinner" role="status">
+            <span class="visually-hidden">Loading ...</span>
+        </div>
+        <p class="mt-3">Cargando datos, por favor espere...</p>
+    </div>
 
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="../../assets/js/app/constants.js"></script>
+    <script src="../../assets/js/storage/appStorage.js"></script>
+    <script src="../../assets/js/services/services.js"></script>
+    <script src="../../assets/js/app/app.js"></script>
+    <script src="../../assets/js/controllers/report/report.controller.js"></script>
+
+    <script>
+        // Small navigation helpers for cards
+        document.getElementById('card-users').addEventListener('click', () => { if (window.parent && window.parent.changeIframeView) window.parent.changeIframeView('user'); });
+        document.getElementById('card-parkings').addEventListener('click', () => { if (window.parent && window.parent.changeIframeView) window.parent.changeIframeView('parkingslot'); });
+        document.getElementById('card-properties').addEventListener('click', () => { if (window.parent && window.parent.changeIframeView) window.parent.changeIframeView('property'); });
+        document.getElementById('card-payments').addEventListener('click', () => { if (window.parent && window.parent.changeIframeView) window.parent.changeIframeView('payment'); });
+    </script>
 </body>
 
-</html> 
+</html>

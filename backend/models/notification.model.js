@@ -6,15 +6,13 @@ const NotificationModel = {
     const [rows] = await connect.query(`
       SELECT 
         n.*,
-        u.username, 
+        u.user_name, 
         p.property_name, 
-        s.status_name, 
-        nt.notification_type_name
+        s.status_name
       FROM notification n
       JOIN user u ON n.user_id = u.user_id
       JOIN property p ON n.property_id = p.property_id
       JOIN status s ON n.status_id = s.status_id
-      JOIN notification_type nt ON n.notification_type_id = nt.notification_type_id
       ORDER BY n.notification_created_at DESC
     `);
     return rows;
@@ -26,11 +24,11 @@ const NotificationModel = {
       `
       SELECT 
         n.*, 
-        nt.notification_type_name, 
-        s.status_name
+        s.status_name,
+        p.property_name
       FROM notification n
-      JOIN notification_type nt ON n.notification_type_id = nt.notification_type_id
       JOIN status s ON n.status_id = s.status_id
+      JOIN property p ON n.property_id = p.property_id
       WHERE n.user_id = ?
       ORDER BY n.notification_created_at DESC
       `,
@@ -44,7 +42,6 @@ const NotificationModel = {
     const {
       user_id,
       property_id,
-      notification_type_id,
       notification_title,
       notification_message,
       status_id
@@ -53,13 +50,12 @@ const NotificationModel = {
     const [result] = await connect.query(
       `
       INSERT INTO notification 
-      (user_id, property_id, notification_type_id, notification_title, notification_message, status_id)
-      VALUES (?, ?, ?, ?, ?, ?)
+      (user_id, property_id, notification_title, notification_message, status_id)
+      VALUES (?, ?, ?, ?, ?)
       `,
       [
         user_id,
         property_id,
-        notification_type_id,
         notification_title,
         notification_message,
         status_id
@@ -74,7 +70,7 @@ const NotificationModel = {
     const [result] = await connect.query(
       `
       UPDATE notification 
-      SET status_id = 2, notification_updated_at = CURRENT_TIMESTAMP
+      SET status_id = 2
       WHERE notification_id = ?
       `,
       [notificationId]
@@ -84,22 +80,35 @@ const NotificationModel = {
 
   // Actualizar notificación
   async update(notificationId, data) {
+    const fields = [];
+    const values = [];
+
+    if (data.notification_title !== undefined) {
+      fields.push('notification_title = ?');
+      values.push(data.notification_title);
+    }
+    if (data.notification_message !== undefined) {
+      fields.push('notification_message = ?');
+      values.push(data.notification_message);
+    }
+    if (data.status_id !== undefined) {
+      fields.push('status_id = ?');
+      values.push(data.status_id);
+    }
+
+    if (fields.length === 0) {
+      return false;
+    }
+
+    values.push(notificationId);
+
     const [result] = await connect.query(
       `
       UPDATE notification 
-      SET 
-        notification_title = ?, 
-        notification_message = ?, 
-        status_id = ?, 
-        notification_updated_at = CURRENT_TIMESTAMP
+      SET ${fields.join(', ')}
       WHERE notification_id = ?
       `,
-      [
-        data.notification_title,
-        data.notification_message,
-        data.status_id,
-        notificationId
-      ]
+      values
     );
     return result.affectedRows > 0;
   },

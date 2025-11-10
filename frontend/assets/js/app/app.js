@@ -1,6 +1,19 @@
 
 
 async function checkAuth() {
+  // Verificar si se está procesando un login activo
+  // Esto previene condiciones de carrera cuando el login está guardando el token
+  if (window.isProcessingLogin === true) {
+    console.log('[checkAuth] Login en proceso, esperando...');
+    // Esperar un poco y verificar de nuevo
+    await new Promise(resolve => setTimeout(resolve, 300));
+    // Si después de esperar aún está procesando, no hacer nada
+    if (window.isProcessingLogin === true) {
+      console.log('[checkAuth] Login aún en proceso, omitiendo verificación');
+      return false;
+    }
+  }
+  
   toggleLoading(true);
   const storage = new AppStorage();
   const getToken = storage.getItem(KEY_TOKEN);
@@ -9,10 +22,9 @@ async function checkAuth() {
   const getUrl = window.location.href;
 
   if (!getToken) {
-    //console.log("No token found, redirecting to login page.");
     // No token found, redirecting to login page.
     if (!getUrl.includes(moduleLogin)) {
-      window.location.href = `views/auth`
+      window.location.href = `views/auth`;
     }
     toggleLoading(false);
     return false;
@@ -21,39 +33,56 @@ async function checkAuth() {
   try {
     // Verify the token with the server
     let endpointUrl = HOST + "/validate-token/";
-    const response = getServicesAuth("", "POST", endpointUrl, getToken);
-
-    response.then(response => {
-      return response.json();
-    }).then(data => {
-
-      //console.log(data['valid']);
-      if (data['valid']) {
-        // Token is valid, redirect to dashboard if not already there
-
-        if (getUrl.includes(moduleLogin)) {
-          window.history.back();
-          window.history.forward();
-          return true;
-        }
-      } else {
-        // Token is invalid, redirect to login page
-        storage.removeItem(KEY_TOKEN);
-        window.location.href = `..${moduleLogin}`;
-        return false;
+    const response = await getServicesAuth("", "POST", endpointUrl, getToken);
+    
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      console.error('Error al parsear respuesta de validación de token:', jsonError);
+      // Si no se puede parsear, asumir que el token es inválido
+      storage.removeItem(KEY_TOKEN);
+      if (!getUrl.includes(moduleLogin)) {
+        window.location.href = `views/auth`;
       }
-
-
-    }).catch(error => {
-      console.log(error);
-    }).finally(() => {
-      //console.log("finally");
       toggleLoading(false);
-    });
+      return false;
+    }
+
+    if (data && data['valid']) {
+      // Token is valid
+      // Si estamos en la página de login y el token es válido, redirigir al dashboard
+      if (getUrl.includes(moduleLogin)) {
+        // Pequeño delay para evitar condiciones de carrera con el proceso de login
+        setTimeout(() => {
+          window.location.href = '../../';
+        }, 200);
+        toggleLoading(false);
+        return true;
+      }
+      // Si no estamos en login, continuar normalmente
+      toggleLoading(false);
+      return true;
+    } else {
+      // Token is invalid, redirect to login page
+      storage.removeItem(KEY_TOKEN);
+      if (!getUrl.includes(moduleLogin)) {
+        window.location.href = `views/auth`;
+      }
+      toggleLoading(false);
+      return false;
+    }
   } catch (error) {
-    console.error('Error al validate token:', error);
-    storage.removeItem(KEY_TOKEN);
-    //window.location.href = `..${moduleLogin}`;
+    console.error('Error al validar token:', error);
+    // En caso de error de red, no redirigir si ya estamos en login
+    // Solo limpiar el token si hay un error claro de autenticación
+    if (error.message && error.message.includes('401')) {
+      storage.removeItem(KEY_TOKEN);
+      if (!getUrl.includes(moduleLogin)) {
+        window.location.href = `views/auth`;
+      }
+    }
+    toggleLoading(false);
     return false;
   }
 }

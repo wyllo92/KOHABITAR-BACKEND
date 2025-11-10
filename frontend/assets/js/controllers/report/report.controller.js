@@ -1,230 +1,369 @@
-document.addEventListener('DOMContentLoaded', async () => {
+(function () {
+  const el = {
+    users: document.getElementById('stat-users'),
+    parkings: document.getElementById('stat-parkings'),
+    properties: document.getElementById('stat-properties'),
+    payments: document.getElementById('stat-payments'),
+    updated: document.getElementById('dashboard-updated'),
+    loading: document.getElementById('loading-screen')
+  };
+
+  // Utility to format money
+  function fmtMoney(n){
+    try{ return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits:0 }).format(n); }
+    catch(e){ return '$'+(n||0); }
+  }
+
+  // Fetch summary from backend
+  async function fetchSummary(){
+    const token = localStorage.getItem('token') || null;
+    try{
+      let resp;
+      if(token) resp = await getServicesAuth('', 'GET', URL_REPORT + 'summary', token);
+      else resp = await getDataServices('', 'GET', URL_REPORT + 'summary');
+      const j = await resp.json();
+      return j.data || {};
+    }catch(e){
+      console.error('Error fetching summary:', e);
+      return { users:0, parkingsAvailable:0, properties:0, payments: { total_amount: 0 }, pqrs:0 };
+    }
+  }
+
+  // Fetch payments chart data from backend
+  async function fetchPaymentsChart(months = 6){
+    const token = localStorage.getItem('token') || null;
+    try{
+      let resp;
+      if(token) resp = await getServicesAuth('', 'GET', URL_REPORT + `payments-chart?months=${months}`, token);
+      else resp = await getDataServices('', 'GET', URL_REPORT + `payments-chart?months=${months}`);
+      const j = await resp.json();
+      return j.data || [];
+    }catch(e){
+      console.error('Error fetching payments chart:', e);
+      return [];
+    }
+  }
+
+  // Fetch PQRS chart data from backend
+  async function fetchPqrsChart(months = 6){
+    const token = localStorage.getItem('token') || null;
+    try{
+      let resp;
+      if(token) resp = await getServicesAuth('', 'GET', URL_REPORT + `pqrs-chart?months=${months}`, token);
+      else resp = await getDataServices('', 'GET', URL_REPORT + `pqrs-chart?months=${months}`);
+      const j = await resp.json();
+      return j.data || [];
+    }catch(e){
+      console.error('Error fetching PQRS chart:', e);
+      return [];
+    }
+  }
+
+  // Format chart data for Chart.js
+  function formatChartData(backendData, months = 6){
+    const now = new Date();
+    const map = {};
+    
+    // Create map from backend data
+    backendData.forEach(item => {
+      const key = `${item.year}-${item.month}`;
+      map[key] = item.total;
+    });
+
+    // Generate labels and data for all months
+    const labels = [];
+    const data = [];
+    for(let i = months - 1; i >= 0; i--){
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
+      labels.push(d.toLocaleString('es-ES', { month: 'short', year: '2-digit' }));
+      data.push(map[key] || 0);
+    }
+
+    return { labels, data };
+  }
+
+  // Create charts
+  let reserveChart = null;
+  let incidentsChart = null;
+  function createLineChart(ctx, labels, data, label, color, chartInstance){
+    if(chartInstance) chartInstance.destroy();
+    
+    return new Chart(ctx, {
+      type: 'line',
+      data: { 
+        labels, 
+        datasets: [{ 
+          label, 
+          data, 
+          borderColor: color, 
+          backgroundColor: color + '44', 
+          tension: 0.4,
+          fill: true,
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }] 
+      },
+      options: { 
+        responsive: true, 
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top'
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                if(label.includes('Fondo')) {
+                  return fmtMoney(value);
+                }
+                return value;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Update payments chart
+  async function updatePaymentsChart(months = 6){
+    const data = await fetchPaymentsChart(months);
+    const formatted = formatChartData(data, months);
+    const reserveCtx = document.getElementById('chart-reserve').getContext('2d');
+    reserveChart = createLineChart(reserveCtx, formatted.labels, formatted.data, 'Fondo de Reserva (COP)', 'rgb(54,162,235)', reserveChart);
+  }
+
+  // Update PQRS chart
+  async function updatePqrsChart(months = 6){
+    const data = await fetchPqrsChart(months);
+    const formatted = formatChartData(data, months);
+    const incCtx = document.getElementById('chart-incidents').getContext('2d');
+    incidentsChart = createLineChart(incCtx, formatted.labels, formatted.data, 'Incidencias', 'rgb(255,99,132)', incidentsChart);
+  }
+
+  // Export to PDF
+  async function exportToPDF(){
+    try{
+      const token = localStorage.getItem('token') || null;
+      let resp;
+      if(token) resp = await getServicesAuth('', 'GET', URL_REPORT + 'full', token);
+      else resp = await getDataServices('', 'GET', URL_REPORT + 'full');
+      const j = await resp.json();
+      
+      if(!j || !j.data){
+        throw new Error('No se pudieron obtener los datos del reporte');
+      }
+      
+      const reportData = j.data;
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      // Title
+      doc.setFontSize(18);
+      doc.text('Reporte General - Conjunto Residencial', 14, 20);
+      doc.setFontSize(12);
+      doc.text(`Generado: ${new Date().toLocaleString('es-ES')}`, 14, 30);
+
+      let yPos = 40;
+
+      // Summary section
+      doc.setFontSize(14);
+      doc.text('Resumen General', 14, yPos);
+      yPos += 10;
+      doc.setFontSize(10);
+      doc.text(`Usuarios: ${reportData.summary?.users || 0}`, 20, yPos);
+      yPos += 7;
+      doc.text(`Propiedades: ${reportData.summary?.properties || 0}`, 20, yPos);
+      yPos += 7;
+      doc.text(`Parqueaderos Disponibles: ${reportData.summary?.parkingsAvailable || 0}`, 20, yPos);
+      yPos += 7;
+      doc.text(`Total Pagos: ${fmtMoney(reportData.summary?.payments?.total_amount || 0)}`, 20, yPos);
+      yPos += 7;
+      doc.text(`PQRS: ${reportData.summary?.pqrs || 0}`, 20, yPos);
+      yPos += 15;
+
+      // Charts data
+      if(reportData.charts && reportData.charts.payments && reportData.charts.payments.length > 0){
+        doc.setFontSize(12);
+        doc.text('Evolución de Pagos (Últimos 12 meses)', 14, yPos);
+        yPos += 10;
+        const tableData = reportData.charts.payments.map(item => [
+          `${item.month}/${item.year}`,
+          fmtMoney(item.total)
+        ]);
+        doc.autoTable({
+          startY: yPos,
+          head: [['Mes', 'Total']],
+          body: tableData,
+          theme: 'striped'
+        });
+        yPos = doc.lastAutoTable.finalY + 15;
+      }
+
+      if(reportData.charts && reportData.charts.pqrs && reportData.charts.pqrs.length > 0){
+        doc.setFontSize(12);
+        doc.text('Evolución de PQRS (Últimos 12 meses)', 14, yPos);
+        yPos += 10;
+        const tableData = reportData.charts.pqrs.map(item => [
+          `${item.month}/${item.year}`,
+          item.total
+        ]);
+        doc.autoTable({
+          startY: yPos,
+          head: [['Mes', 'Cantidad']],
+          body: tableData,
+          theme: 'striped'
+        });
+      }
+
+      doc.save(`reporte-${new Date().toISOString().split('T')[0]}.pdf`);
+    }catch(e){
+      console.error('Error exporting PDF:', e);
+      alert('Error al exportar PDF: ' + e.message);
+    }
+  }
+
+  // Export to Excel
+  async function exportToExcel(){
+    try{
+      const token = localStorage.getItem('token') || null;
+      let resp;
+      if(token) resp = await getServicesAuth('', 'GET', URL_REPORT + 'full', token);
+      else resp = await getDataServices('', 'GET', URL_REPORT + 'full');
+      const j = await resp.json();
+      
+      if(!j || !j.data){
+        throw new Error('No se pudieron obtener los datos del reporte');
+      }
+      
+      const reportData = j.data;
+
+      const wb = XLSX.utils.book_new();
+
+      // Summary sheet
+      const summaryData = [
+        ['Resumen General'],
+        ['Usuarios', reportData.summary?.users || 0],
+        ['Propiedades', reportData.summary?.properties || 0],
+        ['Parqueaderos Disponibles', reportData.summary?.parkingsAvailable || 0],
+        ['Total Pagos', reportData.summary?.payments?.total_amount || 0],
+        ['PQRS', reportData.summary?.pqrs || 0]
+      ];
+      const ws1 = XLSX.utils.aoa_to_sheet(summaryData);
+      XLSX.utils.book_append_sheet(wb, ws1, 'Resumen');
+
+      // Payments chart sheet
+      if(reportData.charts && reportData.charts.payments && reportData.charts.payments.length > 0){
+        const paymentsData = [['Mes', 'Año', 'Total']];
+        reportData.charts.payments.forEach(item => {
+          paymentsData.push([item.month, item.year, item.total]);
+        });
+        const ws2 = XLSX.utils.aoa_to_sheet(paymentsData);
+        XLSX.utils.book_append_sheet(wb, ws2, 'Pagos');
+      }
+
+      // PQRS chart sheet
+      if(reportData.charts && reportData.charts.pqrs && reportData.charts.pqrs.length > 0){
+        const pqrsData = [['Mes', 'Año', 'Cantidad']];
+        reportData.charts.pqrs.forEach(item => {
+          pqrsData.push([item.month, item.year, item.total]);
+        });
+        const ws3 = XLSX.utils.aoa_to_sheet(pqrsData);
+        XLSX.utils.book_append_sheet(wb, ws3, 'PQRS');
+      }
+
+      // Details sheets
+      if(reportData.details && reportData.details.users && reportData.details.users.length > 0){
+        const usersData = [['ID', 'Nombre', 'Email', 'Fecha Creación']];
+        reportData.details.users.forEach(item => {
+          usersData.push([item.user_id, item.user_name, item.profile_email || 'N/A', item.created_at || 'N/A']);
+        });
+        const ws4 = XLSX.utils.aoa_to_sheet(usersData);
+        XLSX.utils.book_append_sheet(wb, ws4, 'Usuarios');
+      }
+
+      if(reportData.details && reportData.details.payments && reportData.details.payments.length > 0){
+        const paymentsDetailData = [['ID', 'Usuario', 'Monto', 'Fecha', 'Método']];
+        reportData.details.payments.forEach(item => {
+          paymentsDetailData.push([
+            item.payment_id,
+            item.user_name || '',
+            item.amount_paid || 0,
+            item.payment_date || 'N/A',
+            item.method || ''
+          ]);
+        });
+        const ws5 = XLSX.utils.aoa_to_sheet(paymentsDetailData);
+        XLSX.utils.book_append_sheet(wb, ws5, 'Pagos Detalle');
+      }
+
+      XLSX.writeFile(wb, `reporte-${new Date().toISOString().split('T')[0]}.xlsx`);
+    }catch(e){
+      console.error('Error exporting Excel:', e);
+      alert('Error al exportar Excel: ' + e.message);
+    }
+  }
+
+  async function init(){
+    try{
+      el.loading.style.display = 'flex';
+    }catch(e){}
+
+    // Fetch summary
+    const summary = await fetchSummary();
+    el.users.textContent = summary.users || 0;
+    el.parkings.textContent = summary.parkingsAvailable || 0;
+    el.properties.textContent = summary.properties || 0;
+    el.payments.textContent = fmtMoney(summary.payments?.total_amount || 0);
+
+    // Load charts
+    await updatePaymentsChart(6);
+    await updatePqrsChart(6);
+
+    // Event listeners for month selectors
+    document.getElementById('select-payments-months').addEventListener('change', (e) => {
+      updatePaymentsChart(parseInt(e.target.value));
+    });
+    document.getElementById('select-pqrs-months').addEventListener('change', (e) => {
+      updatePqrsChart(parseInt(e.target.value));
+    });
+
+    // Export buttons
+    document.getElementById('btn-export-pdf').addEventListener('click', exportToPDF);
+    document.getElementById('btn-export-excel').addEventListener('click', exportToExcel);
+    document.getElementById('btn-refresh').addEventListener('click', () => {
+      const btn = document.getElementById('btn-refresh');
+      btn.classList.add('spinning');
+      init().finally(() => {
+        btn.classList.remove('spinning');
+      });
+    });
+
+    try{ el.updated.textContent = new Date().toLocaleString('es-ES'); }catch(e){}
+    try{ el.loading.style.display = 'none'; }catch(e){}
+  }
+
+  // Initialize when DOM ready
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(init, 120);
+  });
+
+})();
+document.addEventListener('DOMContentLoaded', async ()=> {
   document.querySelector('body').style.display = 'none';
   document.querySelector('body').style.opacity = 0;
-
+ 
   await checkAuth();
-  console.log('Report controller has been loaded');
+  console.log('report controller has been loaded');
   fadeInElement(document.querySelector('body'), 1000);
-  // Initialize the loading screen
-
 });
-
-const objForm = new Form('reportForm', 'edit-input');
-const objModal = new bootstrap.Modal(document.getElementById('appModal'));
-const objTableBody = document.getElementById('app-table-body');
-const myForm = objForm.getForm();
-const textConfirm = "¿Estás seguro de que deseas eliminar este reporte?";
-const appTable = "#app-table";
-
-let insertUpdate = true;
-let keyId;
-let documentData = "";
-let httpMethod = "";
-let endpointUrl = "";
-
-myForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (!objForm.validateForm()) {
-    console.log("Error en validación del formulario");
-    return;
-  }
-  toggleLoading(true);
-  if (insertUpdate) {
-    console.log("Insertando nuevo reporte");
-    httpMethod = METHODS[1]; // POST method
-    endpointUrl = URL_REPORT;
-  } else {
-    console.log("Actualizando reporte");
-    httpMethod = METHODS[2]; // PUT method
-    endpointUrl = URL_REPORT + keyId;
-  }
-  documentData = objForm.getDataForm();
-  console.log('Datos del formulario:', documentData);
-
-  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
-  resultServices.then(response => {
-    return response.json();
-  }).then(data => {
-    console.log('Respuesta del servidor:', data);
-    if (data.error) {
-      alert('Error: ' + data.error);
-    } else {
-      alert(data.message || 'Operación completada exitosamente');
-    }
-  }).catch(error => {
-    console.log('Error en la operación:', error);
-    alert('Error en la operación. Por favor, inténtalo de nuevo.');
-  }).finally(() => {
-    loadView();
-    showHiddenModal(false);
-  });
-});
-
-function add() {
-  showHiddenModal(true);
-  insertUpdate = true;
-  objForm.resetForm();
-  objForm.enabledForm();
-  objForm.enabledButton();
-  objForm.showButton();
-}
-
-function showId(id) {
-  objForm.resetForm();
-  objForm.disabledForm();
-  objForm.disabledButton();
-  objForm.hiddenButton();
-  getDataId(id);
-}
-
-function edit(id) {
-  insertUpdate = false;
-  objForm.resetForm();
-  objForm.enabledEditForm();
-  objForm.enabledButton();
-  objForm.showButton();
-  keyId = id;
-  getDataId(id);
-}
-
-function delete_(id) {
-  objForm.resetForm();
-  objForm.enabledForm();
-  objForm.enabledButton();
-  if (confirm(textConfirm)) {
-    documentData = "";
-    httpMethod = METHODS[3]; // DELETE method
-    endpointUrl = URL_REPORT + id;
-    const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
-    resultServices.then(response => {
-      return response.json();
-    }).then(data => {
-      console.log('Respuesta de eliminación:', data);
-      if (data.error) {
-        alert('Error: ' + data.error);
-      } else {
-        alert(data.message || 'Reporte eliminado exitosamente');
-      }
-    }).catch(error => {
-      console.log('Error al eliminar:', error);
-      alert('Error al eliminar. Por favor, inténtalo de nuevo.');
-    }).finally(() => {
-      loadView();
-    });
-  } else {
-    console.log("Operación cancelada");
-  }
-}
-
-function getDataId(id) {
-  documentData = "";
-  httpMethod = METHODS[0]; // GET method
-  endpointUrl = URL_REPORT + id;
-  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
-  resultServices.then(response => {
-    return response.json();
-  }).then(data => {
-    console.log('Datos del reporte:', data);
-    if (data.data) {
-      let getData = data.data;
-      objForm.setDataFormJson(getData);
-    } else {
-      alert('Error: No se encontraron datos del reporte');
-    }
-  }).catch(error => {
-    console.log('Error al obtener datos:', error);
-    alert('Error al obtener los datos del reporte');
-  }).finally(() => {
-    showHiddenModal(true);
-  });
-}
-
-function getData() {
-  documentData = "";
-  httpMethod = METHODS[0]; // GET method
-  endpointUrl = URL_REPORT;
-
-  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
-  resultServices.then(response => {
-    return response.json();
-  }).then(data => {
-    console.log('Datos recibidos del backend:', data);
-    createTable(data);
-    // Destruir DataTable si ya existe
-    if ($.fn.DataTable.isDataTable(appTable)) {
-      $(appTable).DataTable().destroy();
-    }
-    new DataTable(appTable);
-  }).catch(error => {
-    console.log('Error al obtener datos:', error);
-    alert('Error al cargar los datos de reportes');
-  }).finally(() => {
-    toggleLoading(false);
-  });
-}
-
-function createTable(data) {
-  objTableBody.innerHTML = ""; // Clear previous table data
-  let getData = data.data || [];
-  console.log('Datos para crear tabla:', getData);
-  
-  if (getData.length === 0) {
-    console.log('No hay datos para mostrar');
-    objTableBody.innerHTML = '<tr><td colspan="7" class="text-center">No hay reportes disponibles</td></tr>';
-    return;
-  }
-  
-  let rowLong = getData.length;
-  for (let i = 0; i < rowLong; i++) {
-    let row = getData[i];
-    console.log('Fila actual:', row);
-    
-    // Determinar el estado activo/inactivo
-    const statusActive = row.status_name || 'N/A';
-    const statusClass = row.status_name === 'Activo' ? 'text-success' : 'text-danger';
-    
-    // Formatear fecha
-    const reportDate = row.report_created_at || row.created_at || 'N/A';
-    const formattedDate = reportDate !== 'N/A' ? new Date(reportDate).toLocaleDateString('es-ES') : 'N/A';
-    
-    let dataRow = `<tr>
-      <td>${row.report_id || row.id}</td>
-      <td>${row.report_title || row.title || 'N/A'}</td>
-      <td>${row.report_type || row.type || 'N/A'}</td>
-      <td>${row.user_name || 'N/A'}</td>
-      <td>
-        <span class="${statusClass}">${statusActive}</span>
-      </td>
-      <td>${formattedDate}</td>
-      <td>
-        <button type="button" title="Ver Reporte" class="btn btn-success btn-sm" onclick="showId(${row.report_id || row.id})">
-          <i class='fas fa-eye'></i>
-        </button>
-        <button type="button" title="Editar Reporte" class="btn btn-primary btn-sm" onclick="edit(${row.report_id || row.id})">
-          <i class='fas fa-edit'></i>
-        </button>
-        <button type="button" title="Eliminar Reporte" class="btn btn-danger btn-sm" onclick="delete_(${row.report_id || row.id})">
-          <i class='fas fa-trash'></i>
-        </button>
-      </td>
-    </tr>`;
-    objTableBody.innerHTML += dataRow;
-  }
-}
-
-function showHiddenModal(type) {
-  if (type) {
-    objModal.show();
-  } else {
-    objModal.hide();
-  }
-}
-
-function loadView() {
-  getData();
-  toggleLoading(true);
-}
-
-window.addEventListener('load', () => {
-  loadView();
-}); 

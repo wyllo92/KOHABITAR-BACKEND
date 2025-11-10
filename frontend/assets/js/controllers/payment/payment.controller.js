@@ -70,6 +70,8 @@ function add() {
   objForm.enabledForm();
   objForm.enabledButton();
   objForm.showButton();
+  // Asegurar que los usuarios estén cargados antes de mostrar el modal
+  getDataSelects();
   showHiddenModal(true);
 }
 
@@ -186,15 +188,20 @@ function showHiddenModal(type) {
 
 function getDataSelects() {
   // Cargar usuarios para el select
-  getDataServices('', METHODS[0], URL_PROFILE).then(r => r.json()).then(d => {
-    if (d.data) {
-      objSelectUser.innerHTML = '<option value="">Seleccione un usuario</option>';
+  getDataServices('', METHODS[0], URL_USER).then(r => r.json()).then(d => {
+    if (d.data && Array.isArray(d.data)) {
+      objSelectUser.innerHTML = '<option value="" selected disabled>Seleccione un usuario</option>';
       d.data.forEach(u => {
-        objSelectUser.innerHTML += `<option value="${u.user_id}">${u.user_name || u.email || u.user_id}</option>`;
+        const userName = u.user_name || u.email || `Usuario ${u.user_id}`;
+        objSelectUser.innerHTML += `<option value="${u.user_id}">${userName}</option>`;
       });
+    } else {
+      console.warn('No se encontraron usuarios o formato de respuesta incorrecto:', d);
+      objSelectUser.innerHTML = '<option value="" selected disabled>No hay usuarios disponibles</option>';
     }
   }).catch(err => {
     console.error('Error al cargar usuarios:', err);
+    objSelectUser.innerHTML = '<option value="" selected disabled>Error al cargar usuarios</option>';
   });
 }
 

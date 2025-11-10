@@ -233,6 +233,7 @@ class ProfileController {
 
   /**
    * Buscar perfil por ID de usuario
+   * Si no existe, intenta obtener datos del usuario y crear un perfil básico
    */
   async findById(req, res) {
     try {
@@ -246,12 +247,76 @@ class ProfileController {
       }
 
       // Buscar perfil
-      const profile = await ProfileModel.getByUserId(user_id);
+      let profile = await ProfileModel.getByUserId(user_id);
 
+      // Si no existe el perfil, intentar obtener datos del usuario y crear uno básico
       if (!profile) {
-        return res.status(404).json({ 
-          error: 'Perfil no encontrado' 
-        });
+        console.log(`[INFO] Perfil no encontrado para user_id=${user_id}, intentando crear perfil básico...`);
+        
+        // Obtener datos del usuario usando getFullProfile que hace LEFT JOIN
+        const fullProfile = await ProfileModel.getFullProfile(user_id);
+        
+        if (!fullProfile || !fullProfile.user_id) {
+          console.error(`[ERROR] Usuario con ID ${user_id} no encontrado en la base de datos`);
+          return res.status(404).json({ 
+            error: 'Usuario no encontrado' 
+          });
+        }
+
+        // Crear un perfil básico con los datos del usuario
+        try {
+          // Generar un email temporal único usando timestamp para evitar duplicados
+          const timestamp = Date.now();
+          let tempEmail = `user${fullProfile.user_id}_${timestamp}@temp.kohabitar.local`;
+          
+          // Verificar que el email no esté en uso (aunque es muy improbable)
+          let emailAvailable = await ProfileModel.isEmailAvailable(tempEmail);
+          let attempts = 0;
+          while (!emailAvailable && attempts < 5) {
+            tempEmail = `user${fullProfile.user_id}_${timestamp}_${attempts}@temp.kohabitar.local`;
+            emailAvailable = await ProfileModel.isEmailAvailable(tempEmail);
+            attempts++;
+          }
+          
+          if (!emailAvailable) {
+            throw new Error('No se pudo generar un email temporal único después de varios intentos');
+          }
+          
+          const newProfile = await ProfileModel.create({
+            user_id: fullProfile.user_id,
+            profile_fullName: fullProfile.user_name || `Usuario ${fullProfile.user_id}`,
+            profile_phone: null,
+            profile_email: tempEmail, // Email temporal que el usuario deberá actualizar
+            profile_photo: null,
+            profile_address: null
+          });
+
+          if (!newProfile) {
+            throw new Error('No se pudo crear el perfil después de la inserción');
+          }
+
+          console.log(`[INFO] Perfil básico creado exitosamente para user_id=${user_id}`);
+          profile = newProfile;
+        } catch (createError) {
+          console.error(`[ERROR] Error al crear perfil básico para user_id=${user_id}:`, createError);
+          console.error(`[ERROR] Stack trace:`, createError.stack);
+          
+          // Si falla la creación, retornar un objeto con datos del usuario para que el frontend pueda crear el perfil
+          // Esto permite que el usuario pueda completar su perfil manualmente
+          return res.status(200).json({
+            message: 'Perfil no encontrado, pero usuario existe. Por favor, completa tu información.',
+            data: {
+              user_id: fullProfile.user_id,
+              profile_fullName: fullProfile.user_name || '',
+              profile_phone: '',
+              profile_email: '',
+              profile_photo: null,
+              profile_address: null
+            },
+            needsCreation: true,
+            error: createError.message || 'Error al crear perfil automáticamente'
+          });
+        }
       }
 
       res.status(200).json({

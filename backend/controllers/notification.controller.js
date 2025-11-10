@@ -6,7 +6,6 @@ const createNotification = async (req, res) => {
     const {
       user_id,
       property_id,
-      notification_type_id,
       notification_title,
       notification_message,
       status_id
@@ -16,9 +15,9 @@ const createNotification = async (req, res) => {
     if (
       !user_id ||
       !property_id ||
-      !notification_type_id ||
       !notification_title ||
-      !notification_message
+      !notification_message ||
+      !status_id
     ) {
       return res.status(400).json({ message: "Faltan campos obligatorios." });
     }
@@ -27,10 +26,9 @@ const createNotification = async (req, res) => {
     const data = {
       user_id,
       property_id,
-      notification_type_id,
       notification_title,
       notification_message,
-      status_id: status_id || 1 // Por defecto '1' (ej. "No leída")
+      status_id
     };
 
     const result = await NotificationModel.create(data);

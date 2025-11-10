@@ -42,8 +42,8 @@
             <tr class="table-primary text-center">
               <th>#</th>
               <th>Título</th>
-              <th>Tipo</th>
-              <th>Destinatario</th>
+              <th>Propiedad</th>
+              <th>Usuario</th>
               <th>Estado</th>
               <th>Fecha</th>
               <th>Acciones</th>
@@ -56,8 +56,8 @@
             <tr class="table-primary text-center">
               <th>#</th>
               <th>Título</th>
-              <th>Tipo</th>
-              <th>Destinatario</th>
+              <th>Propiedad</th>
+              <th>Usuario</th>
               <th>Estado</th>
               <th>Fecha</th>
               <th>Acciones</th>
@@ -93,24 +93,34 @@
                 </div>
               </div>
 
-              <!-- Tipo -->
+              <!-- Estado -->
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="notification_type_id" class="form-label required">Tipo de Notificación</label>
-                  <select class="form-select edit-input" id="notification_type_id" name="notification_type_id" required>
-                    <option value="" selected disabled>Selecciona el tipo</option>
+                  <label for="status_id" class="form-label required">Estado</label>
+                  <select class="form-select edit-input" id="status_id" name="status_id" required>
+                    <option value="" selected disabled>Selecciona el estado</option>
                   </select>
                 </div>
               </div>
             </div>
 
-            <!-- Usuario destinatario -->
             <div class="row">
-              <div class="col-md-12">
+              <!-- Usuario destinatario -->
+              <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="user_id" class="form-label required">Destinatario</label>
+                  <label for="user_id" class="form-label required">Usuario</label>
                   <select class="form-select edit-input" id="user_id" name="user_id" required>
-                    <option value="" selected disabled>Selecciona el destinatario</option>
+                    <option value="" selected disabled>Selecciona el usuario</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Propiedad -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="property_id" class="form-label required">Propiedad</label>
+                  <select class="form-select edit-input" id="property_id" name="property_id" required>
+                    <option value="" selected disabled>Selecciona la propiedad</option>
                   </select>
                 </div>
               </div>

@@ -11,14 +11,16 @@ const objForm = new Form('paymentForm', 'edit-input');
 const objModal = new bootstrap.Modal(document.getElementById('appModal'));
 const objTableBody = document.getElementById('app-table-body');
 const objSelectUser = document.getElementById('user_id');
+const objFileInput = document.getElementById('payment_photo');
+const objFilePreview = document.getElementById('photo-preview');
 const myForm = objForm.getForm();
 const appTable = "#app-table";
 
 let insertUpdate = true;
 let keyId;
-let documentData = "";
 let httpMethod = "";
 let endpointUrl = "";
+let currentPhotoPath = null; // Guardar la ruta de la foto actual
 
 myForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -33,7 +35,9 @@ myForm.addEventListener('submit', (e) => {
     endpointUrl = URL_PAYMENT + keyId;
   }
   
-  documentData = objForm.getDataForm();
+  // Crear FormData para enviar archivos
+  const formData = new FormData();
+  const documentData = objForm.getDataForm();
   
   // Validación adicional en el frontend
   if (!documentData.user_id || !documentData.amount_paid || !documentData.payment_date) {
@@ -48,12 +52,27 @@ myForm.addEventListener('submit', (e) => {
     return;
   }
 
-  const result = getDataServices(documentData, httpMethod, endpointUrl);
+  // Agregar todos los campos al FormData
+  Object.keys(documentData).forEach(key => {
+    if (documentData[key] !== null && documentData[key] !== undefined) {
+      formData.append(key, documentData[key]);
+    }
+  });
+
+  // Agregar la foto si existe
+  if (objFileInput && objFileInput.files[0]) {
+    formData.append('payment_photo', objFileInput.files[0]);
+  }
+
+  const result = getDataServicesWithFile(formData, httpMethod, endpointUrl);
   result.then(r => r.json()).then(d => {
     if (d.error) {
       alert('Error: ' + d.error);
     } else {
       alert(d.message || 'Operación exitosa');
+      if (d.payment_photo) {
+        console.log('Foto guardada en:', d.payment_photo);
+      }
     }
   }).catch(err => {
     console.error(err);
@@ -61,15 +80,19 @@ myForm.addEventListener('submit', (e) => {
   }).finally(() => {
     loadView();
     showHiddenModal(false);
+    resetFilePreview();
   });
 });
 
 function add() {
   insertUpdate = true;
+  keyId = null;
+  currentPhotoPath = null;
   objForm.resetForm();
   objForm.enabledForm();
   objForm.enabledButton();
   objForm.showButton();
+  resetFilePreview();
   // Asegurar que los usuarios estén cargados antes de mostrar el modal
   getDataSelects();
   showHiddenModal(true);
@@ -82,6 +105,7 @@ function edit(id) {
   objForm.enabledEditForm();
   objForm.enabledButton();
   objForm.showButton();
+  resetFilePreview();
   getDataId(id);
 }
 
@@ -111,6 +135,11 @@ function getDataId(id) {
       alert('Error: ' + d.error);
     } else if (d.data) {
       objForm.setDataFormJson(d.data);
+      currentPhotoPath = d.data.payment_photo;
+      // Mostrar la foto actual si existe
+      if (d.data.payment_photo) {
+        showCurrentPhoto(d.data.payment_photo);
+      }
     }
   }).catch(err => {
     console.error(err);
@@ -126,7 +155,7 @@ function createTable(data) {
   const rows = data.data || [];
   
   if (rows.length === 0) {
-    objTableBody.innerHTML = '<tr><td colspan="7" class="text-center">No hay pagos registrados</td></tr>';
+    objTableBody.innerHTML = '<tr><td colspan="8" class="text-center">No hay pagos registrados</td></tr>';
     return;
   }
   
@@ -134,17 +163,27 @@ function createTable(data) {
     // Formatear fecha para mejor visualización
     const formattedDate = row.payment_date ? new Date(row.payment_date).toLocaleDateString() : '';
     
+    // Icono para indicar si tiene foto
+    const photoIcon = row.payment_photo 
+      ? '<i class="fas fa-image text-success" title="Tiene foto"></i>' 
+      : '<i class="fas fa-image text-muted" title="Sin foto"></i>';
+    
     const tr = `<tr>
       <td>${row.payment_id}</td>
       <td>${row.user_name || row.user_id}</td>
       <td>$${parseFloat(row.amount_paid).toFixed(2)}</td>
       <td>${formattedDate}</td>
+      <td>${photoIcon}</td>
       <td>${row.method || 'N/A'}</td>
       <td>${row.reference || 'N/A'}</td>
       <td>
         <button class="btn btn-success btn-sm" onclick="showId(${row.payment_id})" title="Ver">
           <i class='fas fa-eye'></i>
         </button>
+        ${row.payment_photo ? `
+        <button class="btn btn-info btn-sm" onclick="viewPhoto('${row.payment_photo}')" title="Ver foto">
+          <i class='fas fa-camera'></i>
+        </button>` : ''}
         <button class="btn btn-primary btn-sm" onclick="edit(${row.payment_id})" title="Editar">
           <i class='fas fa-edit'></i>
         </button>
@@ -210,6 +249,111 @@ function loadView() {
   getDataSelects();
 }
 
+// === FUNCIONES PARA MANEJO DE FOTOS ===
+
+// Preview de la foto cuando se selecciona
+if (objFileInput) {
+  objFileInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      previewPhoto(file);
+    }
+  });
+}
+
+function previewPhoto(file) {
+  if (!objFilePreview) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    objFilePreview.innerHTML = `
+      <div class="text-center">
+        <img src="${e.target.result}" class="img-fluid" style="max-height: 200px;" alt="Preview">
+        <p class="mt-2 text-muted small">${file.name}</p>
+      </div>
+    `;
+    objFilePreview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function showCurrentPhoto(photoPath) {
+  if (!objFilePreview) return;
+  
+  objFilePreview.innerHTML = `
+    <div class="text-center">
+      <p class="text-muted small">Foto actual:</p>
+      <img src="${photoPath}" class="img-fluid" style="max-height: 200px;" alt="Foto actual">
+      <p class="mt-2 text-muted small">Selecciona una nueva foto para reemplazarla</p>
+    </div>
+  `;
+  objFilePreview.style.display = 'block';
+}
+
+function resetFilePreview() {
+  if (objFilePreview) {
+    objFilePreview.innerHTML = '';
+    objFilePreview.style.display = 'none';
+  }
+  if (objFileInput) {
+    objFileInput.value = '';
+  }
+  currentPhotoPath = null;
+}
+
+function viewPhoto(photoPath) {
+  // Crear modal para ver la foto en grande
+  const photoModal = `
+    <div class="modal fade" id="photoModal" tabindex="-1">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Comprobante de Pago</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body text-center">
+            <img src="${photoPath}" class="img-fluid" alt="Comprobante de pago">
+          </div>
+          <div class="modal-footer">
+            <a href="${photoPath}" download class="btn btn-primary">
+              <i class="fas fa-download"></i> Descargar
+            </a>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Remover modal anterior si existe
+  const existingModal = document.getElementById('photoModal');
+  if (existingModal) existingModal.remove();
+  
+  // Agregar modal al body
+  document.body.insertAdjacentHTML('beforeend', photoModal);
+  
+  // Mostrar modal
+  const modal = new bootstrap.Modal(document.getElementById('photoModal'));
+  modal.show();
+  
+  // Limpiar cuando se cierre
+  document.getElementById('photoModal').addEventListener('hidden.bs.modal', function() {
+    this.remove();
+  });
+}
+
+// === FUNCIÓN PARA ENVIAR ARCHIVOS ===
+function getDataServicesWithFile(formData, method, url) {
+  return fetch(url, {
+    method: method,
+    headers: {
+      // NO incluir Content-Type para que el navegador lo establezca automáticamente con boundary
+      'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+    },
+    body: formData
+  });
+}
+
 // Cargar la vista cuando la ventana termine de cargar
 window.addEventListener('load', () => { 
   loadView(); 
@@ -221,9 +365,11 @@ window.showId = function (id) {
   objForm.disabledForm();
   objForm.disabledButton();
   objForm.hiddenButton();
+  resetFilePreview();
   getDataId(id);
 }
 
 window.delete_ = delete_;
 window.edit = edit;
 window.add = add;
+window.viewPhoto = viewPhoto;

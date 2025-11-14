@@ -266,7 +266,7 @@ const sqlStatements = [
     INDEX idx_invoice_due_date (due_date)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;`,
 
-  // Create reservation table (SIN tariff_id y reservation_time_unit)
+  // Create reservation table 
   `CREATE TABLE IF NOT EXISTS reservation (
     reservation_id int(11) NOT NULL AUTO_INCREMENT,
     amenity_id int(11) NOT NULL,
@@ -319,6 +319,7 @@ const sqlStatements = [
     user_id int(11) NOT NULL,
     amount_paid double NOT NULL,
     payment_date datetime NOT NULL,
+    payment_photo varchar(450) DEFAULT NULL,
     method varchar(50) DEFAULT NULL,
     reference varchar(100) DEFAULT NULL,
     created_at datetime DEFAULT current_timestamp(),
@@ -522,15 +523,13 @@ const sqlStatements = [
     Visitor_entry_time datetime NOT NULL,
     Visitor_exit_time datetime DEFAULT NULL,
     Property_id int(11) NOT NULL,
-    Vehicle_id int(11) DEFAULT NULL,
+    Visitor_vehicle varchar(75) DEFAULT NULL,
     parkingSlot_id int(11) DEFAULT NULL,
     created_at datetime DEFAULT current_timestamp(),
     PRIMARY KEY (Visitor_id),
     KEY Property_id (Property_id),
-    KEY Vehicle_id (Vehicle_id),
     KEY parkingSlot_id (parkingSlot_id),
     FOREIGN KEY (Property_id) REFERENCES property(property_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (Vehicle_id) REFERENCES vehicle(vehicle_id) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (parkingSlot_id) REFERENCES parkingslot(parkingSlot_id) ON DELETE SET NULL ON UPDATE CASCADE,
     INDEX idx_visitor_entry_time (Visitor_entry_time),
     INDEX idx_visitor_document (Visitor_id_document)
@@ -541,8 +540,7 @@ const sqlStatements = [
 (1, 'Activo', 'Estado activo', 'General', 1, '2025-05-27 16:14:45'),
 (2, 'Inactivo', 'Estado inactivo', 'General', 1, '2025-05-27 16:14:45'),
 (3, 'Pendiente', 'Estado pendiente', 'General', 1, '2025-05-27 16:14:45'),
-(4, 'Completado', 'Estado completado', 'General', 1, '2025-05-27 16:14:45'),
-(5, 'Cancelado', 'Estado cancelado', 'General', 1, '2025-05-27 16:14:45');`,
+(4, 'Completado', 'Estado completado', 'General', 1, '2025-05-27 16:14:45')`,
 
   `INSERT INTO role (role_id, role_name, role_description, status_id, role_createAt) VALUES
 (1, 'Administrador', 'Gestiona el conjunto', 1, '2025-05-27 16:14:55'),

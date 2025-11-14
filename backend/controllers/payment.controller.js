@@ -8,6 +8,7 @@ class PaymentController {
     try {
       console.log('=== PAYMENT CREATE ===');
       console.log('Received request body:', req.body);
+      console.log('Received file:', req.file);
       
       const { user_id, amount_paid, payment_date, method, reference } = req.body;
 
@@ -22,10 +23,14 @@ class PaymentController {
         return res.status(400).json({ error: 'The amount_paid must be greater than 0' });
       }
 
+      // Obtener la ruta de la foto si fue subida
+      const payment_photo = req.file ? req.file.path : null;
+
       const paymentId = await PaymentModel.create({
         user_id,
         amount_paid,
         payment_date,
+        payment_photo,
         method,
         reference,
       });
@@ -33,6 +38,7 @@ class PaymentController {
       res.status(201).json({
         message: 'Payment created successfully',
         id: paymentId,
+        payment_photo,
       });
     } catch (error) {
       console.error('=== PAYMENT CREATE ERROR ===', error);
@@ -106,10 +112,14 @@ class PaymentController {
         return res.status(404).json({ error: 'Payment not found' });
       }
 
+      // Si se sube una nueva foto, usar la nueva; si no, mantener la anterior
+      const payment_photo = req.file ? req.file.path : existing.payment_photo;
+
       const updated = await PaymentModel.update(id, {
         user_id,
         amount_paid,
         payment_date,
+        payment_photo,
         method,
         reference,
       });
@@ -120,6 +130,44 @@ class PaymentController {
       });
     } catch (error) {
       console.error('=== PAYMENT UPDATE ERROR ===', error);
+      res.status(500).json({
+        error: 'Internal Server Error',
+        debug: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      });
+    }
+  }
+
+  // === ACTUALIZAR SOLO LA FOTO DE PAGO ===
+  async updatePhoto(req, res) {
+    try {
+      const id = req.params.id;
+      
+      if (!id) {
+        return res.status(400).json({ error: 'Payment ID is required' });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ error: 'Payment photo is required' });
+      }
+
+      const existing = await PaymentModel.findById(id);
+      if (!existing) {
+        return res.status(404).json({ error: 'Payment not found' });
+      }
+
+      const payment_photo = req.file.path;
+      const updated = await PaymentModel.updatePhoto(id, payment_photo);
+
+      if (!updated) {
+        return res.status(500).json({ error: 'Failed to update payment photo' });
+      }
+
+      res.status(200).json({
+        message: 'Payment photo updated successfully',
+        payment_photo,
+      });
+    } catch (error) {
+      console.error('=== PAYMENT UPDATE PHOTO ERROR ===', error);
       res.status(500).json({
         error: 'Internal Server Error',
         debug: process.env.NODE_ENV === 'development' ? error.message : undefined,

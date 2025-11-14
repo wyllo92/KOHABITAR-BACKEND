@@ -26,12 +26,14 @@
   <!-- Contenedor principal -->
   <div class="container-fluid d-flex flex-column min-vh-100">
     <main class="flex-fill">
-      <h1 class="text-center mb-4 mt-3">Gestión de Notificaciones</h1>
+      <h1 class="text-center mb-4 mt-3">
+        <i class="fas fa-bell text-primary me-2"></i>Gestión de Notificaciones
+      </h1>
 
       <!-- Botón agregar -->
       <div class="text-end mb-3">
         <button type="button" class="btn btn-primary" title="Agregar Notificación" onclick="add()">
-          <i class="fa fa-bell me-1"></i>Agregar Notificación
+          <i class="fas fa-plus me-1"></i>Nueva Notificación
         </button>
       </div>
 
@@ -40,13 +42,14 @@
         <table class="table table-dark table-hover" id="app-table">
           <thead>
             <tr class="table-primary text-center">
-              <th>#</th>
-              <th>Título</th>
-              <th>Propiedad</th>
-              <th>Usuario</th>
-              <th>Estado</th>
-              <th>Fecha</th>
-              <th>Acciones</th>
+              <th style="width: 5%;">#</th>
+              <th style="width: 15%;">Título</th>
+              <th style="width: 20%;">Mensaje</th>
+              <th style="width: 15%;">Propiedad</th>
+              <th style="width: 12%;">Usuario</th>
+              <th style="width: 10%;">Estado</th>
+              <th style="width: 13%;">Fecha</th>
+              <th style="width: 10%;">Acciones</th>
             </tr>
           </thead>
           <tbody id="app-table-body" class="text-center">
@@ -56,6 +59,7 @@
             <tr class="table-primary text-center">
               <th>#</th>
               <th>Título</th>
+              <th>Mensaje</th>
               <th>Propiedad</th>
               <th>Usuario</th>
               <th>Estado</th>
@@ -72,9 +76,11 @@
   <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="appModalLabel">Notificación</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <div class="modal-header bg-primary text-white">
+          <h1 class="modal-title fs-5" id="appModalLabel">
+            <i class="fas fa-bell me-2"></i>Formulario de Notificación
+          </h1>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
 
         <div class="modal-body">
@@ -84,19 +90,30 @@
               <!-- Título -->
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="notification_title" class="form-label required">Título</label>
+                  <label for="notification_title" class="form-label">
+                    Título <span class="text-danger">*</span>
+                  </label>
                   <div class="form-floating">
-                    <input type="text" class="form-control edit-input" id="notification_title"
-                      name="notification_title" placeholder="Título de la notificación" required>
+                    <input 
+                      type="text" 
+                      class="form-control edit-input" 
+                      id="notification_title"
+                      name="notification_title" 
+                      placeholder="Título de la notificación" 
+                      maxlength="100"
+                      required>
                     <label for="notification_title">Título de la Notificación</label>
                   </div>
+                  <div class="form-text">Máximo 100 caracteres</div>
                 </div>
               </div>
 
               <!-- Estado -->
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="status_id" class="form-label required">Estado</label>
+                  <label for="status_id" class="form-label">
+                    Estado <span class="text-danger">*</span>
+                  </label>
                   <select class="form-select edit-input" id="status_id" name="status_id" required>
                     <option value="" selected disabled>Selecciona el estado</option>
                   </select>
@@ -108,7 +125,9 @@
               <!-- Usuario destinatario -->
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="user_id" class="form-label required">Usuario</label>
+                  <label for="user_id" class="form-label">
+                    Usuario Destinatario <span class="text-danger">*</span>
+                  </label>
                   <select class="form-select edit-input" id="user_id" name="user_id" required>
                     <option value="" selected disabled>Selecciona el usuario</option>
                   </select>
@@ -118,7 +137,9 @@
               <!-- Propiedad -->
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="property_id" class="form-label required">Propiedad</label>
+                  <label for="property_id" class="form-label">
+                    Propiedad <span class="text-danger">*</span>
+                  </label>
                   <select class="form-select edit-input" id="property_id" name="property_id" required>
                     <option value="" selected disabled>Selecciona la propiedad</option>
                   </select>
@@ -128,11 +149,23 @@
 
             <!-- Mensaje -->
             <div class="mb-3">
-              <label for="notification_message" class="form-label required">Mensaje</label>
+              <label for="notification_message" class="form-label">
+                Mensaje <span class="text-danger">*</span>
+              </label>
               <div class="form-floating">
-                <textarea class="form-control edit-input" id="notification_message" name="notification_message"
-                  placeholder="Mensaje de la notificación" style="height: 120px" required></textarea>
+                <textarea 
+                  class="form-control edit-input" 
+                  id="notification_message" 
+                  name="notification_message"
+                  placeholder="Mensaje de la notificación" 
+                  style="height: 120px" 
+                  maxlength="500"
+                  required></textarea>
                 <label for="notification_message">Mensaje de la Notificación</label>
+              </div>
+              <div class="form-text">
+                Máximo 500 caracteres
+                <span id="char-count" class="float-end text-muted">0/500</span>
               </div>
             </div>
 
@@ -141,8 +174,8 @@
               <button type="reset" class="btn btn-outline-secondary me-2">
                 <i class="fas fa-undo me-1"></i>Limpiar
               </button>
-              <button type="submit" class="btn btn-outline-primary">
-                <i class="fas fa-paper-plane me-1"></i>Guardar
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane me-1"></i>Guardar Notificación
               </button>
             </div>
           </form>
@@ -177,6 +210,33 @@
   <script src="../../assets/js/app/app.js"></script>
   <script src="../../assets/js/utils/Form.js"></script>
   <script src="../../assets/js/controllers/notification/notification.controller.js"></script>
+
+  <!-- Script para contador de caracteres -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const messageTextarea = document.getElementById('notification_message');
+      const charCount = document.getElementById('char-count');
+      
+      if (messageTextarea && charCount) {
+        messageTextarea.addEventListener('input', function() {
+          const currentLength = this.value.length;
+          charCount.textContent = `${currentLength}/500`;
+          
+          // Cambiar color según el uso
+          if (currentLength > 450) {
+            charCount.classList.remove('text-muted', 'text-warning');
+            charCount.classList.add('text-danger');
+          } else if (currentLength > 400) {
+            charCount.classList.remove('text-muted', 'text-danger');
+            charCount.classList.add('text-warning');
+          } else {
+            charCount.classList.remove('text-warning', 'text-danger');
+            charCount.classList.add('text-muted');
+          }
+        });
+      }
+    });
+  </script>
 </body>
 
 </html>

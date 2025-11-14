@@ -3,14 +3,14 @@ import { connect } from '../config/db/connectMysql.js';
 class PaymentModel {
 
   // === CREAR PAGO ===
-  static async create({ user_id, amount_paid, payment_date, method, reference }) {
+  static async create({ user_id, amount_paid, payment_date, payment_photo, method, reference }) {
     try {
       console.log('PaymentModel.create: Creating payment...');
 
       const [result] = await connect.query(
-        `INSERT INTO payment (user_id, amount_paid, payment_date, method, reference)
-         VALUES (?, ?, ?, ?, ?)`,
-        [user_id, amount_paid, payment_date, method, reference]
+        `INSERT INTO payment (user_id, amount_paid, payment_date, payment_photo, method, reference)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [user_id, amount_paid, payment_date, payment_photo, method, reference]
       );
 
       console.log('✅ Payment created with ID:', result.insertId);
@@ -33,6 +33,7 @@ class PaymentModel {
           u.user_name,
           p.amount_paid,
           p.payment_date,
+          p.payment_photo,
           p.method,
           p.reference,
           p.created_at
@@ -61,6 +62,7 @@ class PaymentModel {
           u.user_name,
           p.amount_paid,
           p.payment_date,
+          p.payment_photo,
           p.method,
           p.reference,
           p.created_at
@@ -123,20 +125,36 @@ class PaymentModel {
   }
 
   // === ACTUALIZAR PAGO ===
-  static async update(id, { user_id, amount_paid, payment_date, method, reference }) {
+  static async update(id, { user_id, amount_paid, payment_date, payment_photo, method, reference }) {
     try {
       console.log('PaymentModel.update: Updating payment ID:', id);
       const [result] = await connect.query(
         `UPDATE payment 
-         SET user_id = ?, amount_paid = ?, payment_date = ?, method = ?, reference = ? 
+         SET user_id = ?, amount_paid = ?, payment_date = ?, payment_photo = ?, method = ?, reference = ? 
          WHERE payment_id = ?`,
-        [user_id, amount_paid, payment_date, method, reference, id]
+        [user_id, amount_paid, payment_date, payment_photo, method, reference, id]
       );
 
       console.log('✅ Affected rows:', result.affectedRows);
       return result.affectedRows > 0 ? this.findById(id) : null;
     } catch (error) {
       console.error('❌ PaymentModel.update error:', error);
+      throw error;
+    }
+  }
+
+  // === ACTUALIZAR SOLO LA FOTO DE PAGO ===
+  static async updatePhoto(id, payment_photo) {
+    try {
+      console.log('PaymentModel.updatePhoto: Updating photo for payment ID:', id);
+      const [result] = await connect.query(
+        `UPDATE payment SET payment_photo = ? WHERE payment_id = ?`,
+        [payment_photo, id]
+      );
+      console.log('✅ Photo updated:', result.affectedRows > 0);
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error('❌ PaymentModel.updatePhoto error:', error);
       throw error;
     }
   }

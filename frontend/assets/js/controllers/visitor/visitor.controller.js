@@ -11,7 +11,7 @@ const objForm = new Form('visitorForm', 'edit-input');
 const objModal = new bootstrap.Modal(document.getElementById('appModal'));
 const objTableBody = document.getElementById('app-table-body');
 const objSelectProperty = document.getElementById('Property_id');
-const objSelectVehicle = document.getElementById('Vehicle_id');
+const objInputVehicle = document.getElementById('Visitor_vehicle'); // Changed from select to input
 const objSelectParking = document.getElementById('parkingSlot_id');
 const myForm = objForm.getForm();
 const textConfirm = "Press a button!\nEither OK or Cancel.";
@@ -56,7 +56,7 @@ myForm.addEventListener('submit', (e) => {
   console.log('Sending visitor payload:', documentData, 'to', endpointUrl, 'method:', httpMethod);
 
   // Normalize empty strings to null for numeric/optional ids
-  ['Vehicle_id', 'parkingSlot_id', 'Property_id'].forEach(k => {
+  ['parkingSlot_id', 'Property_id'].forEach(k => {
     if (k in documentData) {
       if (documentData[k] === "" || documentData[k] === undefined) {
         documentData[k] = null;
@@ -66,6 +66,13 @@ myForm.addEventListener('submit', (e) => {
       }
     }
   });
+
+  // Handle Visitor_vehicle as text field (convert empty to null)
+  if ('Visitor_vehicle' in documentData) {
+    if (documentData.Visitor_vehicle === "" || documentData.Visitor_vehicle === undefined) {
+      documentData.Visitor_vehicle = null;
+    }
+  }
 
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
   resultServices.then(response => {
@@ -256,7 +263,8 @@ function createTable(data) {
   let rowLong = getData.length;
   for (let i = 0; i < rowLong; i++) {
     let row = getData[i];
-    const vehicleInfo = row.vehicle_model ? `${row.vehicle_model} (${row.vehicle_type || ''})` : 'Sin vehículo';
+    // Visitor_vehicle is now a text field, not a relation
+    const vehicleInfo = row.Visitor_vehicle || 'Sin vehículo';
     const parkingInfo = row.parking_slot_code || 'Sin parqueadero';
     const entryTime = row.Visitor_entry_time ? new Date(row.Visitor_entry_time).toLocaleString('es-CO') : '';
     const exitTime = row.Visitor_exit_time ? new Date(row.Visitor_exit_time).toLocaleString('es-CO') : '';
@@ -300,17 +308,6 @@ function createSelectProperty(data) {
   }
 }
 
-function createSelectVehicle(data) {
-  objSelectVehicle.innerHTML = "<option value='' selected>Sin vehículo</option>";
-  let getData = data['data'];
-  if (!getData || getData.length === 0) return;
-  for (let i = 0; i < getData.length; i++) {
-    let row = getData[i];
-    let dataRow = `<option value="${row.vehicle_id}">${row.model} - ${row.type || ''} - ${row.plate || ''}</option>`;
-    objSelectVehicle.innerHTML += dataRow;
-  }
-}
-
 function createSelectParking(data) {
   objSelectParking.innerHTML = "<option value='' selected>Sin Parqueadero</option>";
   let getData = data['data'];
@@ -344,17 +341,6 @@ function getDataProperty() {
   resultServices.then(response => response.json())
   .then(data => createSelectProperty(data))
   .catch(error => console.log('Error loading properties:', error))
-  .finally(() => toggleLoading(false));
-}
-
-function getDataVehicle() {
-  documentData = "";
-  httpMethod = METHODS[0];
-  endpointUrl = URL_VEHICLE;
-  const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
-  resultServices.then(response => response.json())
-  .then(data => createSelectVehicle(data))
-  .catch(error => console.log('Error loading vehicles:', error))
   .finally(() => toggleLoading(false));
 }
 
@@ -399,6 +385,5 @@ function getTodayVisitors() {
 window.addEventListener('load', () => {
   loadView();
   getDataProperty();
-  getDataVehicle();
-  getDataParking();
+  getDataParking(); // Removed getDataVehicle() since it's no longer needed
 });

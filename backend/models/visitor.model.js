@@ -2,10 +2,10 @@ import { connect } from '../config/db/connectMysql.js';
 
 class VisitorModel {
 
-  static async create({ Visitor_full_name, Visitor_id_document, Visitor_entry_time, Visitor_exit_time, Property_id, Vehicle_id, parkingSlot_id }) {
+  static async create({ Visitor_full_name, Visitor_id_document, Visitor_entry_time, Visitor_exit_time, Property_id, Visitor_vehicle, parkingSlot_id }) {
     try {
-      let sqlQuery = "INSERT INTO visitor (Visitor_full_name, Visitor_id_document, Visitor_entry_time, Visitor_exit_time, Property_id, Vehicle_id, parkingSlot_id) VALUES (?, ?, ?, ?, ?, ?, ?);";
-      const [result] = await connect.query(sqlQuery, [Visitor_full_name, Visitor_id_document, Visitor_entry_time, Visitor_exit_time, Property_id, Vehicle_id, parkingSlot_id]);
+      let sqlQuery = "INSERT INTO visitor (Visitor_full_name, Visitor_id_document, Visitor_entry_time, Visitor_exit_time, Property_id, Visitor_vehicle, parkingSlot_id) VALUES (?, ?, ?, ?, ?, ?, ?);";
+      const [result] = await connect.query(sqlQuery, [Visitor_full_name, Visitor_id_document, Visitor_entry_time, Visitor_exit_time, Property_id, Visitor_vehicle, parkingSlot_id]);
       return result.insertId;
     } catch (error) {
       return null;
@@ -16,12 +16,9 @@ class VisitorModel {
     try {
       let sqlQuery = `SELECT v.*, 
                              p.property_name, 
-                             veh.model as vehicle_model, 
-                             veh.type as vehicle_type, 
                              ps.code as parking_slot_code 
                       FROM visitor v 
                       LEFT JOIN property p ON v.Property_id = p.property_id 
-                      LEFT JOIN vehicle veh ON v.Vehicle_id = veh.vehicle_id 
                       LEFT JOIN parkingslot ps ON v.parkingSlot_id = ps.parkingSlot_id 
                       ORDER BY v.Visitor_id`;
       const [result] = await connect.query(sqlQuery);
@@ -31,10 +28,10 @@ class VisitorModel {
     }
   }
 
-  static async update(id, { Visitor_full_name, Visitor_id_document, Visitor_entry_time, Visitor_exit_time, Property_id, Vehicle_id, parkingSlot_id }) {
+  static async update(id, { Visitor_full_name, Visitor_id_document, Visitor_entry_time, Visitor_exit_time, Property_id, Visitor_vehicle, parkingSlot_id }) {
     try {
-      let sqlQuery = "UPDATE visitor SET Visitor_full_name = ?, Visitor_id_document = ?, Visitor_entry_time = ?, Visitor_exit_time = ?, Property_id = ?, Vehicle_id = ?, parkingSlot_id = ? WHERE Visitor_id = ?;";
-      const [result] = await connect.query(sqlQuery, [Visitor_full_name, Visitor_id_document, Visitor_entry_time, Visitor_exit_time, Property_id, Vehicle_id, parkingSlot_id, id]);
+      let sqlQuery = "UPDATE visitor SET Visitor_full_name = ?, Visitor_id_document = ?, Visitor_entry_time = ?, Visitor_exit_time = ?, Property_id = ?, Visitor_vehicle = ?, parkingSlot_id = ? WHERE Visitor_id = ?;";
+      const [result] = await connect.query(sqlQuery, [Visitor_full_name, Visitor_id_document, Visitor_entry_time, Visitor_exit_time, Property_id, Visitor_vehicle, parkingSlot_id, id]);
       return result.affectedRows > 0 ? this.findById(id) : null;
     } catch (error) {
       return null;
@@ -55,12 +52,9 @@ class VisitorModel {
     try {
       let sqlQuery = `SELECT v.*, 
                              p.property_name, 
-                             veh.model as vehicle_model, 
-                             veh.type as vehicle_type, 
                              ps.code as parking_slot_code 
                       FROM visitor v 
                       LEFT JOIN property p ON v.Property_id = p.property_id 
-                      LEFT JOIN vehicle veh ON v.Vehicle_id = veh.vehicle_id 
                       LEFT JOIN parkingslot ps ON v.parkingSlot_id = ps.parkingSlot_id 
                       WHERE v.Visitor_id = ?`;
       const [result] = await connect.query(sqlQuery, [id]);
@@ -74,12 +68,9 @@ class VisitorModel {
     try {
       let sqlQuery = `SELECT v.*, 
                              p.property_name, 
-                             veh.model as vehicle_model, 
-                             veh.type as vehicle_type, 
                              ps.code as parking_slot_code 
                       FROM visitor v 
                       LEFT JOIN property p ON v.Property_id = p.property_id 
-                      LEFT JOIN vehicle veh ON v.Vehicle_id = veh.vehicle_id 
                       LEFT JOIN parkingslot ps ON v.parkingSlot_id = ps.parkingSlot_id 
                       WHERE v.Visitor_id_document = ?`;
       const [result] = await connect.query(sqlQuery, [Visitor_id_document]);
@@ -93,12 +84,9 @@ class VisitorModel {
     try {
       let sqlQuery = `SELECT v.*, 
                              p.property_name, 
-                             veh.model as vehicle_model, 
-                             veh.type as vehicle_type, 
                              ps.code as parking_slot_code 
                       FROM visitor v 
                       LEFT JOIN property p ON v.Property_id = p.property_id 
-                      LEFT JOIN vehicle veh ON v.Vehicle_id = veh.vehicle_id 
                       LEFT JOIN parkingslot ps ON v.parkingSlot_id = ps.parkingSlot_id 
                       WHERE v.Property_id = ?`;
       const [result] = await connect.query(sqlQuery, [Property_id]);
@@ -112,12 +100,9 @@ class VisitorModel {
     try {
       let sqlQuery = `SELECT v.*, 
                              p.property_name, 
-                             veh.model as vehicle_model, 
-                             veh.type as vehicle_type, 
                              ps.code as parking_slot_code 
                       FROM visitor v 
                       LEFT JOIN property p ON v.Property_id = p.property_id 
-                      LEFT JOIN vehicle veh ON v.Vehicle_id = veh.vehicle_id 
                       LEFT JOIN parkingslot ps ON v.parkingSlot_id = ps.parkingSlot_id 
                       WHERE v.Visitor_entry_time BETWEEN ? AND ?`;
       const [result] = await connect.query(sqlQuery, [start_date, end_date]);
@@ -131,12 +116,9 @@ class VisitorModel {
     try {
       let sqlQuery = `SELECT v.*, 
                              p.property_name, 
-                             veh.model as vehicle_model, 
-                             veh.type as vehicle_type, 
                              ps.code as parking_slot_code 
                       FROM visitor v 
                       LEFT JOIN property p ON v.Property_id = p.property_id 
-                      LEFT JOIN vehicle veh ON v.Vehicle_id = veh.vehicle_id 
                       LEFT JOIN parkingslot ps ON v.parkingSlot_id = ps.parkingSlot_id 
                       WHERE v.Visitor_exit_time IS NULL 
                       ORDER BY v.Visitor_entry_time DESC`;
@@ -166,12 +148,9 @@ class VisitorModel {
       const today = new Date().toISOString().split('T')[0];
       let sqlQuery = `SELECT v.*, 
                              p.property_name, 
-                             veh.model as vehicle_model, 
-                             veh.type as vehicle_type, 
                              ps.code as parking_slot_code 
                       FROM visitor v 
                       LEFT JOIN property p ON v.Property_id = p.property_id 
-                      LEFT JOIN vehicle veh ON v.Vehicle_id = veh.vehicle_id 
                       LEFT JOIN parkingslot ps ON v.parkingSlot_id = ps.parkingSlot_id 
                       WHERE DATE(v.Visitor_entry_time) = ?
                       ORDER BY v.Visitor_entry_time DESC`;
@@ -189,7 +168,7 @@ class VisitorModel {
                         COUNT(*) as total_visitors,
                         COUNT(CASE WHEN Visitor_exit_time IS NULL THEN 1 END) as current_visitors,
                         COUNT(CASE WHEN DATE(Visitor_entry_time) = CURDATE() THEN 1 END) as today_visitors,
-                        COUNT(CASE WHEN Vehicle_id IS NOT NULL THEN 1 END) as visitors_with_vehicles,
+                        COUNT(CASE WHEN Visitor_vehicle IS NOT NULL AND Visitor_vehicle != '' THEN 1 END) as visitors_with_vehicles,
                         COUNT(CASE WHEN parkingSlot_id IS NOT NULL THEN 1 END) as visitors_with_parking,
                         AVG(TIMESTAMPDIFF(HOUR, Visitor_entry_time, COALESCE(Visitor_exit_time, NOW()))) as avg_visit_duration_hours
                       FROM visitor`;
@@ -227,13 +206,10 @@ class VisitorModel {
     try {
       let sqlQuery = `SELECT v.*, 
                              p.property_name, 
-                             veh.model as vehicle_model,
-                             veh.type as vehicle_type,
                              ps.code as parking_slot_code,
                              TIMESTAMPDIFF(HOUR, v.Visitor_entry_time, COALESCE(v.Visitor_exit_time, NOW())) as visit_duration_hours
                       FROM visitor v
                       LEFT JOIN property p ON v.Property_id = p.property_id
-                      LEFT JOIN vehicle veh ON v.Vehicle_id = veh.vehicle_id
                       LEFT JOIN parkingslot ps ON v.parkingSlot_id = ps.parkingSlot_id
                       WHERE v.Visitor_id_document = ?
                       ORDER BY v.Visitor_entry_time DESC`;

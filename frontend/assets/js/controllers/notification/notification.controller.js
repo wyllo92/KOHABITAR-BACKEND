@@ -64,8 +64,8 @@ myForm.addEventListener('submit', (e) => {
       alert('Error en la operación. Por favor, inténtalo de nuevo.');
     })
     .finally(() => {
-      loadView();
       showHiddenModal(false);
+      loadView();
     });
 });
 
@@ -73,30 +73,24 @@ myForm.addEventListener('submit', (e) => {
    FUNCIONES CRUD
 ============================ */
 function add() {
-  showHiddenModal(true);
   insertUpdate = true;
   objForm.resetForm();
   objForm.enabledForm();
   objForm.enabledButton();
   objForm.showButton();
+  showHiddenModal(true);
 }
 
 function showId(id) {
   objForm.resetForm();
-  objForm.disabledForm();
-  objForm.disabledButton();
-  objForm.hiddenButton();
-  getDataId(id);
+  getDataId(id, false); // false = modo vista
 }
 
 function edit(id) {
   insertUpdate = false;
-  objForm.resetForm();
-  objForm.enabledEditForm();
-  objForm.enabledButton();
-  objForm.showButton();
   keyId = id;
-  getDataId(id);
+  objForm.resetForm();
+  getDataId(id, true); // true = modo edición
 }
 
 function delete_(id) {
@@ -124,30 +118,61 @@ function delete_(id) {
       console.error('Error al eliminar:', error);
       alert('Error al eliminar. Por favor, inténtalo de nuevo.');
     })
-    .finally(() => loadView());
+    .finally(() => {loadView();});
 }
 
 /* ============================
    CONSULTAS AL BACKEND
 ============================ */
-function getDataId(id) {
+function getDataId(id, isEditMode = false) {
   documentData = "";
   httpMethod = METHODS[0]; // GET
   endpointUrl = `${URL_NOTIFICATION}${id}`;
 
+  toggleLoading(true);
+  
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
   resultServices
     .then(response => response.json())
     .then(data => {
-      console.log('Datos de la notificación:', data);
-      const getData = data.data || data;
-      objForm.setDataFormJson(getData);
+      console.log('Datos de la notificación recibidos:', data);
+      
+      // Asegurarse de que los datos existan
+      if (!data || !data.notification_id) {
+        throw new Error('No se recibieron datos válidos de la notificación');
+      }
+      
+      // Mostrar el modal PRIMERO
+      showHiddenModal(true);
+      
+      // Esperar a que el modal esté completamente visible
+      setTimeout(() => {
+        // Llenar el formulario con los datos
+        objForm.setDataFormJson(data);
+        
+        // Configurar el estado del formulario según el modo
+        if (isEditMode) {
+          console.log('Habilitando formulario para edición...');
+          // Habilitar todos los campos para edición
+          enableAllFields();
+          objForm.enabledButton();
+          objForm.showButton();
+        } else {
+          console.log('Deshabilitando formulario para vista...');
+          // Deshabilitar todos los campos para solo lectura
+          disableAllFields();
+          objForm.disabledButton();
+          objForm.hiddenButton();
+        }
+      }, 300); // Dar tiempo para que el modal se renderice
     })
     .catch(error => {
       console.error('Error al obtener datos:', error);
-      alert('Error al obtener los datos de la notificación.');
+      alert('Error al obtener los datos de la notificación: ' + error.message);
     })
-    .finally(() => showHiddenModal(true));
+    .finally(() => {
+      toggleLoading(false);
+    });
 }
 
 function getData() {
@@ -160,10 +185,11 @@ function getData() {
     .then(response => response.json())
     .then(data => {
       console.log('Datos recibidos del backend:', data);
-      createTable(data);
       if ($.fn.DataTable.isDataTable(appTable)) {
         $(appTable).DataTable().destroy();
       }
+      // El backend retorna { count: X, notifications: [...] }
+      createTable(data.notifications || data);
       new DataTable(appTable);
     })
     .catch(error => {
@@ -174,30 +200,77 @@ function getData() {
 }
 
 /* ============================
+   HABILITAR/DESHABILITAR CAMPOS
+============================ */
+function enableAllFields() {
+  // Habilitar todos los inputs con la clase edit-input
+  const fields = document.querySelectorAll('.edit-input');
+  fields.forEach(field => {
+    field.disabled = false;
+    field.readOnly = false;
+    console.log(`Campo habilitado: ${field.name || field.id}`);
+  });
+  
+  // Asegurar que los selects estén habilitados
+  objSelectUser.disabled = false;
+  objSelectProperty.disabled = false;
+  objSelectStatus.disabled = false;
+}
+
+function disableAllFields() {
+  // Deshabilitar todos los inputs con la clase edit-input
+  const fields = document.querySelectorAll('.edit-input');
+  fields.forEach(field => {
+    field.disabled = true;
+    field.readOnly = true;
+  });
+  
+  // Deshabilitar los selects
+  objSelectUser.disabled = true;
+  objSelectProperty.disabled = true;
+  objSelectStatus.disabled = true;
+}
+
+/* ============================
    CREAR TABLA DINÁMICA
 ============================ */
 function createTable(data) {
   objTableBody.innerHTML = "";
-  const getData = Array.isArray(data) ? data : data.data || [];
+  const getData = Array.isArray(data) ? data : [];
 
   if (getData.length === 0) {
-    objTableBody.innerHTML = `<tr><td colspan="7" class="text-center">No hay notificaciones disponibles</td></tr>`;
+    objTableBody.innerHTML = `<tr><td colspan="8" class="text-center">No hay notificaciones disponibles</td></tr>`;
     return;
   }
 
   for (let row of getData) {
     const statusText = row.status_name || 'N/A';
-    const statusClass = statusText.toLowerCase().includes('leída') || statusText.toLowerCase().includes('leido') 
+    const statusClass = statusText.toLowerCase().includes('leída') || 
+                       statusText.toLowerCase().includes('leido') || 
+                       statusText.toLowerCase() === 'read'
       ? 'text-success' 
       : 'text-warning';
+    
     const formattedDate = row.notification_created_at
-      ? new Date(row.notification_created_at).toLocaleString('es-ES')
+      ? new Date(row.notification_created_at).toLocaleString('es-ES', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
       : 'N/A';
+
+    // Truncar mensaje si es muy largo para la tabla
+    const truncatedMessage = row.notification_message && row.notification_message.length > 50
+      ? row.notification_message.substring(0, 50) + '...'
+      : row.notification_message || 'N/A';
 
     const htmlRow = `
       <tr>
         <td>${row.notification_id}</td>
         <td>${row.notification_title || 'N/A'}</td>
+        <td title="${row.notification_message || ''}">${truncatedMessage}</td>
         <td>${row.property_name || 'N/A'}</td>
         <td>${row.user_name || 'N/A'}</td>
         <td><span class="${statusClass}">${statusText}</span></td>
@@ -226,7 +299,16 @@ function createSelectUser(data) {
     console.log('Creando select de usuarios con datos:', data);
     objSelectUser.innerHTML = "<option value='' selected disabled>Selecciona el usuario</option>";
     
-    const getData = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
+    // Manejar estructura: { count: X, users: [...] } o array directo
+    let getData = [];
+    if (Array.isArray(data)) {
+      getData = data;
+    } else if (data.users && Array.isArray(data.users)) {
+      getData = data.users;
+    } else if (data.data && Array.isArray(data.data)) {
+      getData = data.data;
+    }
+    
     console.log('Datos de usuarios procesados:', getData);
 
     if (getData.length === 0) {
@@ -257,7 +339,16 @@ function createSelectProperty(data) {
     console.log('Creando select de propiedades con datos:', data);
     objSelectProperty.innerHTML = "<option value='' selected disabled>Selecciona la propiedad</option>";
     
-    const getData = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
+    // Manejar estructura: { count: X, properties: [...] } o array directo
+    let getData = [];
+    if (Array.isArray(data)) {
+      getData = data;
+    } else if (data.properties && Array.isArray(data.properties)) {
+      getData = data.properties;
+    } else if (data.data && Array.isArray(data.data)) {
+      getData = data.data;
+    }
+    
     console.log('Datos de propiedades procesados:', getData);
 
     if (getData.length === 0) {
@@ -288,7 +379,16 @@ function createSelectStatus(data) {
     console.log('Creando select de estados con datos:', data);
     objSelectStatus.innerHTML = "<option value='' selected disabled>Selecciona el estado</option>";
     
-    const getData = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
+    // Manejar estructura: { count: X, statuses: [...] } o array directo
+    let getData = [];
+    if (Array.isArray(data)) {
+      getData = data;
+    } else if (data.statuses && Array.isArray(data.statuses)) {
+      getData = data.statuses;
+    } else if (data.data && Array.isArray(data.data)) {
+      getData = data.data;
+    }
+    
     console.log('Datos de estados procesados:', getData);
 
     if (getData.length === 0) {
@@ -333,7 +433,7 @@ function getDataUser() {
     const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
     resultServices
       .then(response => {
-        console.log('Respuesta del servidor:', response);
+        console.log('Respuesta del servidor (usuarios):', response);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -374,7 +474,7 @@ function getDataProperty() {
     const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
     resultServices
       .then(response => {
-        console.log('Respuesta del servidor:', response);
+        console.log('Respuesta del servidor (propiedades):', response);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -415,7 +515,7 @@ function getDataStatus() {
     const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
     resultServices
       .then(response => {
-        console.log('Respuesta del servidor:', response);
+        console.log('Respuesta del servidor (estados):', response);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

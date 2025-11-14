@@ -17,8 +17,9 @@ class VisitorController {
         visitor_exit_time,
         Property_id,
         property_id,
-        Vehicle_id,
-        vehicle_id,
+        Visitor_vehicle,
+        visitor_vehicle,
+        vehicle_plate,
         parkingSlot_id,
         parking_slot_id,
         // Additional fields from JSON
@@ -30,7 +31,7 @@ class VisitorController {
       const fullName = Visitor_full_name || visitor_name;
       const document = Visitor_id_document || visitor_document;
       const propertyId = Property_id || property_id;
-      const vehicleId = Vehicle_id || vehicle_id;
+      const visitorVehicle = Visitor_vehicle || visitor_vehicle || vehicle_plate || null;
       const parkingSlotId = parkingSlot_id || parking_slot_id;
 
       // Handling datetime formats
@@ -72,7 +73,7 @@ class VisitorController {
         Visitor_entry_time: entryTime,
         Visitor_exit_time: exitTime,
         Property_id: propertyId,
-        Vehicle_id: vehicleId,
+        Visitor_vehicle: visitorVehicle,
         parkingSlot_id: parkingSlotId
       });
 
@@ -121,8 +122,9 @@ class VisitorController {
         visitor_exit_time,
         Property_id,
         property_id,
-        Vehicle_id,
-        vehicle_id,
+        Visitor_vehicle,
+        visitor_vehicle,
+        vehicle_plate,
         parkingSlot_id,
         parking_slot_id,
         // Additional fields from JSON
@@ -135,7 +137,7 @@ class VisitorController {
       const fullName = Visitor_full_name || visitor_name;
       const document = Visitor_id_document || visitor_document;
       const propertyId = Property_id || property_id;
-      const vehicleId = Vehicle_id || vehicle_id;
+      const visitorVehicle = Visitor_vehicle || visitor_vehicle || vehicle_plate || null;
       const parkingSlotId = parkingSlot_id || parking_slot_id;
 
       // Handle datetime formats
@@ -172,7 +174,7 @@ class VisitorController {
         Visitor_entry_time: entryTime,
         Visitor_exit_time: exitTime,
         Property_id: propertyId,
-        Vehicle_id: vehicleId,
+        Visitor_vehicle: visitorVehicle,
         parkingSlot_id: parkingSlotId
       };
 

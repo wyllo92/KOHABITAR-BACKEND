@@ -15,6 +15,48 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
   <!-- Loading -->
   <link rel="stylesheet" href="../../assets/css/loading.css">
+  
+  <style>
+    /* Estilos para el preview de imagen */
+    #photo-preview {
+      margin-top: 15px;
+      padding: 15px;
+      border: 2px dashed #dee2e6;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+    }
+    
+    #photo-preview img {
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .photo-icon {
+      font-size: 1.2rem;
+    }
+    
+    .file-input-wrapper {
+      position: relative;
+    }
+    
+    .file-input-label {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: #0d6efd;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .file-input-label:hover {
+      background-color: #0b5ed7;
+    }
+    
+    .file-input-label i {
+      margin-right: 8px;
+    }
+  </style>
 </head>
 
 <body>
@@ -35,6 +77,7 @@
               <th>Usuario</th>
               <th>Monto</th>
               <th>Fecha</th>
+              <th>Foto</th>
               <th>Método</th>
               <th>Referencia</th>
               <th>Acciones</th>
@@ -48,6 +91,7 @@
               <td>Usuario</td>
               <td>Monto</td>
               <td>Fecha</td>
+              <td>Foto</td>
               <td>Método</td>
               <td>Referencia</td>
               <td>Acciones</td>
@@ -67,7 +111,7 @@
             </div>
 
             <div class="modal-body p-4">
-              <form id="paymentForm">
+              <form id="paymentForm" enctype="multipart/form-data">
                 <div class="row g-3">
 
                   <!-- Usuario (Requerido) -->
@@ -75,7 +119,7 @@
                     <label for="user_id" class="form-label fw-semibold">
                       Usuario <span class="text-danger">*</span>
                     </label>
-                    <select class="form-select" id="user_id" name="user_id" required>
+                    <select class="form-select edit-input" id="user_id" name="user_id" required>
                       <option value="" selected disabled>Seleccione un usuario</option>
                     </select>
                   </div>
@@ -87,7 +131,7 @@
                     </label>
                     <div class="input-group">
                       <span class="input-group-text">$</span>
-                      <input type="number" step="0.01" min="0.01" class="form-control" id="amount_paid" name="amount_paid" placeholder="0.00" required>
+                      <input type="number" step="0.01" min="0.01" class="form-control edit-input" id="amount_paid" name="amount_paid" placeholder="0.00" required>
                     </div>
                     <small class="form-text text-muted">Debe ser mayor a 0</small>
                   </div>
@@ -97,13 +141,13 @@
                     <label for="payment_date" class="form-label fw-semibold">
                       Fecha de pago <span class="text-danger">*</span>
                     </label>
-                    <input type="datetime-local" class="form-control" id="payment_date" name="payment_date" required>
+                    <input type="datetime-local" class="form-control edit-input" id="payment_date" name="payment_date" required>
                   </div>
 
                   <!-- Método (Opcional) -->
                   <div class="col-md-6">
                     <label for="method" class="form-label fw-semibold">Método de pago</label>
-                    <select class="form-select" id="method" name="method">
+                    <select class="form-select edit-input" id="method" name="method">
                       <option value="">Seleccione un método</option>
                       <option value="Efectivo">Efectivo</option>
                       <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
@@ -117,8 +161,31 @@
                   <!-- Referencia (Opcional) -->
                   <div class="col-md-12">
                     <label for="reference" class="form-label fw-semibold">Referencia / Número de transacción</label>
-                    <input type="text" class="form-control" id="reference" name="reference" placeholder="Ej: TRX123456789" maxlength="100">
+                    <input type="text" class="form-control edit-input" id="reference" name="reference" placeholder="Ej: TRX123456789" maxlength="100">
                     <small class="form-text text-muted">Opcional: Ingrese el número de referencia o código de transacción</small>
+                  </div>
+
+                  <!-- Comprobante de Pago - NUEVO -->
+                  <div class="col-md-12">
+                    <label for="payment_photo" class="form-label fw-semibold">
+                      <i class="fas fa-camera me-2"></i>Comprobante de Pago 
+                      <small class="text-muted">(Opcional)</small>
+                    </label>
+                    <input 
+                      type="file" 
+                      class="form-control edit-input" 
+                      id="payment_photo" 
+                      name="payment_photo"
+                      accept="image/jpeg,image/jpg,image/png,image/gif,application/pdf">
+                    <small class="form-text text-muted">
+                      <i class="fas fa-info-circle me-1"></i>
+                      Formatos permitidos: JPG, PNG, GIF, PDF. Tamaño máximo: 5MB
+                    </small>
+                  </div>
+
+                  <!-- Preview de la foto - NUEVO -->
+                  <div class="col-md-12">
+                    <div id="photo-preview" style="display: none;"></div>
                   </div>
 
                 </div>

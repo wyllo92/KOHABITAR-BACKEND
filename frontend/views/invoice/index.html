@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Facturas</title>
+  <!-- Favicon -->
+  <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Data table -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
+  <!-- Loading -->
+  <link rel="stylesheet" href="../../assets/css/loading.css">
+</head>
+
+<body>
+
+  <!--Container -->
+  <div class="container-fluid d-flex flex-column min-vh-100">
+
+    <!--Content data-->
+    <main>
+      <h1 class="text-center mb-4">Gestión de Facturas y Tarifas</h1>
+
+      <!--
+        PESTAÑAS DE NAVEGACIÓN
+        El sistema proporciona pestañas para navegar entre Facturas y Tarifas
+        Utiliza Bootstrap 5 Nav Tabs para la navegación
+      -->
+      <ul class="nav nav-tabs mb-4" id="invoiceTabs" role="tablist">
+        <!--
+          Pestaña de Facturas: Activa por defecto
+          El sistema muestra la gestión de facturas
+        -->
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="facturas-tab" data-bs-toggle="tab" data-bs-target="#facturas-panel" type="button" role="tab" aria-controls="facturas-panel" aria-selected="true">
+            <i class="fa fa-file-invoice-dollar me-1"></i>Facturas
+          </button>
+        </li>
+        <!--
+          Pestaña de Tarifas: Enlaza al submódulo de tarifas
+          El sistema redirige a la vista de tarifas
+        -->
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" href="tariff.html">
+            <i class="fa fa-dollar-sign me-1"></i>Tarifas
+          </a>
+        </li>
+      </ul>
+
+      <!--
+        CONTENIDO DE LAS PESTAÑAS
+        El sistema muestra el contenido según la pestaña seleccionada
+      -->
+      <div class="tab-content" id="invoiceTabContent">
+        <!--
+          PANEL DE FACTURAS
+          El sistema muestra la tabla de facturas y sus controles
+        -->
+        <div class="tab-pane fade show active" id="facturas-panel" role="tabpanel" aria-labelledby="facturas-tab">
+
+          <!--
+            BOTÓN AGREGAR FACTURA
+            El sistema proporciona un botón para crear una nueva factura
+          -->
+          <button type="button" title="Agregar factura" class="btn btn-primary mb-3" onclick="add()">
+            <i class="fa fa-file-invoice-dollar me-1"></i>Agregar Factura
+          </button>
+
+      <!--
+        BOTONES DE FILTRO POR ESTADO
+        - Permiten filtrar las facturas según su estado
+        - Al hacer clic en un botón, se muestra solo las facturas con ese estado
+        - El botón activo se resalta con la clase 'active'
+      -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Filtrar por Estado:</label>
+        <div class="btn-group" role="group" aria-label="Filtros de estado">
+          <!--
+            Botón "Todos": Muestra todas las facturas sin importar su estado
+            - onclick="filterByStatus('all')": Llama a la función de filtrado con parámetro 'all'
+            - id="filter-all": Para identificar y marcar el botón como activo
+            - class="active": Está activo por defecto al cargar la página
+          -->
+          <button type="button" class="btn btn-outline-secondary active" id="filter-all" onclick="filterByStatus('all')">
+            <i class="fas fa-list me-1"></i>Todos
+          </button>
+
+          <!-- Botón "Pendiente": Muestra solo facturas pendientes de pago -->
+          <button type="button" class="btn btn-outline-warning" id="filter-pendiente" onclick="filterByStatus('Pendiente')">
+            <i class="fas fa-clock me-1"></i>Pendiente
+          </button>
+
+          <!-- Botón "Pagado": Muestra solo facturas pagadas -->
+          <button type="button" class="btn btn-outline-success" id="filter-pagado" onclick="filterByStatus('Pagado')">
+            <i class="fas fa-check-circle me-1"></i>Pagado
+          </button>
+
+          <!-- Botón "Vencido": Muestra solo facturas vencidas -->
+          <button type="button" class="btn btn-outline-danger" id="filter-vencido" onclick="filterByStatus('Vencido')">
+            <i class="fas fa-exclamation-triangle me-1"></i>Vencido
+          </button>
+
+          <!-- Botón "Cancelado": Muestra solo facturas canceladas -->
+          <button type="button" class="btn btn-outline-dark" id="filter-cancelado" onclick="filterByStatus('Cancelado')">
+            <i class="fas fa-ban me-1"></i>Cancelado
+          </button>
+        </div>
+      </div>
+
+      <!--
+        TABLA DE FACTURAS
+        - Muestra las facturas filtradas según el botón seleccionado
+        - Los datos se cargan mediante getData() que consulta GET /api_v1/invoice
+        - DataTable se inicializa para agregar funcionalidades de búsqueda, paginación y ordenamiento
+      -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover bg-white shadow-sm text-center" id="app-table">
+          <thead class="thead-dark">
+            <tr class="table-secondary text-center">
+              <th class="text-center">#</th>
+              <th class="text-center">Usuario</th>
+              <th class="text-center">Propiedad</th>
+              <th class="text-center">Monto</th>
+              <th class="text-center">Fecha de Vencimiento</th>
+              <th class="text-center">Tarifa</th>
+              <th class="text-center">Estado</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <!--
+            TBODY - Aquí se renderizan dinámicamente las filas de la tabla
+            - Se llena mediante la función createTable() del controlador JavaScript
+            - Cada fila se crea con los datos recibidos del backend
+          -->
+          <tbody id="app-table-body" class="text-center">
+          </tbody>
+          <tfoot>
+            <tr class="table-secondary text-center">
+              <td class="text-center">#</td>
+              <td class="text-center">Usuario</td>
+              <td class="text-center">Propiedad</td>
+              <td class="text-center">Monto</td>
+              <td class="text-center">Fecha de Vencimiento</td>
+              <td class="text-center">Tarifa</td>
+              <td class="text-center">Estado</td>
+              <td class="text-center">Acciones</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!--
+        MODAL - FORMULARIO DE FACTURA
+        - Se abre cuando el usuario hace clic en "Agregar", "Ver" o "Editar"
+        - El formulario se envía al backend mediante POST (crear) o PUT (actualizar)
+      -->
+      <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="appModalLabel">Factura</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <!--
+                FORMULARIO DE FACTURA
+                - id="invoiceForm": Se utiliza para instanciar el objeto Form en JavaScript
+                - Los atributos "name" de cada campo DEBEN coincidir EXACTAMENTE con los nombres
+                  que el backend espera en req.body (ver invoice.controller.js línea 153)
+              -->
+              <form id="invoiceForm">
+
+                <!--
+                  FILA 1: USUARIO Y PROPIEDAD
+                -->
+                <div class="row">
+
+                  <!--
+                    CAMPO: USUARIO
+                    - name="user_id" ← IMPORTANTE: Coincide con el backend (req.body.user_id)
+                    - required: Campo obligatorio según el modelo
+                    - Se llena dinámicamente con getDataUsers()
+                  -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="user_id" class="form-label">
+                        Usuario <span class="text-danger">*</span>
+                      </label>
+                      <select class="form-select" id="user_id" name="user_id" required>
+                        <option value="" selected disabled>Selecciona el usuario</option>
+                        <!-- Las opciones se cargan dinámicamente desde el backend -->
+                      </select>
+                      <div class="form-text">
+                        Usuario asociado a la factura
+                      </div>
+                    </div>
+                  </div>
+
+                  <!--
+                    CAMPO: PROPIEDAD
+                    - name="property_id" ← Coincide con backend
+                    - Se llena dinámicamente con getDataProperties()
+                  -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="property_id" class="form-label">
+                        Propiedad <span class="text-danger">*</span>
+                      </label>
+                      <select class="form-select" id="property_id" name="property_id" required>
+                        <option value="" selected disabled>Selecciona la propiedad</option>
+                        <!-- Las opciones se cargan dinámicamente desde el backend -->
+                      </select>
+                      <div class="form-text">
+                        Propiedad asociada a la factura
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!--
+                  FILA 2: TARIFA Y MONTO
+                -->
+                <div class="row">
+
+                  <!--
+                    CAMPO: TARIFA
+                    - name="tariff_id" ← Coincide con backend
+                    - Se llena dinámicamente con getDataTariffs()
+                  -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="tariff_id" class="form-label">
+                        Tarifa <span class="text-danger">*</span>
+                      </label>
+                      <select class="form-select" id="tariff_id" name="tariff_id" required>
+                        <option value="" selected disabled>Selecciona la tarifa</option>
+                        <!-- Las opciones se cargan dinámicamente desde el backend -->
+                      </select>
+                      <div class="form-text">
+                        Tarifa aplicada a la factura
+                      </div>
+                    </div>
+                  </div>
+
+                  <!--
+                    CAMPO: MONTO
+                    - name="amount" ← Coincide con backend
+                    - type="number": Solo acepta números
+                    - step="0.01": Permite decimales
+                    - min="0": No permite montos negativos
+                  -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="amount" class="form-label">
+                        Monto <span class="text-danger">*</span>
+                      </label>
+                      <div class="form-floating">
+                        <input
+                          type="number"
+                          class="form-control"
+                          placeholder="Monto de la factura"
+                          id="amount"
+                          name="amount"
+                          required
+                          min="0"
+                          step="0.01">
+                        <label for="amount">Monto ($)</label>
+                      </div>
+                      <div class="form-text">
+                        Monto total de la factura
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!--
+                  FILA 3: FECHA DE VENCIMIENTO Y ESTADO
+                -->
+                <div class="row">
+
+                  <!--
+                    CAMPO: FECHA DE VENCIMIENTO
+                    - name="due_date" ← Coincide con backend
+                    - type="date": Selector de fecha
+                    - required: Campo obligatorio
+                  -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="due_date" class="form-label">
+                        Fecha de Vencimiento <span class="text-danger">*</span>
+                      </label>
+                      <div class="form-floating">
+                        <input
+                          type="date"
+                          class="form-control"
+                          id="due_date"
+                          name="due_date"
+                          required>
+                        <label for="due_date">Fecha de Vencimiento</label>
+                      </div>
+                      <div class="form-text">
+                        Fecha límite de pago
+                      </div>
+                    </div>
+                  </div>
+
+                  <!--
+                    CAMPO: ESTADO
+                    - name="status_id" ← Coincide con backend
+                    - required: Campo obligatorio según backend
+                    - Se llena dinámicamente con getDataStatus()
+                  -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="status_id" class="form-label">
+                        Estado <span class="text-danger">*</span>
+                      </label>
+                      <select class="form-select" id="status_id" name="status_id" required>
+                        <option value="" selected disabled>Selecciona el estado</option>
+                        <!-- Las opciones se cargan dinámicamente desde el backend -->
+                      </select>
+                      <div class="form-text">
+                        Estado actual de la factura
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!--
+                  BOTONES DEL FORMULARIO
+                  - Botón Resetear: Limpia todos los campos del formulario
+                  - Botón Enviar: Envía el formulario (trigger del evento submit)
+                -->
+                <div class="col-12 d-flex justify-content-between mt-3">
+                  <button type="reset" class="btn btn-outline-secondary">
+                    <i class="fas fa-undo me-1"></i> Resetear
+                  </button>
+                  <button type="submit" class="btn btn-success">
+                    <i class="fas fa-paper-plane me-1"></i> Guardar
+                  </button>
+                </div>
+
+              </form>
+              <!--Fin del formulario-->
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--Fin del modal-->
+
+        </div>
+        <!--Fin del panel de facturas-->
+
+      </div>
+      <!--Fin del tab-content-->
+
+    </main>
+    <!--End Content data-->
+
+  </div>
+  <!--End Container -->
+
+
+  <!--
+    PANTALLA DE CARGA
+    - Se muestra mientras se realizan peticiones al backend
+    - Se controla con toggleLoading(true/false) en el controlador JavaScript
+  -->
+  <div id="loading-screen">
+    <div class="spinner-border text-light spinner" role="status">
+      <span class="visually-hidden">Loading ...</span>
+    </div>
+    <p class="mt-3">Cargando datos, por favor espera...</p>
+  </div>
+  <!--End Loading -->
+
+  <!--
+    SCRIPTS JAVASCRIPT
+    - Se cargan en orden específico para evitar errores de dependencias
+  -->
+
+  <!-- Bootstrap 5 JS Bundle con Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Data table -->
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+
+  <!-- JS personalizado - ORDEN IMPORTANTE -->
+  <!-- 1. Constants: Define URLs y métodos HTTP -->
+  <script src="../../assets/js/app/constants.js"></script>
+
+  <!-- 2. AppStorage: Maneja localStorage -->
+  <script src="../../assets/js/storage/appStorage.js"></script>
+
+  <!-- 3. Services: Funciones para peticiones HTTP -->
+  <script src="../../assets/js/services/services.js"></script>
+
+  <!-- 4. App: Funciones globales (checkAuth, toggleLoading, etc.) -->
+  <script src="../../assets/js/app/app.js"></script>
+
+  <!-- 5. Form: Clase para validación y manejo de formularios -->
+  <script src="../../assets/js/utils/Form.js"></script>
+
+  <!-- 6. Invoice Controller: Lógica específica del módulo -->
+  <script src="../../assets/js/controllers/invoice/invoice.controller.js"></script>
+
+</body>
+
+</html>

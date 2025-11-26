@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagos</title>
+  <!-- Favicon -->
+  <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Data table -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
+  <!-- Loading -->
+  <link rel="stylesheet" href="../../assets/css/loading.css">
+</head>
+
+<body>
+
+  <div class="container-fluid d-flex flex-column min-vh-100">
+
+    <main>
+      <h1 class="text-center mb-4">Gestión de Pagos</h1>
+      <button type="button" title="Agregar Pago" class="btn btn-primary mb-3" onclick="add()">
+        <i class="fa fa-plus me-1"></i>Agregar Pago
+      </button>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover bg-white shadow-sm text-center" id="app-table">
+          <thead class="thead-dark">
+            <tr class="table-secondary text-center">
+              <th>#</th>
+              <th>Usuario</th>
+              <th>Monto</th>
+              <th>Fecha</th>
+              <th>Método</th>
+              <th>Referencia</th>
+              <th>Factura</th>
+              <th>Reserva</th>
+              <th>Espacio de parqueo</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="app-table-body" class="text-center">
+          </tbody>
+          <tfoot>
+            <tr class="table-secondary text-center">
+              <td>#</td>
+              <td>Usuario</td>
+              <td>Monto</td>
+              <td>Fecha</td>
+              <td>Método</td>
+              <td>Referencia</td>
+              <td>Factura</td>
+              <td>Reserva</td>
+              <td>Espacio de parqueo</td>
+              <td>Estado</td>
+              <td>Acciones</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg custom-modal">
+          <div class="modal-content shadow-lg border-0 rounded-4">
+
+            <div class="modal-header bg-primary text-white rounded-top-4">
+              <h1 class="modal-title fs-5 fw-bold" id="appModalLabel">Pago</h1>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4">
+              <form id="paymentForm">
+                <div class="row g-3">
+
+                  <!-- CAMPO USUARIO OBLIGATORIO
+                       carga del modelo Payment que requiere user_id como campo obligatorio.
+                       Se carga dinámicamente desde el endpoint /profile del backend. -->
+                  <div class="col-md-6">
+                    <label for="user_id" class="form-label">
+                      <i class="fas fa-user me-1"></i>Usuario *
+                    </label>
+                    <select class="form-select" id="user_id" name="user_id" required>
+                      <option value="" selected disabled>Seleccione el usuario que realiza el pago</option>
+                    </select>
+                  </div>
+
+                  <!-- CAMPO MONTO PAGADO OBLIGATORIO
+                       carga del modelo Payment que requiere amount_paid (decimal).
+                       Incluye validación para asegurar valores positivos. -->
+                  <div class="col-md-6">
+                    <label for="amount_paid" class="form-label">
+                      <i class="fas fa-dollar-sign me-1"></i>Monto Pagado *
+                    </label>
+                    <div class="form-floating">
+                      <input type="number" step="0.01" min="0.01" class="form-control" id="amount_paid" name="amount_paid" placeholder="Monto" required>
+                      <label for="amount_paid">Ingrese el monto en pesos colombianos</label>
+                    </div>
+                  </div>
+
+                  <!-- CAMPO FECHA DE PAGO OBLIGATORIO
+                       carga del modelo Payment que requiere payment_date.
+                       El backend convierte automáticamente al formato MySQL datetime. -->
+                  <div class="col-md-6">
+                    <label for="payment_date" class="form-label">
+                      <i class="fas fa-calendar-alt me-1"></i>Fecha y Hora del Pago *
+                    </label>
+                    <div class="form-floating">
+                      <input type="datetime-local" class="form-control" id="payment_date" name="payment_date" placeholder="Fecha de pago" required>
+                      <label for="payment_date">Seleccione fecha y hora del pago</label>
+                    </div>
+                  </div>
+
+                  <!-- CAMPO MÉTODO DE PAGO
+                       carga del modelo Payment del backend que acepta diferentes métodos.
+                       Proporciona opciones comunes para facilitar la entrada de datos
+                       pero permite entrada manual para flexibilidad. -->
+                  <div class="col-md-6">
+                    <label for="method" class="form-label">
+                      <i class="fas fa-credit-card me-1"></i>Método de Pago
+                    </label>
+                    <select class="form-select" id="method" name="method" required>
+                      <option value="" selected disabled>Seleccione método de pago</option>
+                      <option value="Efectivo">Efectivo</option>
+                      <option value="Transferencia">Transferencia Bancaria</option>
+                      <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
+                      <option value="Cheque">Cheque</option>
+                      <option value="PSE">PSE</option>
+                      <option value="Nequi">Nequi</option>
+                      <option value="Daviplata">Daviplata</option>
+                      <option value="Otro">Otro</option>
+                    </select>
+                  </div>
+
+                  <!-- CAMPO REFERENCIA
+                       carga del modelo Payment que requiere referencia para trazabilidad.
+                       Campo obligatorio para seguimiento de transacciones. -->
+                  <div class="col-md-6">
+                    <label for="reference" class="form-label">
+                      <i class="fas fa-receipt me-1"></i>Referencia/Número de Transacción
+                    </label>
+                    <div class="form-floating">
+                      <input type="text" class="form-control" id="reference" name="reference" placeholder="Referencia" required>
+                      <label for="reference">Ingrese la referencia del pago</label>
+                    </div>
+                  </div>
+
+                  <!-- CAMPO FACTURA OPCIONAL
+                       carga del modelo Payment donde invoice_id es opcional (puede ser null).
+                       Se carga dinámicamente desde el endpoint /invoice del backend. -->
+                  <div class="col-md-6">
+                    <label for="invoice_id" class="form-label">
+                      <i class="fas fa-file-invoice-dollar me-1"></i>Factura Asociada (Opcional)
+                    </label>
+                    <select class="form-select" id="invoice_id" name="invoice_id">
+                      <option value="" selected>Sin factura asociada</option>
+                    </select>
+                  </div>
+
+                  <!-- CAMPO RESERVA OPCIONAL
+                       carga del modelo Payment donde reservation_id es opcional.
+                       Se carga dinámicamente desde el endpoint /reservations del backend. -->
+                  <div class="col-md-6">
+                    <label for="reservation_id" class="form-label">
+                      <i class="fas fa-calendar-check me-1"></i>Reserva Asociada (Opcional)
+                    </label>
+                    <select class="form-select" id="reservation_id" name="reservation_id">
+                      <option value="" selected>Sin reserva asociada</option>
+                    </select>
+                  </div>
+
+                  <!-- CAMPO ASIGNACIÓN DE PARQUEADERO OPCIONAL
+                       carga del modelo Payment donde parking_assignment_id es opcional.
+                       Se carga dinámicamente desde el endpoint /parking-assignments del backend. -->
+                  <div class="col-md-6">
+                    <label for="parking_assignment_id" class="form-label">
+                      <i class="fas fa-parking me-1"></i>Espacio de Parqueo (Opcional)
+                    </label>
+                    <select class="form-select" id="parking_assignment_id" name="parking_assignment_id">
+                      <option value="" selected>Sin espacio asociado</option>
+                    </select>
+                  </div>
+
+                  <!-- CAMPO ESTADO OBLIGATORIO
+                       carga del modelo Payment que requiere status_id como campo obligatorio.
+                       Se carga dinámicamente desde el endpoint /statuses del backend. -->
+                  <div class="col-md-6">
+                    <label for="status_id" class="form-label">
+                      <i class="fas fa-check-circle me-1"></i>Estado del Pago *
+                    </label>
+                    <select class="form-select" id="status_id" name="status_id" required>
+                      <option value="" selected disabled>Seleccione el estado del pago</option>
+                    </select>
+                  </div>
+
+                </div>
+
+                <div class="col-12 d-flex justify-content-between mt-3">
+                  <button type="reset" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Resetear
+                  </button>
+                  <button type="submit" class="btn btn-success ">
+                    <i class="bi bi-send-fill me-1"></i> Enviar
+                  </button>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <div id="loading-screen">
+    <div class="spinner-border text-light spinner" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-3">Cargando datos, por favor espera...</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+  <script src="../../assets/js/app/constants.js"></script>
+  <script src="../../assets/js/storage/appStorage.js"></script>
+  <script src="../../assets/js/services/services.js"></script>
+  <script src="../../assets/js/app/app.js"></script>
+  <script src="../../assets/js/utils/Form.js"></script>
+  <script src="../../assets/js/controllers/payment/payment.controller.js"></script>
+
+</body>
+
+</html>

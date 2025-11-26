@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PQRS</title>
+  <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
+  <link rel="stylesheet" href="../../assets/css/loading.css">
+</head>
+
+<body>
+  <div class="container-fluid">
+    <main>
+      <h1 class="text-center">Gestión de PQRS</h1>
+      <button type="button" title="Add PQRS" class="btn btn-primary mb-3" onclick="add()"> <i
+          class="fa fa-plus me-1"></i> Agregar PQRS</button>
+
+      <!-- Filtros de búsqueda con Bootstrap -->
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filtros de Búsqueda</h6>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <!-- Filtro por Estado -->
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Filtrar por Estado:</label>
+              <select class="form-select" id="filter-status" onchange="filterByStatus(this.value)">
+                <option value="">Todos los Estados</option>
+                <!-- Las opciones se cargarán dinámicamente desde el backend -->
+              </select>
+            </div>
+
+            <!-- Filtro por Tipo -->
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Filtrar por Tipo:</label>
+              <select class="form-select" id="filter-type" onchange="filterByType(this.value)">
+                <option value="">Todos los Tipos</option>
+                <!-- Las opciones se cargarán dinámicamente desde el backend -->
+              </select>
+            </div>
+
+            <!-- Filtro por Usuario (solo visible para administradores) -->
+            <div class="col-md-4" id="filter-user-container" style="display: none;">
+              <label class="form-label fw-semibold">Filtrar por Usuario:</label>
+              <select class="form-select" id="filter-user" onchange="filterByUser(this.value)">
+                <option value="">Todos los Usuarios</option>
+                <!-- Las opciones se cargarán dinámicamente desde el backend -->
+              </select>
+            </div>
+
+            <!-- Botón para limpiar filtros -->
+            <div class="col-12">
+              <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearFilters()">
+                <i class="fas fa-times me-1"></i> Limpiar Filtros
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover bg-white shadow-sm text-center"  id="app-table">
+          <thead class="thead-dark">
+            <tr class="table-secondary text-center">
+              <th>#</th>
+              <th>Usuario</th>
+              <th>Propiedad</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="app-table-body" class="text-center">
+
+          </tbody>
+          <tfoot>
+            <tr class="table-secondary text-center">
+              <td>#</td>
+              <td>Usuario</td>
+              <td>Propiedad</td>
+              <td>Tipo</td>
+              <td>Descripción</td>
+              <td>Estado</td>
+              <td>Acciones</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Controles de paginación -->
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <div>
+          <label for="records-per-page" class="form-label me-2">Registros por página:</label>
+          <select class="form-select d-inline-block w-auto" id="records-per-page" onchange="changeRecordsPerPage(this.value)">
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+
+        <nav aria-label="Paginación de PQRS">
+          <ul class="pagination mb-0" id="pagination-controls">
+            <!-- Los botones de paginación se generarán dinámicamente -->
+          </ul>
+        </nav>
+
+        <div>
+          <span class="text-muted" id="pagination-info">Mostrando 0 de 0 registros</span>
+        </div>
+      </div>
+
+      <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="margin-top: 2rem;"> 
+          <div class="modal-content shadow-lg border-0 rounded-4">
+            <div class="modal-header bg-primary text-white rounded-top-4">
+              <h5 class="modal-title d-flex align-items-center" id="appModalLabel">
+                <i class="bi bi-file-earmark-text me-2"></i> PQRS
+              </h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="cpcgForm" class="row g-3">
+
+                <div class="col-md-6">
+                  <label for="User_id" class="form-label fw-semibold">Usuario</label>
+                  <select class="form-select" id="User_id" name="User_id" required>
+                    <option value="" selected disabled>-- Seleccione --</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="Property_id" class="form-label fw-semibold">Propiedad</label>
+                  <select class="form-select" id="Property_id" name="Property_id" required>
+                    <option value="" selected disabled>-- Seleccione --</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="CPCG_type_id" class="form-label fw-semibold">Tipo</label>
+                  <select class="form-select" id="CPCG_type_id" name="CPCG_type_id" required>
+                    <option value="" selected disabled>-- Seleccione --</option>
+                  </select>
+                </div>
+
+                <div class="col-12">
+                  <div class="form-floating">
+                    <textarea class="form-control" placeholder="Descripción" id="CPCG_description" name="CPCG_description" style="height: 120px" required></textarea>
+                    <label for="CPCG_description">Descripción</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="Status_id" class="form-label fw-semibold">Estado</label>
+                  <select class="form-select" id="Status_id" name="Status_id" required>
+                    <option value="" selected disabled>-- Seleccione --</option>
+                  </select>
+                </div>
+
+                <!-- Campo de respuesta del administrador (solo visible para administradores) -->
+                <div class="col-12" id="admin-response-container" style="display: none;">
+                  <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Respuesta del Administrador:</strong> Este campo solo es visible para administradores
+                  </div>
+                  <div class="form-floating">
+                    <textarea class="form-control" placeholder="Respuesta del Administrador" id="Admin_response" name="Admin_response" style="height: 120px"></textarea>
+                    <label for="Admin_response">Respuesta del Administrador</label>
+                  </div>
+                </div>
+
+                <div class="col-12 d-flex justify-content-between mt-3">
+                  <button type="reset" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Resetear
+                  </button>
+                  <button type="submit" class="btn btn-success">
+                    <i class="bi bi-send-fill me-1"></i> Enviar
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <div id="loading-screen">
+    <div class="spinner-border text-light spinner" role="status">
+      <span class="visually-hidden">Loading ...</span>
+    </div>
+    <p class="mt-3">Cargando datos, por favor espere...</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+  <script src="../../assets/js/app/constants.js"></script>
+  <script src="../../assets/js/storage/appStorage.js"></script>
+  <script src="../../assets/js/services/services.js"></script>
+  <script src="../../assets/js/app/app.js"></script>
+
+  <script src="../../assets/js/utils/Form.js"></script>
+  <script src="../../assets/js/controllers/cpcg/cpcg.controller.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Vehículos</title>
+  <!-- Favicon -->
+  <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Data table -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
+  <!-- Loading -->
+  <link rel="stylesheet" href="../../assets/css/loading.css">
+</head>
+
+<body>
+
+  <!--Container -->
+  <div class="container-fluid d-flex flex-column min-vh-100">
+
+    <!--Content data-->
+    <main>
+      <h1 class="text-center mb-4">Gestión de Vehículos</h1>
+      <!-- El sistema proporciona botón para agregar nuevos vehículos -->
+      <button type="button" title="Agregar Vehículo" class="btn btn-primary mb-3" onclick="add()">
+        <i class="fa fa-car me-1"></i> Agregar Vehículo
+      </button>
+      <!-- El sistema proporciona botón para exportar vehículos a PDF -->
+      <button type="button" title="Exportar Vehículos a PDF" class="btn btn-danger mb-3 ms-2" onclick="exportVehiclesToPDF()">
+        <i class="fas fa-file-pdf me-1"></i>Exportar PDF
+      </button>
+      <!-- El sistema proporciona botón para exportar vehículos a Excel -->
+      <button type="button" title="Exportar Vehículos a Excel" class="btn btn-success mb-3 ms-2" onclick="exportVehiclesToExcel()">
+        <i class="fas fa-file-excel me-1"></i>Exportar Excel
+      </button>
+
+      <!--Table-->
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover bg-white shadow-sm text-center" id="app-table">
+          <thead class="thead-dark">
+            <tr class="table-secondary text-center">
+              <th class="text-center">#</th>
+              <th class="text-center">Placa</th>
+              <th class="text-center">Modelo</th>
+              <th class="text-center">Tipo</th>
+              <th class="text-center">Color</th>
+              <th class="text-center">Propietario</th>
+              <th class="text-center">Propiedad</th>
+              <th class="text-center">Estado</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="app-table-body" class="text-center">
+          </tbody>
+          <tfoot>
+            <tr class="table-secondary text-center">
+              <td class="text-center">#</td>
+              <td class="text-center">Placa</td>
+              <td class="text-center">Modelo</td>
+              <td class="text-center">Tipo</td>
+              <td class="text-center">Color</td>
+              <td class="text-center">Propietario</td>
+              <td class="text-center">Propiedad</td>
+              <td class="text-center">Estado</td>
+              <td class="text-center">Acciones</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+    <!-- Modal -->
+<div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg custom-modal">
+    <div class="modal-content shadow-lg border-0 rounded-4">
+
+      <!-- Header -->
+      <div class="modal-header bg-primary text-white rounded-top-4">
+        <h5 class="modal-title d-flex align-items-center" id="appModalLabel">
+          <i class="fa fa-car me-2"></i> Vehículo
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body p-4">
+        <form id="vehicleForm" class="row g-3">
+
+          <!-- Modelo -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="text" class="form-control rounded-3" id="model" name="model" placeholder="Modelo del vehículo" required>
+              <label for="model">Modelo del Vehículo</label>
+            </div>
+          </div>
+
+          <!-- Placa -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="text" class="form-control rounded-3" id="license_plate" name="license_plate" placeholder="Placa del vehículo" required>
+              <label for="license_plate">Placa</label>
+            </div>
+          </div>
+
+          <!-- Tipo -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <select class="form-select rounded-3" id="type" name="type" required>
+                <option value="" selected disabled>Selecciona el tipo</option>
+                <option value="Carro">Carro</option>
+                <option value="Moto">Moto</option>
+                <option value="Camión">Camión</option>
+                <option value="Bicicleta">Bicicleta</option>
+              </select>
+              <label for="type">Tipo de Vehículo</label>
+            </div>
+          </div>
+
+          <!-- Color -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="text" class="form-control rounded-3" id="color" name="color" placeholder="Color del vehículo" required>
+              <label for="color">Color del Vehículo</label>
+            </div>
+          </div>
+
+          <!-- Propietario -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <select class="form-select rounded-3" id="user_id" name="user_id" required>
+                <option value="" selected disabled>Selecciona el propietario</option>
+              </select>
+              <label for="user_id">Propietario</label>
+            </div>
+          </div>
+
+          <!-- Propiedad -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <select class="form-select rounded-3" id="property_id" name="property_id" required>
+                <option value="" selected disabled>Selecciona la propiedad</option>
+              </select>
+              <label for="property_id">Propiedad</label>
+            </div>
+          </div>
+
+          <!-- Zona de Parqueo -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <select class="form-select rounded-3" id="parkingZone_id" name="parkingZone_id">
+                <option value="" selected disabled>Selecciona la zona de parqueo</option>
+              </select>
+              <label for="parkingZone_id">Zona de Parqueo</label>
+            </div>
+          </div>
+
+          <!-- Estado -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <select class="form-select rounded-3" id="status_id" name="status_id" required>
+                <option value="" selected disabled>Selecciona el estado</option>
+              </select>
+              <label for="status_id">Estado</label>
+            </div>
+          </div>
+
+          <!-- Foto del Vehículo (Opcional) -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="url" class="form-control rounded-3" id="vehicle_photo" name="vehicle_photo" placeholder="URL de la foto del vehículo">
+              <label for="vehicle_photo">Foto del Vehículo (URL)</label>
+            </div>
+          </div>
+
+          <!-- Botones -->
+           <div class="col-12 d-flex justify-content-between mt-3">
+            <button type="reset" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Resetear
+            </button>
+            <button type="submit" class="btn btn-success ">
+              <i class="bi bi-send-fill me-1"></i> Enviar
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+  </main>
+  <!--End Content data-->
+
+  </div>
+  <!--End Container -->
+
+
+  <!--Loading -->
+  <div id="loading-screen">
+    <div class="spinner-border text-light spinner" role="status">
+      <span class="visually-hidden">Loading ...</span>
+    </div>
+    <p class="mt-3">Cargando datos, por favor espera...</p>
+  </div>
+  <!--End Loading -->
+
+  <!-- Bootstrap 5 JS Bundle con Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Data table -->
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+  <!-- JS personalizado -->
+  <script src="../../assets/js/app/constants.js"></script>
+  <script src="../../assets/js/storage/appStorage.js"></script>
+  <script src="../../assets/js/services/services.js"></script>
+  <script src="../../assets/js/app/app.js"></script>
+  <script src="../../assets/js/utils/Form.js"></script>
+  <script src="../../assets/js/controllers/vehicle/vehicle.controller.js"></script>
+
+</body>
+
+</html>

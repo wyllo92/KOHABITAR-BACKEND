@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espacios de Parqueo</title>
+  <!-- Favicon -->
+  <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Data table -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
+  <!-- Loading -->
+  <link rel="stylesheet" href="../../assets/css/loading.css">
+</head>
+
+<body>
+ 
+  <!--Container -->
+  <div class="container-fluid d-flex flex-column min-vh-100">
+
+    <!--Content data-->
+    <main>
+      <h1 class="text-center mb-4">Gestión de Espacios de Parqueo</h1>
+
+      <!-- El sistema implementa tabs para organizar las tres funcionalidades principales -->
+      <ul class="nav nav-tabs mb-3" id="parkingTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="slots-tab" data-bs-toggle="tab" data-bs-target="#slots" type="button" role="tab" aria-controls="slots" aria-selected="true">
+            <i class="fas fa-parking"></i> Espacios de Parqueo
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="assignments-tab" data-bs-toggle="tab" data-bs-target="#assignments" type="button" role="tab" aria-controls="assignments" aria-selected="false">
+            <i class="fas fa-clipboard-list"></i> Asignaciones
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="lotteries-tab" data-bs-toggle="tab" data-bs-target="#lotteries" type="button" role="tab" aria-controls="lotteries" aria-selected="false">
+            <i class="fas fa-dice"></i> Sorteos
+          </button>
+        </li>
+      </ul>
+
+      <!-- El sistema organiza el contenido en pestañas -->
+      <div class="tab-content" id="parkingTabContent">
+
+        <!-- Tab 1: Espacios de Parqueo -->
+        <div class="tab-pane fade show active" id="slots" role="tabpanel" aria-labelledby="slots-tab">
+          <!-- El sistema proporciona botón para agregar nuevos espacios de parqueo -->
+          <button type="button" title="Agregar Espacio de Parqueo" class="btn btn-primary mb-3" onclick="addSlot()">
+            <i class="fa fa-parking me-1"></i>Agregar Espacio de Parqueo
+          </button>
+          <!-- El sistema proporciona botón para exportar espacios de parqueo a PDF -->
+          <button type="button" title="Exportar Espacios a PDF" class="btn btn-danger mb-3 ms-2" onclick="exportParkingSlotsToPDF()">
+            <i class="fas fa-file-pdf me-1"></i>Exportar PDF
+          </button>
+          <!-- El sistema proporciona botón para exportar espacios de parqueo a Excel -->
+          <button type="button" title="Exportar Espacios a Excel" class="btn btn-success mb-3 ms-2" onclick="exportParkingSlotsToExcel()">
+            <i class="fas fa-file-excel me-1"></i>Exportar Excel
+          </button>
+
+          <!--Table-->
+          <div class="table-responsive">
+        <table class="table table-bordered table-hover bg-white shadow-sm text-center" id="app-table">
+          <thead class="thead-dark">
+            <tr class="table-secondary text-center">
+              <th class="text-center">#</th>
+              <th class="text-center">Código</th>
+              <th class="text-center">Tipo de Zona</th>
+              <th class="text-center">Propiedad</th>
+              <th class="text-center">Estado</th>
+              <th class="text-center">Disponibilidad</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="app-table-body" class="text-center">
+          </tbody>
+          <tfoot>
+            <tr class="table-secondary text-center">
+              <td class="text-center">#</td>
+              <td class="text-center">Código</td>
+              <td class="text-center">Tipo de Zona</td>
+              <td class="text-center">Propiedad</td>
+              <td class="text-center">Estado</td>
+              <td class="text-center">Disponibilidad</td>
+              <td class="text-center">Acciones</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+        </div>
+        <!-- Fin Tab 1: Espacios de Parqueo -->
+
+        <!-- Tab 2: Asignaciones de Parqueo -->
+        <div class="tab-pane fade" id="assignments" role="tabpanel" aria-labelledby="assignments-tab">
+          <button type="button" title="Crear Asignación" class="btn btn-success mb-3" onclick="addAssignment()">
+            <i class="fas fa-plus me-1"></i>Crear Asignación
+          </button>
+          <button type="button" title="Exportar Asignaciones a PDF" class="btn btn-danger mb-3 ms-2" onclick="exportAssignmentsToPDF()">
+            <i class="fas fa-file-pdf me-1"></i>Exportar PDF
+          </button>
+          <button type="button" title="Exportar Asignaciones a Excel" class="btn btn-success mb-3 ms-2" onclick="exportAssignmentsToExcel()">
+            <i class="fas fa-file-excel me-1"></i>Exportar Excel
+          </button>
+
+          <!-- Tabla de asignaciones -->
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover bg-white shadow-sm text-center" id="assignments-table">
+              <thead class="thead-dark">
+                <tr class="table-secondary text-center">
+                  <th class="text-center">#</th>
+                  <th class="text-center">Espacio</th>
+                  <th class="text-center">Usuario</th>
+                  <th class="text-center">Vehículo</th>
+                  <th class="text-center">Fecha Inicio</th>
+                  <th class="text-center">Fecha Fin</th>
+                  <th class="text-center">Monto</th>
+                  <th class="text-center">Estado</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="assignments-table-body" class="text-center">
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Fin Tab 2: Asignaciones -->
+
+        <!-- Tab 3: Sorteos de Parqueo -->
+        <div class="tab-pane fade" id="lotteries" role="tabpanel" aria-labelledby="lotteries-tab">
+          <button type="button" title="Crear Sorteo" class="btn btn-warning mb-3" onclick="addLottery()">
+            <i class="fas fa-plus me-1"></i>Crear Sorteo
+          </button>
+          <button type="button" title="Exportar Sorteos a PDF" class="btn btn-danger mb-3 ms-2" onclick="exportLotteriesToPDF()">
+            <i class="fas fa-file-pdf me-1"></i>Exportar PDF
+          </button>
+          <button type="button" title="Exportar Sorteos a Excel" class="btn btn-success mb-3 ms-2" onclick="exportLotteriesToExcel()">
+            <i class="fas fa-file-excel me-1"></i>Exportar Excel
+          </button>
+
+          <!-- Tabla de sorteos -->
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover bg-white shadow-sm text-center" id="lotteries-table">
+              <thead class="thead-dark">
+                <tr class="table-secondary text-center">
+                  <th class="text-center">#</th>
+                  <th class="text-center">Fecha Inicio</th>
+                  <th class="text-center">Fecha Fin</th>
+                  <th class="text-center">Zona</th>
+                  <th class="text-center">Estado</th>
+                  <th class="text-center">Participantes</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="lotteries-table-body" class="text-center">
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Fin Tab 3: Sorteos -->
+
+      </div>
+      <!-- Fin tab-content -->
+
+     <!-- Modal Espacio de Parqueo -->
+<div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg custom-modal">
+    <div class="modal-content shadow-lg border-0 rounded-4">
+
+      <div class="modal-header bg-primary text-white rounded-top-4">
+        <h1 class="modal-title fs-5" id="appModalLabel">
+          <i class="fas fa-parking me-2"></i>Espacio de Parqueo
+        </h1>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!--Form-->
+        <form id="parkingslotForm">
+          <div class="row">
+            <!-- Código del espacio -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="code" class="form-label required">Código del Espacio</label>
+                <div class="form-floating">
+                  <input type="text" class="form-control" placeholder="Código del espacio" id="code" name="code" required>
+                  <label for="code">Código del Espacio</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Zona de parqueo -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="parking_zone_id" class="form-label required">Zona de Parqueo</label>
+                <div class="form-floating">
+                  <select class="form-control" id="parking_zone_id" name="parking_zone_id" required>
+                    <option value="" selected disabled>Selecciona la zona</option>
+                  </select>
+                  <label for="parking_zone_id">Zona de Parqueo</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Estado de reserva -->
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="is_reserved" class="form-label">Estado de Reserva</label>
+                <div class="form-floating">
+                  <select class="form-control" id="is_reserved" name="is_reserved">
+                    <option value="0" selected>Disponible</option>
+                    <option value="1">Reservado</option>
+                  </select>
+                  <label for="is_reserved">Estado de Reserva</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Estado -->
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="status_id" class="form-label required">Estado</label>
+                <div class="form-floating">
+                  <select class="form-control" id="status_id" name="status_id" required>
+                    <option value="" selected disabled>Selecciona el estado</option>
+                  </select>
+                  <label for="status_id">Estado</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tarifa -->
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="tariff_id" class="form-label">Tarifa</label>
+                <div class="form-floating">
+                  <select class="form-control" id="tariff_id" name="tariff_id">
+                    <option value="" selected>Sin tarifa específica</option>
+                  </select>
+                  <label for="tariff_id">Tarifa Aplicable</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones -->
+          <div class="col-12 d-flex justify-content-between mt-3">
+            <button type="reset" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Resetear
+            </button>
+            <button type="submit" class="btn btn-success ">
+              <i class="bi bi-send-fill me-1"></i> Enviar
+            </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Asignaciones de Parqueo -->
+  <div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content shadow-lg border-0 rounded-4">
+        <div class="modal-header bg-success text-white rounded-top-4">
+          <h1 class="modal-title fs-5" id="assignmentModalLabel">
+            <i class="fas fa-clipboard-list me-2"></i>Asignación de Parqueo
+          </h1>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- El formulario se adapta a la estructura del backend -->
+          <form id="assignmentForm">
+            <div class="row">
+              <!-- El sistema solicita el espacio de parqueo -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="assignment_parking_slot_id" class="form-label required">Espacio de Parqueo</label>
+                  <div class="form-floating">
+                    <select class="form-control" id="assignment_parking_slot_id" name="parking_slot_id" required>
+                      <option value="" selected disabled>Selecciona el espacio</option>
+                    </select>
+                    <label for="assignment_parking_slot_id">Espacio de Parqueo</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- El sistema solicita el usuario -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="assignment_user_id" class="form-label required">Usuario</label>
+                  <div class="form-floating">
+                    <select class="form-control" id="assignment_user_id" name="user_id" required>
+                      <option value="" selected disabled>Selecciona el usuario</option>
+                    </select>
+                    <label for="assignment_user_id">Usuario</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- El sistema solicita el vehículo (opcional) -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="assignment_vehicle_id" class="form-label">Vehículo (Opcional)</label>
+                  <div class="form-floating">
+                    <select class="form-control" id="assignment_vehicle_id" name="vehicle_id">
+                      <option value="">Sin vehículo</option>
+                    </select>
+                    <label for="assignment_vehicle_id">Vehículo</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- El sistema solicita el estado -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="assignment_status_id" class="form-label required">Estado</label>
+                  <div class="form-floating">
+                    <select class="form-control" id="assignment_status_id" name="status_id" required>
+                      <option value="" selected disabled>Selecciona el estado</option>
+                    </select>
+                    <label for="assignment_status_id">Estado</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- El sistema solicita fecha de inicio -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="assignment_start_time" class="form-label required">Fecha y Hora de Inicio</label>
+                  <input type="datetime-local" class="form-control" id="assignment_start_time" name="start_time" required>
+                </div>
+              </div>
+
+              <!-- El sistema solicita fecha de fin -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="assignment_end_time" class="form-label required">Fecha y Hora de Fin</label>
+                  <input type="datetime-local" class="form-control" id="assignment_end_time" name="end_time" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- El sistema solicita el monto total -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="assignment_total_amount" class="form-label required">Monto Total</label>
+                  <div class="form-floating">
+                    <input type="number" step="0.01" class="form-control" placeholder="Monto" id="assignment_total_amount" name="total_amount" required>
+                    <label for="assignment_total_amount">Monto Total</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="col-12 d-flex justify-content-between mt-3">
+              <button type="reset" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-counterclockwise me-1"></i> Resetear
+              </button>
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-send-fill me-1"></i> Enviar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Sorteos de Parqueo -->
+  <div class="modal fade" id="lotteryModal" tabindex="-1" aria-labelledby="lotteryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content shadow-lg border-0 rounded-4">
+        <div class="modal-header bg-warning text-dark rounded-top-4">
+          <h1 class="modal-title fs-5" id="lotteryModalLabel">
+            <i class="fas fa-dice me-2"></i>Sorteo de Parqueo
+          </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- El formulario se adapta a la estructura del backend -->
+          <form id="lotteryForm">
+            <div class="row">
+              <!-- El sistema solicita fecha de inicio del sorteo -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="lottery_start_date" class="form-label required">Fecha de Inicio del Sorteo</label>
+                  <input type="datetime-local" class="form-control" id="lottery_start_date" name="start_date" required>
+                </div>
+              </div>
+
+              <!-- El sistema solicita fecha de fin del sorteo -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="lottery_end_date" class="form-label required">Fecha de Fin del Sorteo</label>
+                  <input type="datetime-local" class="form-control" id="lottery_end_date" name="end_date" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- El sistema solicita la zona de parqueo -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="lottery_parking_zone_id" class="form-label required">Zona de Parqueo</label>
+                  <div class="form-floating">
+                    <select class="form-control" id="lottery_parking_zone_id" name="parking_zone_id" required>
+                      <option value="" selected disabled>Selecciona la zona</option>
+                    </select>
+                    <label for="lottery_parking_zone_id">Zona de Parqueo</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- El sistema solicita el estado del sorteo -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="lottery_status_id" class="form-label required">Estado</label>
+                  <div class="form-floating">
+                    <select class="form-control" id="lottery_status_id" name="status_id" required>
+                      <option value="" selected disabled>Selecciona el estado</option>
+                    </select>
+                    <label for="lottery_status_id">Estado del Sorteo</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="col-12 d-flex justify-content-between mt-3">
+              <button type="reset" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-counterclockwise me-1"></i> Resetear
+              </button>
+              <button type="submit" class="btn btn-warning">
+                <i class="bi bi-send-fill me-1"></i> Crear Sorteo
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    </main>
+    <!--End Content data-->
+
+  </div>
+  <!--End Container -->
+ 
+
+  <!--Loading -->
+  <div id="loading-screen">
+    <div class="spinner-border text-light spinner" role="status">
+      <span class="visually-hidden">Loading ...</span>
+    </div>
+    <p class="mt-3">Cargando datos, por favor espera...</p>
+  </div>
+  <!--End Loading -->
+
+  <!-- Bootstrap 5 JS Bundle con Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Data table -->
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+  <!-- JS personalizado -->
+  <script src="../../assets/js/app/constants.js"></script>
+  <script src="../../assets/js/storage/appStorage.js"></script>
+  <script src="../../assets/js/services/services.js"></script> 
+  <script src="../../assets/js/app/app.js"></script>
+  <script src="../../assets/js/utils/Form.js"></script>
+  <script src="../../assets/js/controllers/parkingslot/parkingslot.controller.js"></script>
+
+</body>
+
+</html> 

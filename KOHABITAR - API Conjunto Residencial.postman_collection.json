@@ -1,0 +1,4069 @@
+{
+	"info": {
+		"_postman_id": "dd9360f0-125d-45c7-aade-c1b34f0e4cd9",
+		"name": "KOHABITAR - API Conjunto Residencial",
+		"description": "Colección completa de endpoints para la API de gestión de conjuntos residenciales KOHABITAR.\n\n**Base URL:** http://localhost:3000/api_v1\n\n**Autenticación:** JWT Bearer Token\n\n**Usuarios de prueba:**\n- Admin: username: `admin`, password: `password`\n- Propietario: username: `propietario1`, password: `password`\n- Residente: username: `residente1`, password: `password`\n- Vigilante: username: `vigilante1`, password: `password`",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30938704",
+		"_collection_link": "https://team-kohabitar.postman.co/workspace/team-Kohabitar-Workspace~18f31f43-c883-4bd7-8a2b-f3313865ec8f/collection/30938704-dd9360f0-125d-45c7-aade-c1b34f0e4cd9?action=share&source=collection_link&creator=30938704"
+	},
+	"item": [
+		{
+			"name": "01 - Autenticación OK",
+			"item": [
+				{
+					"name": "Login - Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"auth_token\", jsonData.token);",
+									"    pm.environment.set(\"user_id\", jsonData.user.user_id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "Iniciar sesión como administrador del conjunto residencial"
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Propietario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"propietario1\",\n  \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "Iniciar sesión como propietario"
+					},
+					"response": []
+				},
+				{
+					"name": "Validar Token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/validate-token",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"validate-token"
+							]
+						},
+						"description": "Validar si el token JWT es válido"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para autenticación y validación de tokens"
+		},
+		{
+			"name": "02 - Usuarios OK",
+			"item": [
+				{
+					"name": "Crear Usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"usuario.nuevo\",\n  \"password\": \"MiPassword123!\",\n  \"role_id\": 3,\n  \"status_id\": 1,\n  \"phone\": \"+573157894562\",\n  \"email\": \"fjramirez@correo.co\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
+						},
+						"description": "Crear un nuevo usuario en el sistema"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Usuarios",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
+						},
+						"description": "Obtener lista de todos los usuarios activos"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Usuario por ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"2"
+							]
+						},
+						"description": "Obtener información detallada de un usuario específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"usuario.actualizado\",\n  \"password\": \"Segura2025!\",\n  \"role_id\": 3,\n  \"status_id\": 1\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"6"
+							]
+						},
+						"description": "Actualizar información de un usuario existente"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg0MTMwLCJleHAiOjE3NjIxODc3MzB9.892Cdps2uKKgfOVYg_UYjHLacjk248IdgsVQP6Wn23g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/7",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"7"
+							]
+						},
+						"description": "Eliminar un usuario del sistema"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestión de usuarios del conjunto residencial"
+		},
+		{
+			"name": "03 - Perfiles OK",
+			"item": [
+				{
+					"name": "Crear Perfil",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTM5ODg4LCJleHAiOjE3NjIxNDM0ODh9.JNEuiOLnaSJU4JtRbBHIpD5RdzmSo5qDFGCLSuRH2Zg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": 9,\n  \"full_name\": \"Camila Alejandra Pérez Rojas\",\n  \"phone\": \"+573148923456\",\n  \"email\": \"camila.perez@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/profiles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"profiles"
+							]
+						},
+						"description": "Crear perfil para un usuario"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Perfiles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/profiles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"profiles"
+							]
+						},
+						"description": "Obtener todos los perfiles de usuarios"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Perfil por ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/profiles/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"profiles",
+								"2"
+							]
+						},
+						"description": "Obtener perfil específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Perfil",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"full_name\": \"Camila Alejandra Pérez Rojas\",\n  \"phone\": \"+57 314 892 9999\",\n  \"email\": \"camila.nuevo@gmail.com\",\n  \"address\": \"Casa 305 - Zona Occidente\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/profiles/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"profiles",
+								"2"
+							]
+						},
+						"description": "Actualizar información de perfil"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestión de perfiles de usuarios"
+		},
+		{
+			"name": "04 - Propiedades OK",
+			"item": [
+				{
+					"name": "Crear Propiedad",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"property_type_id\": 1,\n  \"name\": \"Casa 501 - Sección Caribe\",\n  \"description\": \"Casa de 3 habitaciones, 2 baños, balcón con vista al mar\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/properties",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"properties"
+							]
+						},
+						"description": "Registrar una nueva propiedad en el conjunto"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Propiedades",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/properties",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"properties"
+							]
+						},
+						"description": "Obtener todas las propiedades del conjunto"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Propiedades por Nombre",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/properties/search?name=Casa 101 - Seccion 1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"properties",
+								"search"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Casa 101 - Seccion 1"
+								}
+							]
+						},
+						"description": "Buscar propiedades por nombre"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Tipos de Propiedades",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/properties/types",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"properties",
+								"types"
+							]
+						},
+						"description": "Obtener todos los tipos de propiedades disponibles"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Propiedades por Tipo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/properties/type/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"properties",
+								"type",
+								"2"
+							]
+						},
+						"description": "Obtener propiedades filtradas por tipo (1: Apartamento, 2: Casa, 3: Penthouse)"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Propiedad por ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/properties/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"properties",
+								"1"
+							]
+						},
+						"description": "Obtener información detallada de una propiedad"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Propiedad",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"property_type_id\": 2,\n  \"name\": \"Casa 101 - Sección 1 Renovada\",\n  \"description\": \"Casa de 3 habitaciones, 2 baños, remodelada 2024\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/properties/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"properties",
+								"1"
+							]
+						},
+						"description": "Actualizar información de una propiedad"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Propiedad",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/properties/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"properties",
+								"1"
+							]
+						},
+						"description": "Obtener información detallada de una propiedad"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestión de propiedades del conjunto residencial"
+		},
+		{
+			"name": "05 - Usuarios-Propiedades OK",
+			"item": [
+				{
+					"name": "Asociar Usuario a Propiedad",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTQwNzMwLCJleHAiOjE3NjIxNDQzMzB9.9vgYApEbba2JTy7Z6DNDWXN9b1UezLKKBIinbuQLV6U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": 3,\n  \"property_id\": 2,\n  \"is_owner\": true,\n  \"start_date\": \"2025-01-15\",\n    \"status_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user-property",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-property"
+							]
+						},
+						"description": "Crear relación entre usuario y propiedad"
+					},
+					"response": []
+				},
+				{
+					"name": "Propiedades de un Usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user-property/user/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-property",
+								"user",
+								"2"
+							]
+						},
+						"description": "Obtener todas las propiedades de un usuario"
+					},
+					"response": []
+				},
+				{
+					"name": "Usuarios de una Propiedad",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTc2MzQzLCJleHAiOjE3NjIxNzk5NDN9.hyCBDoBByxGWaHc666ml3L9YIudKoOthHQCDAVcIqd8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user-property/property/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-property",
+								"property",
+								"1"
+							]
+						},
+						"description": "Obtener todos los usuarios asociados a una propiedad"
+					},
+					"response": []
+				},
+				{
+					"name": "Residentes de Propiedad",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user-property/residents/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-property",
+								"residents",
+								"1"
+							]
+						},
+						"description": "Obtener información detallada de residentes"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestión de relaciones entre usuarios y propiedades"
+		},
+		{
+			"name": "06 - Vehículos OK",
+			"item": [
+				{
+					"name": "Registrar Vehículo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTc3Nzg3LCJleHAiOjE3NjIxODEzODd9.fiK0Wp56JT6jVSFX0H1UwEW6Xu7FLjDdJCVfm3j6LAo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \n  \"license_plate\": \"XYZ789\",\n  \"model\": \"Renault Logan 2023\",\n  \"type\": \"Automóvil\",\n  \"color\": \"Gris Platino\",\n  \"user_id\": 2,\n  \"property_id\": 1,\n  \"status_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/vehicles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vehicles"
+							]
+						},
+						"description": "Registrar un nuevo vehículo"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Vehículos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg0MTMwLCJleHAiOjE3NjIxODc3MzB9.892Cdps2uKKgfOVYg_UYjHLacjk248IdgsVQP6Wn23g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/vehicles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vehicles"
+							]
+						},
+						"description": "Obtener todos los vehículos registrados"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Vehículo por Placa",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg0MTMwLCJleHAiOjE3NjIxODc3MzB9.892Cdps2uKKgfOVYg_UYjHLacjk248IdgsVQP6Wn23g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/vehicles/license/ABC123",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vehicles",
+								"license",
+								"ABC123"
+							]
+						},
+						"description": "Buscar vehículo por número de placa"
+					},
+					"response": []
+				},
+				{
+					"name": "Vehículos por Usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg0MTMwLCJleHAiOjE3NjIxODc3MzB9.892Cdps2uKKgfOVYg_UYjHLacjk248IdgsVQP6Wn23g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/vehicles/user/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vehicles",
+								"user",
+								"2"
+							]
+						},
+						"description": "Obtener vehículos de un usuario específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Vehículos por Propiedad",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg0MTMwLCJleHAiOjE3NjIxODc3MzB9.892Cdps2uKKgfOVYg_UYjHLacjk248IdgsVQP6Wn23g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/vehicles/property/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vehicles",
+								"property",
+								"1"
+							]
+						},
+						"description": "Obtener vehículos asociados a una propiedad"
+					},
+					"response": []
+				},
+				{
+					"name": "Vehículos por Tipo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTgyNTA4LCJleHAiOjE3NjIxODYxMDh9.xXsruyNNVzwJgtxab2Nr7m4DhRdFdvPTm3vIgbDMuLg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/vehicles/type/Automóvil",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vehicles",
+								"type",
+								"Automóvil"
+							]
+						},
+						"description": "Obtener vehículos por tipo (Automóvil, Motocicleta, etc.)"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Vehículo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg0MTMwLCJleHAiOjE3NjIxODc3MzB9.892Cdps2uKKgfOVYg_UYjHLacjk248IdgsVQP6Wn23g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"model\": \"Renault Logan 2024\",\n  \"color\": \"Gris Oscuro\",\n  \"status_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/vehicles/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vehicles",
+								"1"
+							]
+						},
+						"description": "Actualizar información de un vehículo"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestión de vehículos del conjunto"
+		},
+		{
+			"name": "07 - Parqueaderos OK",
+			"item": [
+				{
+					"name": "Zonas de Parqueo OK",
+					"item": [
+						{
+							"name": "Crear Zona de Parqueo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Sótano 4 - VIP\",\n  \"type\": \"residente\",\n  \"capacity\": 30,\n  \"status_id\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/parking-zones",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-zones"
+									]
+								},
+								"description": "Crear nueva zona de parqueadero"
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Zona de Parqueo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg0ODMxLCJleHAiOjE3NjIxODg0MzF9.Jpj462sPZolYTgsfDcitRxyn_Qj2eDHfi-vtqxY4T-I",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Sótano 4 - VIP\",\n  \"type\": \"residente\",\n  \"capacity\": 30,\n  \"status_id\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/parking-zones/5",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-zones",
+										"5"
+									]
+								},
+								"description": "Crear nueva zona de parqueadero"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Zonas de Parqueo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg1MDYxLCJleHAiOjE3NjIxODg2NjF9.rips0AGDUMnchgnXCf7eYAnd7ddx_B6PoJcyleGopTw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-zones",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-zones"
+									]
+								},
+								"description": "Obtener todas las zonas de parqueo"
+							},
+							"response": []
+						},
+						{
+							"name": "Disponibilidad de Zona",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-zones/1/availability",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-zones",
+										"1",
+										"availability"
+									]
+								},
+								"description": "Obtener disponibilidad de espacios en una zona"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Espacios de Parqueo OK",
+					"item": [
+						{
+							"name": "Crear Espacio de Parqueo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"parking_zone_id\": 1,\n  \"code\": \"A-15\",\n  \"is_reserved\": false,\n  \"status_id\": 6,\n  \"tariff_id\": 5\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/parking-slots",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-slots"
+									]
+								},
+								"description": "Crear nuevo espacio de parqueo"
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Espacio de Parqueo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg3MDcyLCJleHAiOjE3NjIxOTA2NzJ9.VNEu2PL1M7rgGLsHH_C09aYlMWUuDOCSo3mc5ZGjSjA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"parking_zone_id\": 1,\n  \"code\": \"AB-15\",\n  \"is_reserved\": true,\n  \"status_id\": 6,\n  \"tariff_id\": 5\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/parking-slots/8",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-slots",
+										"8"
+									]
+								},
+								"description": "Crear nuevo espacio de parqueo"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Espacios",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg2NTcyLCJleHAiOjE3NjIxOTAxNzJ9.GoeEZbDsegqiRtBT4rCaSBWCsK9pPWckU--eTZ-MMzI",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-slots",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-slots"
+									]
+								},
+								"description": "Obtener todos los espacios"
+							},
+							"response": []
+						},
+						{
+							"name": "Espacios Disponibles",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg3MDAyLCJleHAiOjE3NjIxOTA2MDJ9.aYF5Ig1kzx4DFBb-egP3qUMr9AVHpEmIy6jnb2fTtFk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-slots/available",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-slots",
+										"available"
+									]
+								},
+								"description": "Obtener espacios disponibles"
+							},
+							"response": []
+						},
+						{
+							"name": "Espacios Reservados",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg3MDAyLCJleHAiOjE3NjIxOTA2MDJ9.aYF5Ig1kzx4DFBb-egP3qUMr9AVHpEmIy6jnb2fTtFk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-slots/reserved",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-slots",
+										"reserved"
+									]
+								},
+								"description": "Obtener espacios reservados"
+							},
+							"response": []
+						},
+						{
+							"name": "Espacios por Zona",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg3MDAyLCJleHAiOjE3NjIxOTA2MDJ9.aYF5Ig1kzx4DFBb-egP3qUMr9AVHpEmIy6jnb2fTtFk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-slots/zone/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-slots",
+										"zone",
+										"1"
+									]
+								},
+								"description": "Obtener espacios de una zona específica"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Asignaciones OK",
+					"item": [
+						{
+							"name": "Crear Asignación",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg3MDcyLCJleHAiOjE3NjIxOTA2NzJ9.VNEu2PL1M7rgGLsHH_C09aYlMWUuDOCSo3mc5ZGjSjA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"parking_slot_id\": 3,\n  \"user_id\": 2,\n  \"vehicle_id\": 1,\n  \"start_time\": \"2025-02-01T08:00:00\",\n  \"end_time\": \"2025-02-01T08:00:00\",\n  \"total_amount\": 80000,\n  \"status_id\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/parking-assignments",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-assignments"
+									]
+								},
+								"description": "Crear asignación de parqueadero"
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Asignación",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg3MDcyLCJleHAiOjE3NjIxOTA2NzJ9.VNEu2PL1M7rgGLsHH_C09aYlMWUuDOCSo3mc5ZGjSjA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"parking_slot_id\": 3,\n  \"user_id\": 2,\n  \"vehicle_id\": 1,\n  \"start_time\": \"2025-02-01T08:00:00\",\n  \"end_time\": \"2026-02-01T08:00:00\",\n  \"total_amount\": 80000,\n  \"status_id\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/parking-assignments/5",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-assignments",
+										"5"
+									]
+								},
+								"description": "Crear asignación de parqueadero"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Asignaciones",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg3MDcyLCJleHAiOjE3NjIxOTA2NzJ9.VNEu2PL1M7rgGLsHH_C09aYlMWUuDOCSo3mc5ZGjSjA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-assignments",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-assignments"
+									]
+								},
+								"description": "Obtener todas las asignaciones"
+							},
+							"response": []
+						},
+						{
+							"name": "Asignaciones por Usuario",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg3MDcyLCJleHAiOjE3NjIxOTA2NzJ9.VNEu2PL1M7rgGLsHH_C09aYlMWUuDOCSo3mc5ZGjSjA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-assignments/user/2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-assignments",
+										"user",
+										"2"
+									]
+								},
+								"description": "Obtener asignaciones de un usuario"
+							},
+							"response": []
+						},
+						{
+							"name": "Verificar Disponibilidad",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg3MDcyLCJleHAiOjE3NjIxOTA2NzJ9.VNEu2PL1M7rgGLsHH_C09aYlMWUuDOCSo3mc5ZGjSjA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-assignments/check-availability/3?start_time=2025-02-15T08:00:00&end_time=2025-02-15T18:00:00",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-assignments",
+										"check-availability",
+										"3"
+									],
+									"query": [
+										{
+											"key": "start_time",
+											"value": "2025-02-15T08:00:00"
+										},
+										{
+											"key": "end_time",
+											"value": "2025-02-15T18:00:00"
+										}
+									]
+								},
+								"description": "Verificar disponibilidad de un espacio"
+							},
+							"response": []
+						},
+						{
+							"name": "Finalizar Asignacion",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTg3MDcyLCJleHAiOjE3NjIxOTA2NzJ9.VNEu2PL1M7rgGLsHH_C09aYlMWUuDOCSo3mc5ZGjSjA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-assignments/2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-assignments",
+										"2"
+									]
+								},
+								"description": "Obtener asignaciones de un usuario"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Sorteos OK",
+					"item": [
+						{
+							"name": "Crear Sorteo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMTk5NTU2LCJleHAiOjE3NjIyMDMxNTZ9.iOrO4n0qyyyimny7CscxT9gAVH1TAR8tH9SiqQm8fLc",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"start_date\": \"2025-12-01\",\n  \"end_date\": \"2025-12-31\",\n  \"parking_zone_id\": 1,\n  \"execution_date\": \"2025-11-31\",\n  \"available_slots\": 10\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/parking-lotteries",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-lotteries"
+									]
+								},
+								"description": "Crear un nuevo sorteo"
+							},
+							"response": []
+						},
+						{
+							"name": "Verificar los espacios de parqueo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjAyMDU1LCJleHAiOjE3NjIyMDU2NTV9.Rmv9j-8WhrlOkU_-4obVOe8avjtns4D-saGrLjgV9js",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-lotteries/3/check-availability",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-lotteries",
+										"3",
+										"check-availability"
+									]
+								},
+								"description": "Obtener todos los sorteos"
+							},
+							"response": []
+						},
+						{
+							"name": "Ejecutar Sorteo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjAyODgzLCJleHAiOjE3NjIyMDY0ODN9.UF10kgAaPVAECc-HW0_IzGUBz9aTGwdKbgTXi8RIKLI",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-lotteries/3/execute",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-lotteries",
+										"3",
+										"execute"
+									]
+								},
+								"description": "Ejecutar el sorteo y asignar espacios"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Resultados de Sorteo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjAxMzg3LCJleHAiOjE3NjIyMDQ5ODd9.k5gRzWBcj5Kt1iTAswoxHoSfnY9N0sXrULftuOp_foU",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-lotteries/1/results",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-lotteries",
+										"1",
+										"results"
+									]
+								},
+								"description": "Obtener todos los sorteos"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Sorteos",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjAyMDU1LCJleHAiOjE3NjIyMDU2NTV9.Rmv9j-8WhrlOkU_-4obVOe8avjtns4D-saGrLjgV9js",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-lotteries",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-lotteries"
+									]
+								},
+								"description": "Obtener todos los sorteos"
+							},
+							"response": []
+						},
+						{
+							"name": "Registrar Participante",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjAyMDU1LCJleHAiOjE3NjIyMDU2NTV9.Rmv9j-8WhrlOkU_-4obVOe8avjtns4D-saGrLjgV9js",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2,\n  \"vehicle_id\": 1,\n  \"property_id\":5\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/parking-lotteries/3/participants",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-lotteries",
+										"3",
+										"participants"
+									]
+								},
+								"description": "Registrar participante en sorteo"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar  Participantes de Sorteo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjEzNjgwLCJleHAiOjE3NjIyMTcyODB9.LG1G1xFGwEBqiN48k6xFmmh8SgciDB7KKa6cspNYirs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-lotteries/3/participants",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-lotteries",
+										"3",
+										"participants"
+									]
+								},
+								"description": "Obtener todos los sorteos"
+							},
+							"response": []
+						},
+						{
+							"name": "Cancelar Sorteo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjEzNjgwLCJleHAiOjE3NjIyMTcyODB9.LG1G1xFGwEBqiN48k6xFmmh8SgciDB7KKa6cspNYirs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-lotteries/2/cancel",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-lotteries",
+										"2",
+										"cancel"
+									]
+								},
+								"description": "Obtener todos los sorteos"
+							},
+							"response": []
+						},
+						{
+							"name": "Historial de Sorteos",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjEzNjgwLCJleHAiOjE3NjIyMTcyODB9.LG1G1xFGwEBqiN48k6xFmmh8SgciDB7KKa6cspNYirs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/parking-lotteries/history",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"parking-lotteries",
+										"history"
+									]
+								},
+								"description": "Obtener todos los sorteos"
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "Gestión completa de parqueaderos"
+		},
+		{
+			"name": "08 - Zonas Comunes OK",
+			"item": [
+				{
+					"name": "Tipos de Zonas Comunes OK",
+					"item": [
+						{
+							"name": "Crear Tipo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjEzNjgwLCJleHAiOjE3NjIyMTcyODB9.LG1G1xFGwEBqiN48k6xFmmh8SgciDB7KKa6cspNYirs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Wellness\",\n  \"description\": \"Espacios de bienestar y relajación\",\n  \"is_active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/amenity-types",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"amenity-types"
+									]
+								},
+								"description": "Crear nuevo tipo de zona común"
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Tipo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjEzNjgwLCJleHAiOjE3NjIyMTcyODB9.LG1G1xFGwEBqiN48k6xFmmh8SgciDB7KKa6cspNYirs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Wellness\",\n  \"description\": \"Espacios de bienestar y relajación\",\n  \"is_active\": false\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/amenity-types/6",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"amenity-types",
+										"6"
+									]
+								},
+								"description": "Crear nuevo tipo de zona común"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Tipos",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjEzNjgwLCJleHAiOjE3NjIyMTcyODB9.LG1G1xFGwEBqiN48k6xFmmh8SgciDB7KKa6cspNYirs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/amenity-types",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"amenity-types"
+									]
+								},
+								"description": "Obtener todos los tipos"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Zonas Comunes OK",
+					"item": [
+						{
+							"name": "Crear Zona Común",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"amenity_type_id\": 1,\n  \"status_id\": 1,\n  \"tariff_id\": 3,\n  \"name\": \"Terraza Lounge Bar\",\n  \"description\": \"Terraza con vista panorámica, bar y mesas lounge\",\n  \"capacity\": 40\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/amenities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"amenities"
+									]
+								},
+								"description": "Crear nueva zona común"
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Zona Común",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE1NjU5LCJleHAiOjE3NjIyMTkyNTl9.BFRJOfEN6R8T5k3GKKR6k1JR_hp3dqigH70Tknjnqig",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"amenity_type_id\": 1,\n  \"status_id\": 1,\n  \"tariff_id\": 3,\n  \"name\": \"Terraza Lounge\",\n  \"description\": \"Terraza con vista panorámica y mesas lounge\",\n  \"capacity\": 50\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/amenities/6",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"amenities",
+										"6"
+									]
+								},
+								"description": "Crear nueva zona común"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Zonas Comunes",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE1NjU5LCJleHAiOjE3NjIyMTkyNTl9.BFRJOfEN6R8T5k3GKKR6k1JR_hp3dqigH70Tknjnqig",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/amenities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"amenities"
+									]
+								},
+								"description": "Obtener todas las zonas comunes"
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Zona Común por ID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE1NjU5LCJleHAiOjE3NjIyMTkyNTl9.BFRJOfEN6R8T5k3GKKR6k1JR_hp3dqigH70Tknjnqig",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/amenities/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"amenities",
+										"1"
+									]
+								},
+								"description": "Obtener zona común específica"
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "Gestión de zonas comunes del conjunto"
+		},
+		{
+			"name": "09 - Reservas OK",
+			"item": [
+				{
+					"name": "Crear Reserva",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amenity_id\": 1,\n  \"user_id\": 2,\n  \"status_id\": 1,\n  \"tariff_id\": 3,\n  \"start_time\": \"2025-12-20T15:00:00\",\n  \"end_time\": \"2025-12-20T19:00:00\",\n  \"capacity\": 30\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/reservations",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reservations"
+							]
+						},
+						"description": "Crear nueva reserva de zona común"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Reservas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reservations",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reservations"
+							]
+						},
+						"description": "Obtener todas las reservas"
+					},
+					"response": []
+				},
+				{
+					"name": "Reservas Próximas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reservations/upcoming",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reservations",
+								"upcoming"
+							]
+						},
+						"description": "Obtener reservas futuras"
+					},
+					"response": []
+				},
+				{
+					"name": "Reservas por Usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reservations/user/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reservations",
+								"user",
+								"2"
+							]
+						},
+						"description": "Obtener reservas de un usuario"
+					},
+					"response": []
+				},
+				{
+					"name": "Reservas por Zona Común",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reservations/amenity/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reservations",
+								"amenity",
+								"1"
+							]
+						},
+						"description": "Obtener reservas de una zona común"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar Reserva",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reservations/1/cancel",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reservations",
+								"1",
+								"cancel"
+							]
+						},
+						"description": "Cancelar una reserva existente"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestión de reservas de zonas comunes"
+		},
+		{
+			"name": "10 - Visitantes OK",
+			"item": [
+				{
+					"name": "Registrar Visitante",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"full_name\": \"Andrés Felipe Gutiérrez Sánchez\",\n  \"id_document\": \"1098765432\",\n  \"visit_reason\": \"Visita familiar\",\n  \"entry_time\": \"2025-11-15T14:30:00\",\n  \"authorized_user_id\": 2,\n  \"property_id\": 1,\n  \"status_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/visitors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"visitors"
+							]
+						},
+						"description": "Registrar ingreso de visitante"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Visitantes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/visitors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"visitors"
+							]
+						},
+						"description": "Obtener todos los visitantes"
+					},
+					"response": []
+				},
+				{
+					"name": "Visitantes del Día",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/visitors/today",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"visitors",
+								"today"
+							]
+						},
+						"description": "Obtener visitantes registrados hoy"
+					},
+					"response": []
+				},
+				{
+					"name": "Estadísticas de Visitantes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/visitors/statistics",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"visitors",
+								"statistics"
+							]
+						},
+						"description": "Obtener estadísticas de visitantes"
+					},
+					"response": []
+				},
+				{
+					"name": "Visitantes Frecuentes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/visitors/frequent?limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"visitors",
+								"frequent"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Obtener visitantes más frecuentes"
+					},
+					"response": []
+				},
+				{
+					"name": "Historial de Visitas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/visitors/history/1098765432",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"visitors",
+								"history",
+								"1098765432"
+							]
+						},
+						"description": "Obtener historial de visitas por documento"
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar Salida",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/visitors/checkout/7",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"visitors",
+								"checkout",
+								"7"
+							]
+						},
+						"description": "Registrar salida de visitante"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestión de visitantes del conjunto"
+		},
+		{
+			"name": "11 - Facturas OK",
+			"item": [
+				{
+					"name": "Crear Factura",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": 2,\n  \"property_id\": 1,\n  \"tariff_id\": 1,\n  \"amount\": 320000,\n  \"due_date\": \"2025-03-10\",\n  \"status_id\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/invoice",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoice"
+							]
+						},
+						"description": "Crear nueva factura"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Factura",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": 2,\n  \"property_id\": 1,\n  \"tariff_id\": 2,\n  \"amount\": 3200,\n  \"due_date\": \"2025-03-10\",\n  \"status_id\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/invoice/6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoice",
+								"6"
+							]
+						},
+						"description": "Crear nueva factura"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Facturas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/invoice",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoice"
+							]
+						},
+						"description": "Obtener todas las facturas"
+					},
+					"response": []
+				},
+				{
+					"name": "Facturas Vencidas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/invoice/overdue",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoice",
+								"overdue"
+							]
+						},
+						"description": "Obtener facturas vencidas"
+					},
+					"response": []
+				},
+				{
+					"name": "Facturas Pendientes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/invoice/pending",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoice",
+								"pending"
+							]
+						},
+						"description": "Obtener facturas pendientes"
+					},
+					"response": []
+				},
+				{
+					"name": "Facturas por Usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/invoice/user/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoice",
+								"user",
+								"2"
+							]
+						},
+						"description": "Obtener facturas de un usuario"
+					},
+					"response": []
+				},
+				{
+					"name": "Facturas por Propiedad",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/invoice/property/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoice",
+								"property",
+								"1"
+							]
+						},
+						"description": "Obtener facturas de una propiedad"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestión de facturas"
+		},
+		{
+			"name": "12 - Pagos OK",
+			"item": [
+				{
+					"name": "Registrar Pago",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": 2,\n  \"amount_paid\": 320000,\n  \"payment_date\": \"2025-02-20\",\n  \"method\": \"PSE\",\n  \"reference\": \"PSE-20250220-ABC123\",\n  \"invoice_id\": 1,\n  \"status_id\": 8\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payments"
+							]
+						},
+						"description": "Registrar nuevo pago"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Pago",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": 2,\n  \"amount_paid\": 35000,\n  \"payment_date\": \"2025-02-20\",\n  \"method\": \"PSE\",\n  \"reference\": \"PSE-20250220-ABC123\",\n  \"invoice_id\": 4,\n  \"status_id\": 8\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payments/6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payments",
+								"6"
+							]
+						},
+						"description": "Registrar nuevo pago"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Pagos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/payments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payments"
+							]
+						},
+						"description": "Obtener todos los pagos"
+					},
+					"response": []
+				},
+				{
+					"name": "Pagos por Factura",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/payments/invoice/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payments",
+								"invoice",
+								"1"
+							]
+						},
+						"description": "Obtener pagos de una factura"
+					},
+					"response": []
+				},
+				{
+					"name": "Pagos por Usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/payments/user/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payments",
+								"user",
+								"2"
+							]
+						},
+						"description": "Obtener pagos de un usuario"
+					},
+					"response": []
+				},
+				{
+					"name": "Generar Estado de Cuenta",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 2,\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": \"2025-02-28\",\n  \"includeDetails\": true,\n  \"propertyId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payments/statement",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payments",
+								"statement"
+							]
+						},
+						"description": "Generar estado de cuenta con resumen de pagos"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestión de pagos"
+		},
+		{
+			"name": "13 - Paquetes OK",
+			"item": [
+				{
+					"name": "Registrar Paquete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Caja Amazon - Envío estándar\",\n  \"recipient_user_id\": 2,\n  \"property_id\": 1,\n  \"status_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/packages",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"packages"
+							]
+						},
+						"description": "Registrar llegada de paquete"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Paquete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjIwODg2LCJleHAiOjE3NjIyMjQ0ODZ9.16GsSiPMSjOFrJh6mY-JZmpPphnNVCb48sDi6ZK4XW0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Caja Amazon - Envío estándar\",\n  \"recipient_user_id\": 2,\n  \"property_id\": 3,\n  \"status_id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/packages/5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"packages",
+								"5"
+							]
+						},
+						"description": "Registrar llegada de paquete"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Paquetes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/packages",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"packages"
+							]
+						},
+						"description": "Obtener todos los paquetes"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Paquete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjIwODg2LCJleHAiOjE3NjIyMjQ0ODZ9.16GsSiPMSjOFrJh6mY-JZmpPphnNVCb48sDi6ZK4XW0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/packages/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"packages",
+								"1"
+							]
+						},
+						"description": "Obtener todos los paquetes"
+					},
+					"response": []
+				},
+				{
+					"name": "Paquetes por Usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/packages/user/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"packages",
+								"user",
+								"2"
+							]
+						},
+						"description": "Obtener paquetes de un usuario"
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar Salida de Paquete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjIwODg2LCJleHAiOjE3NjIyMjQ0ODZ9.16GsSiPMSjOFrJh6mY-JZmpPphnNVCb48sDi6ZK4XW0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/packages/1/exit",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"packages",
+								"1",
+								"exit"
+							]
+						},
+						"description": "Registrar entrega de paquete al destinatario"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Paquete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjIwODg2LCJleHAiOjE3NjIyMjQ0ODZ9.16GsSiPMSjOFrJh6mY-JZmpPphnNVCb48sDi6ZK4XW0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/packages/6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"packages",
+								"6"
+							]
+						},
+						"description": "Registrar entrega de paquete al destinatario"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestión de paquetes y correspondencia"
+		},
+		{
+			"name": "14 - PQRS (CPCG)",
+			"item": [
+				{
+					"name": "Tipos de PQRS",
+					"item": [
+						{
+							"name": "Crear Tipo PQRS",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjIwODg2LCJleHAiOjE3NjIyMjQ0ODZ9.16GsSiPMSjOFrJh6mY-JZmpPphnNVCb48sDi6ZK4XW0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Queja\",\n  \"description\": \"Quejas sobre servicios o situaciones\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/cpcg-types",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cpcg-types"
+									]
+								},
+								"description": "Crear tipo de PQRS"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Tipos PQRS",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/cpcg-types",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cpcg-types"
+									]
+								},
+								"description": "Obtener tipos de PQRS"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "PQRS",
+					"item": [
+						{
+							"name": "Crear PQRS",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2,\n  \"cpcg_type_id\": 1,\n  \"description\": \"Los vecinos de la casa 103 realizan fiestas con música alta después de las 11 PM los fines de semana. Esto genera ruido excesivo en horas de descanso.\",\n  \"status_id\": 3\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/cpcg",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cpcg"
+									]
+								},
+								"description": "Crear nueva PQRS"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar PQRS",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/cpcg",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cpcg"
+									]
+								},
+								"description": "Obtener todas las PQRS"
+							},
+							"response": []
+						},
+						{
+							"name": "PQRS por Usuario",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/cpcg/user/2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cpcg",
+										"user",
+										"2"
+									]
+								},
+								"description": "Obtener PQRS de un usuario"
+							},
+							"response": []
+						},
+						{
+							"name": "PQRS por Tipo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/cpcg/type/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"cpcg",
+										"type",
+										"1"
+									]
+								},
+								"description": "Obtener PQRS por tipo"
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "Gestión de Peticiones, Quejas, Reclamos y Sugerencias"
+		},
+		{
+			"name": "15 - Notificaciones",
+			"item": [
+				{
+					"name": "Crear Notificación",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": 2,\n  \"property_id\": 1,\n  \"notification_type_id\": 1,\n  \"title\": \"Mantenimiento de Ascensores\",\n  \"message\": \"Se realizará mantenimiento preventivo de ascensores este sábado de 8:00 AM a 2:00 PM\",\n  \"priority\": 2,\n  \"status_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/notifications",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications"
+							]
+						},
+						"description": "Crear nueva notificación"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Notificaciones",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/notifications",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications"
+							]
+						},
+						"description": "Obtener todas las notificaciones"
+					},
+					"response": []
+				},
+				{
+					"name": "Notificaciones por Usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/notifications/user/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications",
+								"user",
+								"2"
+							]
+						},
+						"description": "Obtener notificaciones de un usuario"
+					},
+					"response": []
+				},
+				{
+					"name": "Marcar como Leída",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/notifications/1/read",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications",
+								"1",
+								"read"
+							]
+						},
+						"description": "Marcar notificación como leída"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestión de notificaciones"
+		},
+		{
+			"name": "16 - Reportes",
+			"item": [
+				{
+					"name": "Tipos de Reportes",
+					"item": [
+						{
+							"name": "Crear Tipo Reporte",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Reporte Financiero\",\n  \"description\": \"Reportes de ingresos y egresos\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/report-types",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"report-types"
+									]
+								},
+								"description": "Crear tipo de reporte"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Tipos Reportes",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/report-types",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"report-types"
+									]
+								},
+								"description": "Obtener tipos de reportes"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Reportes",
+					"item": [
+						{
+							"name": "Crear Reporte",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"report_type_id\": 1,\n  \"title\": \"Reporte Mensual Febrero 2025\",\n  \"description\": \"Reporte consolidado de actividades del mes\",\n  \"generated_by\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/reports",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"reports"
+									]
+								},
+								"description": "Crear nuevo reporte"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Reportes",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/reports",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"reports"
+									]
+								},
+								"description": "Obtener todos los reportes"
+							},
+							"response": []
+						},
+						{
+							"name": "Generar Reportes",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/reports/generate",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"reports",
+										"generate"
+									]
+								},
+								"description": "Generar múltiples reportes del sistema"
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "Gestión de reportes del sistema"
+		},
+		{
+			"name": "17 - Roles",
+			"item": [
+				{
+					"name": "Roles",
+					"item": [
+						{
+							"name": "Crear Rol",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Administrador Financiero\",\n  \"description\": \"Gestiona aspectos financieros del conjunto\",\n  \"status_id\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/roles",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"roles"
+									]
+								},
+								"description": "Crear nuevo rol"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Roles",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/roles",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"roles"
+									]
+								},
+								"description": "Obtener todos los roles"
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "Gestión de roles y módulos del sistema"
+		},
+		{
+			"name": "18 - Tarifas y Estados",
+			"item": [
+				{
+					"name": "Tarifas",
+					"item": [
+						{
+							"name": "Crear Tarifa",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Alquiler Cancha Fútbol\",\n  \"description\": \"Tarifa por hora de alquiler cancha\",\n  \"amount\": 45000\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/tariffs",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"tariffs"
+									]
+								},
+								"description": "Crear nueva tarifa"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Tarifas",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/tariffs",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"tariffs"
+									]
+								},
+								"description": "Obtener todas las tarifas"
+							},
+							"response": []
+						},
+						{
+							"name": "Tarifas Activas",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/tariffs/active",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"tariffs",
+										"active"
+									]
+								},
+								"description": "Obtener solo tarifas activas"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Estados",
+					"item": [
+						{
+							"name": "Crear Estado",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"En Proceso\",\n  \"description\": \"Estado en proceso de revisión\",\n  \"entity\": \"general\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/statuses",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"statuses"
+									]
+								},
+								"description": "Crear nuevo estado"
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Estado",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjE3MjY1LCJleHAiOjE3NjIyMjA4NjV9.NeXgfulkxxXYv86QUWIm2SNP_oywD6gAMJ_5AzkY9rM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"En Proceso\",\n  \"description\": \"Estado en proceso de aprobación\",\n  \"entity\": \"general\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/statuses/12",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"statuses",
+										"12"
+									]
+								},
+								"description": "Crear nuevo estado"
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Estados",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwic3RhdHVzIjoiQWN0aXZvIiwiaWF0IjoxNzYyMjIwODg2LCJleHAiOjE3NjIyMjQ0ODZ9.16GsSiPMSjOFrJh6mY-JZmpPphnNVCb48sDi6ZK4XW0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/statuses",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"statuses"
+									]
+								},
+								"description": "Obtener todos los estados"
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "Gestión de tarifas y estados del sistema"
+		},
+		{
+			"name": "99 - Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/health",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"health"
+							]
+						},
+						"description": "Verificar estado del servidor"
+					},
+					"response": []
+				}
+			],
+			"description": "Verificación de salud del servidor"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api_v1"
+		},
+		{
+			"key": "auth_token",
+			"value": "Bearer Token"
+		},
+		{
+			"key": "user_id",
+			"value": "6"
+		}
+	]
+}

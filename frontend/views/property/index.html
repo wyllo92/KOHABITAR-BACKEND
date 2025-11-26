@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Propiedades</title>
+  <!-- Favicon -->
+  <link rel="icon" href="../../assets/img/logos/logo.png" type="image/png">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Data table -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
+  <!-- Loading -->
+  <link rel="stylesheet" href="../../assets/css/loading.css">
+</head>
+
+<body>
+
+  <!--Container -->
+  <div class="container-fluid d-flex flex-column min-vh-100">
+
+    <!--Content data-->
+    <main>
+      <h1 class="text-center mb-4">Gestión de Propiedades</h1>
+      <!-- El sistema proporciona botón para agregar nuevas propiedades -->
+      <button type="button" title="Agregar Propiedad" class="btn btn-primary mb-3" onclick="add()">
+        <i class="fa fa-home me-1"></i>Agregar Propiedad
+      </button>
+      <!-- El sistema proporciona botón para exportar propiedades a PDF -->
+      <button type="button" title="Exportar Propiedades a PDF" class="btn btn-danger mb-3 ms-2" onclick="exportPropertiesToPDF()">
+        <i class="fas fa-file-pdf me-1"></i>Exportar PDF
+      </button>
+      <!-- El sistema proporciona botón para exportar propiedades a Excel -->
+      <button type="button" title="Exportar Propiedades a Excel" class="btn btn-success mb-3 ms-2" onclick="exportPropertiesToExcel()">
+        <i class="fas fa-file-excel me-1"></i>Exportar Excel
+      </button>
+
+      <!--Table-->
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover bg-white shadow-sm text-center" id="app-table">
+          <thead class="thead-dark">
+            <tr class="table-secondary text-center">
+              <th class="text-center">#</th>
+              <th class="text-center">Nombre</th>
+              <th class="text-center">Tipo</th>
+              <th class="text-center">Descripción</th>
+              <th class="text-center">Fecha Creación</th>
+              <th class="text-center">Estado</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="app-table-body" class="text-center">
+          </tbody>
+          <tfoot>
+            <tr class="table-secondary text-center">
+              <td class="text-center">#</td>
+              <td class="text-center">Nombre</td>
+              <td class="text-center">Tipo</td>
+              <td class="text-center">Descripción</td>
+              <td class="text-center">Fecha Creación</td>
+              <td class="text-center">Estado</td>
+              <td class="text-center">Acciones</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg custom-modal">
+    <div class="modal-content shadow-lg border-0 rounded-4">
+
+      <!-- Header -->
+      <div class="modal-header bg-primary text-white rounded-top-4">
+        <h1 class="modal-title fs-5 fw-bold" id="appModalLabel">Propiedad</h1>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body p-4">
+        <form id="propertyForm">
+          <div class="row g-3">
+            
+            <!-- Nombre -->
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="text" class="form-control rounded-3" id="property_name" name="property_name" placeholder="Nombre de la propiedad" required>
+                <label for="property_name">Nombre de la Propiedad</label>
+              </div>
+            </div>
+
+            <!-- Tipo -->
+            <div class="col-md-6">
+              <div class="form-floating">
+                <select class="form-select rounded-3" id="property_type" name="property_type" required>
+                  <option value="" selected disabled>Selecciona el tipo</option>
+                  <!-- Opciones se cargarán dinámicamente -->
+                </select>
+                <label for="property_type">Tipo de Propiedad</label>
+              </div>
+            </div>
+
+            <!-- Estado -->
+            <div class="col-md-6">
+              <label for="status_id" class="form-label fw-semibold">Seleccionar Estado</label>
+              <select class="form-select" id="status_id" name="status_id" required>
+                <option value="">-- Seleccione --</option>
+              </select>
+            </div>
+
+            <!-- Descripción -->
+            <div class="col-12">
+              <div class="form-floating">
+                <textarea class="form-control rounded-3" id="property_description" name="property_description" placeholder="Descripción de la propiedad" style="height: 120px"></textarea>
+                <label for="property_description">Descripción de la Propiedad</label>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="col-12 d-flex justify-content-between mt-3">
+              <button type="reset" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-counterclockwise me-1"></i> Resetear
+              </button>
+              <button type="submit" class="btn btn-success ">
+                <i class="bi bi-send-fill me-1"></i> Enviar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+ 
+
+
+    </main>
+    <!--End Content data-->
+
+  </div>
+  <!--End Container -->
+
+
+  <!--Loading -->
+  <div id="loading-screen">
+    <div class="spinner-border text-light spinner" role="status">
+      <span class="visually-hidden">Loading ...</span>
+    </div>
+    <p class="mt-3">Cargando datos, por favor espera...</p>
+  </div>
+  <!--End Loading -->
+
+  <!-- Bootstrap 5 JS Bundle con Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Data table -->
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+  <!-- JS personalizado -->
+  <script src="../../assets/js/app/constants.js"></script>
+  <script src="../../assets/js/storage/appStorage.js"></script>
+  <script src="../../assets/js/services/services.js"></script>
+  <script src="../../assets/js/app/app.js"></script>
+  <script src="../../assets/js/utils/Form.js"></script>
+  <script src="../../assets/js/controllers/property/property.controller.js"></script>
+
+</body>
+
+</html>

@@ -1537,8 +1537,7 @@ function getTariffDataId(id) {
         objTariffForm.setDataFormJson({
           tariff_name: getData.name,
           tariff_description: getData.description,
-          tariff_base_price: getData.base_price,
-          tariff_billing_type: getData.billing_type,
+          tariff_amount: getData.amount,
           tariff_status_id: getData.status_id
         });
       }
@@ -1591,7 +1590,7 @@ function createTariffTable(data) {
   console.log('Datos para crear tabla de tarifas:', getData);
 
   if (getData.length === 0) {
-    objTariffTableBody.innerHTML = '<tr><td colspan="7" class="text-center">No hay tarifas disponibles</td></tr>';
+    objTariffTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No hay tarifas disponibles</td></tr>';
     return;
   }
 
@@ -1603,8 +1602,7 @@ function createTariffTable(data) {
       <td>${row.tariff_id}</td>
       <td>${row.name || 'N/A'}</td>
       <td>${row.description || 'N/A'}</td>
-      <td>$${parseFloat(row.base_price || 0).toFixed(2)}</td>
-      <td>${row.billing_type || 'N/A'}</td>
+      <td>$${parseFloat(row.amount || 0).toFixed(2)}</td>
       <td>${row.status_name || 'N/A'}</td>
       <td>
         <button type="button" title="Ver Tarifa" class="btn btn-success btn-sm" onclick="showTariffId(${row.tariff_id})">

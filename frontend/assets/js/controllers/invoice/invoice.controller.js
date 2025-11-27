@@ -1361,4 +1361,328 @@ window.addEventListener('load', () => {
 
   // Carga los estados para el formulario
   getDataStatus();
+
+  // Carga los datos de tarifas al cambiar a la pestaña de tarifas
+  const tarifasTab = document.getElementById('tarifas-tab');
+  if (tarifasTab) {
+    tarifasTab.addEventListener('shown.bs.tab', function () {
+      loadTariffView();
+    });
+  }
 });
+
+/**
+ * SECCIÓN DE GESTIÓN DE TARIFAS
+ * El sistema proporciona funciones para el CRUD completo de tarifas
+ */
+
+/**
+ * INICIALIZACIÓN DE OBJETOS PARA TARIFAS
+ * El sistema crea instancias de los elementos DOM necesarios para las tarifas
+ */
+const objTariffForm = new Form('tariffForm', 'edit-input');
+const objTariffModal = new bootstrap.Modal(document.getElementById('tariffModal'));
+const objTariffTableBody = document.getElementById('tariff-table-body');
+const objTariffSelectStatus = document.getElementById('tariff_status_id');
+const myTariffForm = objTariffForm.getForm();
+const tariffTable = "#tariff-table";
+
+/**
+ * VARIABLES DE ESTADO PARA OPERACIONES CRUD DE TARIFAS
+ */
+let insertUpdateTariff = true;
+let keyIdTariff;
+let documentDataTariff = "";
+let httpMethodTariff = "";
+let endpointUrlTariff = "";
+let tariffDataTable;
+
+/**
+ * El sistema maneja el envío del formulario de tarifas
+ * Captura el evento submit y envía los datos al backend
+ */
+myTariffForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  // El sistema valida el formulario antes de enviar
+  if (!objTariffForm.validateForm()) {
+    console.log("Error en validación del formulario de tarifa");
+    return;
+  }
+
+  toggleLoading(true);
+
+  // El sistema configura el método y endpoint según la operación
+  if (insertUpdateTariff) {
+    httpMethodTariff = METHODS[1]; // POST
+    endpointUrlTariff = URL_TARIFF;
+  } else {
+    httpMethodTariff = METHODS[2]; // PUT
+    endpointUrlTariff = URL_TARIFF + '/' + keyIdTariff;
+  }
+
+  // El sistema obtiene los datos del formulario
+  documentDataTariff = objTariffForm.getDataForm();
+
+  console.log('El sistema envía datos de tarifa:', documentDataTariff);
+
+  // El sistema obtiene el token de autenticación
+  const token = getAuthToken();
+  const resultServices = getServicesAuth(documentDataTariff, httpMethodTariff, endpointUrlTariff, token);
+
+  resultServices.then(response => handleAuthenticatedResponse(response, 'guardar tarifa'))
+    .then(data => {
+      console.log('Tarifa guardada exitosamente:', data);
+      alert('Tarifa guardada correctamente');
+      loadTariffView();
+      showHiddenTariffModal(false);
+    })
+    .catch(error => {
+      console.error('Error al guardar tarifa:', error);
+      alert('Error al guardar la tarifa');
+    })
+    .finally(() => {
+      toggleLoading(false);
+    });
+});
+
+/**
+ * El sistema abre el modal para agregar una nueva tarifa
+ */
+function addTariff() {
+  showHiddenTariffModal(true);
+  insertUpdateTariff = true;
+  objTariffForm.resetForm();
+  objTariffForm.enabledForm();
+  objTariffForm.enabledButton();
+  objTariffForm.showButton();
+}
+
+/**
+ * El sistema abre el modal para visualizar una tarifa en modo lectura
+ * @param {number} id - ID de la tarifa a visualizar
+ */
+function showTariffId(id) {
+  objTariffForm.resetForm();
+  objTariffForm.disabledForm();
+  objTariffForm.disabledButton();
+  objTariffForm.hiddenButton();
+  getTariffDataId(id);
+}
+
+/**
+ * El sistema abre el modal para editar una tarifa existente
+ * @param {number} id - ID de la tarifa a editar
+ */
+function editTariff(id) {
+  insertUpdateTariff = false;
+  objTariffForm.resetForm();
+  objTariffForm.enabledEditForm();
+  objTariffForm.enabledButton();
+  objTariffForm.showButton();
+
+  keyIdTariff = id;
+  getTariffDataId(id);
+}
+
+/**
+ * El sistema elimina una tarifa del sistema
+ * @param {number} id - ID de la tarifa a eliminar
+ */
+function deleteTariff(id) {
+  if (confirm("¿Estás seguro de que deseas eliminar esta tarifa?")) {
+    documentDataTariff = null;
+    httpMethodTariff = METHODS[3]; // DELETE
+    endpointUrlTariff = URL_TARIFF + '/' + id;
+
+    const token = getAuthToken();
+    const resultServices = getServicesAuth(documentDataTariff, httpMethodTariff, endpointUrlTariff, token);
+
+    resultServices.then(response => handleAuthenticatedResponse(response, 'eliminar tarifa'))
+      .then(data => {
+        console.log('Tarifa eliminada:', data);
+        alert('Tarifa eliminada correctamente');
+        loadTariffView();
+      })
+      .catch(error => {
+        console.error('Error al eliminar tarifa:', error);
+        alert('Error al eliminar la tarifa');
+      })
+      .finally(() => {
+        toggleLoading(false);
+      });
+  }
+}
+
+/**
+ * El sistema obtiene los datos de una tarifa específica por su ID
+ * @param {number} id - ID de la tarifa a consultar
+ */
+function getTariffDataId(id) {
+  documentDataTariff = null;
+  httpMethodTariff = METHODS[0]; // GET
+  endpointUrlTariff = URL_TARIFF + '/' + id;
+
+  const token = getAuthToken();
+  const resultServices = getServicesAuth(documentDataTariff, httpMethodTariff, endpointUrlTariff, token);
+
+  resultServices.then(response => handleAuthenticatedResponse(response, 'obtener tarifa'))
+    .then(data => {
+      console.log('Datos de tarifa recibidos:', data);
+
+      if (data && data.data) {
+        let getData = data.data;
+
+        // El sistema mapea los datos del backend al formulario
+        objTariffForm.setDataFormJson({
+          tariff_name: getData.name,
+          tariff_description: getData.description,
+          tariff_base_price: getData.base_price,
+          tariff_billing_type: getData.billing_type,
+          tariff_status_id: getData.status_id
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error al obtener tarifa:', error);
+    })
+    .finally(() => {
+      showHiddenTariffModal(true);
+    });
+}
+
+/**
+ * El sistema obtiene todas las tarifas del backend
+ */
+function getTariffData() {
+  documentDataTariff = null;
+  httpMethodTariff = METHODS[0]; // GET
+  endpointUrlTariff = URL_TARIFF;
+
+  const token = getAuthToken();
+  const resultServices = getServicesAuth(documentDataTariff, httpMethodTariff, endpointUrlTariff, token);
+
+  resultServices.then(response => handleAuthenticatedResponse(response, 'obtener tarifas'))
+    .then(data => {
+      console.log('Tarifas recibidas:', data);
+      createTariffTable(data);
+    })
+    .catch(error => {
+      console.error('Error al obtener tarifas:', error);
+    })
+    .finally(() => {
+      // El sistema inicializa o actualiza DataTable
+      if (tariffDataTable) {
+        tariffDataTable.destroy();
+      }
+      tariffDataTable = new DataTable(tariffTable);
+      toggleLoading(false);
+    });
+}
+
+/**
+ * El sistema crea la tabla de tarifas con los datos recibidos
+ * @param {Object} data - Datos recibidos del backend
+ */
+function createTariffTable(data) {
+  objTariffTableBody.innerHTML = "";
+
+  let getData = data.data || [];
+  console.log('Datos para crear tabla de tarifas:', getData);
+
+  if (getData.length === 0) {
+    objTariffTableBody.innerHTML = '<tr><td colspan="7" class="text-center">No hay tarifas disponibles</td></tr>';
+    return;
+  }
+
+  for (let i = 0; i < getData.length; i++) {
+    let row = getData[i];
+
+    // El sistema construye la fila de la tabla
+    let dataRow = `<tr>
+      <td>${row.tariff_id}</td>
+      <td>${row.name || 'N/A'}</td>
+      <td>${row.description || 'N/A'}</td>
+      <td>$${parseFloat(row.base_price || 0).toFixed(2)}</td>
+      <td>${row.billing_type || 'N/A'}</td>
+      <td>${row.status_name || 'N/A'}</td>
+      <td>
+        <button type="button" title="Ver Tarifa" class="btn btn-success btn-sm" onclick="showTariffId(${row.tariff_id})">
+          <i class='fas fa-eye'></i>
+        </button>
+        <button type="button" title="Editar Tarifa" class="btn btn-primary btn-sm" onclick="editTariff(${row.tariff_id})">
+          <i class='fas fa-edit'></i>
+        </button>
+        <button type="button" title="Eliminar Tarifa" class="btn btn-danger btn-sm" onclick="deleteTariff(${row.tariff_id})">
+          <i class='fas fa-trash'></i>
+        </button>
+      </td>
+    </tr>`;
+
+    objTariffTableBody.innerHTML += dataRow;
+  }
+
+  console.log('Tabla de tarifas creada correctamente');
+}
+
+/**
+ * El sistema carga los estados disponibles para tarifas
+ */
+function getDataStatusForTariff() {
+  documentDataTariff = null;
+  httpMethodTariff = METHODS[0]; // GET
+  endpointUrlTariff = URL_STATUS + '/entity/tariff';
+
+  const token = getAuthToken();
+  const resultServices = getServicesAuth(documentDataTariff, httpMethodTariff, endpointUrlTariff, token);
+
+  resultServices.then(response => handleAuthenticatedResponse(response, 'obtener estados de tarifa'))
+    .then(data => {
+      console.log('Estados de tarifa recibidos:', data);
+      createSelectStatusForTariff(data);
+    })
+    .catch(error => {
+      console.error('Error al obtener estados de tarifa:', error);
+    })
+    .finally(() => {
+      toggleLoading(false);
+    });
+}
+
+/**
+ * El sistema llena el select de estados para tarifas
+ * @param {Object} data - Datos recibidos del backend
+ */
+function createSelectStatusForTariff(data) {
+  objTariffSelectStatus.innerHTML = "<option value='' selected disabled>Seleccione un estado</option>";
+
+  let getData = data.data || [];
+  if (getData.length === 0) return;
+
+  for (let i = 0; i < getData.length; i++) {
+    let row = getData[i];
+    let dataRow = `<option value="${row.status_id}">${row.name}</option>`;
+    objTariffSelectStatus.innerHTML += dataRow;
+  }
+}
+
+/**
+ * El sistema muestra u oculta el modal de tarifas
+ * @param {boolean} type - true para mostrar, false para ocultar
+ */
+function showHiddenTariffModal(type) {
+  if (type) {
+    objTariffModal.show();
+  } else {
+    objTariffModal.hide();
+  }
+}
+
+/**
+ * El sistema carga la vista de tarifas
+ */
+function loadTariffView() {
+  getTariffData();
+  getDataStatusForTariff();
+  toggleLoading(true);
+}

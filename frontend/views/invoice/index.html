@@ -42,13 +42,13 @@
           </button>
         </li>
         <!--
-          Pestaña de Tarifas: Enlaza al submódulo de tarifas
-          El sistema redirige a la vista de tarifas
+          Pestaña de Tarifas: Muestra la gestión de tarifas
+          El sistema permite visualizar y gestionar las tarifas del sistema
         -->
         <li class="nav-item" role="presentation">
-          <a class="nav-link" href="tariff.html">
+          <button class="nav-link" id="tarifas-tab" data-bs-toggle="tab" data-bs-target="#tarifas-panel" type="button" role="tab" aria-controls="tarifas-panel" aria-selected="false">
             <i class="fa fa-dollar-sign me-1"></i>Tarifas
-          </a>
+          </button>
         </li>
       </ul>
 
@@ -359,6 +359,247 @@
 
         </div>
         <!--Fin del panel de facturas-->
+
+        <!--
+          PANEL DE TARIFAS
+          El sistema muestra la tabla de tarifas y sus controles
+        -->
+        <div class="tab-pane fade" id="tarifas-panel" role="tabpanel" aria-labelledby="tarifas-tab">
+
+          <!--
+            BOTÓN AGREGAR TARIFA
+            El sistema proporciona un botón para crear una nueva tarifa
+          -->
+          <button type="button" title="Agregar tarifa" class="btn btn-primary mb-3" onclick="addTariff()">
+            <i class="fa fa-dollar-sign me-1"></i>Agregar Tarifa
+          </button>
+
+          <!--
+            TABLA DE TARIFAS
+            El sistema muestra las tarifas registradas en el sistema
+            Los datos se cargan mediante getTariffData() que consulta GET /api_v1/tariffs
+          -->
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover bg-white shadow-sm text-center" id="tariff-table">
+              <thead class="thead-dark">
+                <tr class="table-secondary text-center">
+                  <th class="text-center">#</th>
+                  <th class="text-center">Nombre</th>
+                  <th class="text-center">Descripción</th>
+                  <th class="text-center">Precio Base</th>
+                  <th class="text-center">Tipo de Cobro</th>
+                  <th class="text-center">Estado</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <!--
+                TBODY - Aquí se renderizan dinámicamente las filas de la tabla
+                Se llena mediante la función createTariffTable() del controlador JavaScript
+                Cada fila se crea con los datos recibidos del backend
+              -->
+              <tbody id="tariff-table-body" class="text-center">
+              </tbody>
+              <tfoot>
+                <tr class="table-secondary text-center">
+                  <td class="text-center">#</td>
+                  <td class="text-center">Nombre</td>
+                  <td class="text-center">Descripción</td>
+                  <td class="text-center">Precio Base</td>
+                  <td class="text-center">Tipo de Cobro</td>
+                  <td class="text-center">Estado</td>
+                  <td class="text-center">Acciones</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!--
+            MODAL - FORMULARIO DE TARIFA
+            El sistema muestra este modal cuando el usuario crea o edita una tarifa
+            El formulario se envía al backend mediante POST (crear) o PUT (actualizar)
+          -->
+          <div class="modal fade" id="tariffModal" tabindex="-1" aria-labelledby="tariffModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="tariffModalLabel">Tarifa</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <!--
+                    FORMULARIO DE TARIFA
+                    El sistema utiliza este formulario para crear y editar tarifas
+                    Los atributos name deben coincidir con los nombres que espera el backend
+                  -->
+                  <form id="tariffForm">
+
+                    <!--
+                      FILA 1: NOMBRE Y DESCRIPCIÓN
+                    -->
+                    <div class="row">
+
+                      <!--
+                        CAMPO: NOMBRE
+                        El sistema almacena el nombre descriptivo de la tarifa
+                        Campo obligatorio según el modelo del backend
+                      -->
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label for="tariff_name" class="form-label">
+                            Nombre <span class="text-danger">*</span>
+                          </label>
+                          <div class="form-floating">
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="tariff_name"
+                              name="name"
+                              placeholder="Nombre de la tarifa"
+                              required>
+                            <label for="tariff_name">Nombre de la tarifa</label>
+                          </div>
+                          <div class="form-text">
+                            Nombre descriptivo de la tarifa
+                          </div>
+                        </div>
+                      </div>
+
+                      <!--
+                        CAMPO: DESCRIPCIÓN
+                        El sistema permite agregar detalles adicionales sobre la tarifa
+                        Campo opcional
+                      -->
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label for="tariff_description" class="form-label">
+                            Descripción
+                          </label>
+                          <div class="form-floating">
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="tariff_description"
+                              name="description"
+                              placeholder="Descripción">
+                            <label for="tariff_description">Descripción</label>
+                          </div>
+                          <div class="form-text">
+                            Detalles adicionales de la tarifa
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <!--
+                      FILA 2: PRECIO BASE Y TIPO DE COBRO
+                    -->
+                    <div class="row">
+
+                      <!--
+                        CAMPO: PRECIO BASE
+                        El sistema almacena el precio base de la tarifa
+                        Campo obligatorio de tipo numérico con decimales
+                      -->
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label for="tariff_base_price" class="form-label">
+                            Precio Base <span class="text-danger">*</span>
+                          </label>
+                          <div class="form-floating">
+                            <input
+                              type="number"
+                              class="form-control"
+                              id="tariff_base_price"
+                              name="base_price"
+                              placeholder="Precio base"
+                              required
+                              min="0"
+                              step="0.01">
+                            <label for="tariff_base_price">Precio Base ($)</label>
+                          </div>
+                          <div class="form-text">
+                            Precio base de la tarifa
+                          </div>
+                        </div>
+                      </div>
+
+                      <!--
+                        CAMPO: TIPO DE COBRO
+                        El sistema define cómo se aplicará el cobro de la tarifa
+                        Ejemplos: Mensual, Anual, Por Hora, Por Día
+                      -->
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label for="tariff_billing_type" class="form-label">
+                            Tipo de Cobro <span class="text-danger">*</span>
+                          </label>
+                          <select class="form-select" id="tariff_billing_type" name="billing_type" required>
+                            <option value="" selected disabled>Selecciona el tipo de cobro</option>
+                            <option value="Mensual">Mensual</option>
+                            <option value="Anual">Anual</option>
+                            <option value="Por Hora">Por Hora</option>
+                            <option value="Por Día">Por Día</option>
+                            <option value="Único">Único</option>
+                          </select>
+                          <div class="form-text">
+                            Periodicidad del cobro
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <!--
+                      FILA 3: ESTADO
+                    -->
+                    <div class="row">
+
+                      <!--
+                        CAMPO: ESTADO
+                        El sistema define si la tarifa está activa o inactiva
+                        Se llena dinámicamente con getDataStatusForTariff()
+                      -->
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label for="tariff_status_id" class="form-label">
+                            Estado <span class="text-danger">*</span>
+                          </label>
+                          <select class="form-select" id="tariff_status_id" name="status_id" required>
+                            <option value="" selected disabled>Selecciona el estado</option>
+                          </select>
+                          <div class="form-text">
+                            Estado actual de la tarifa
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <!--
+                      BOTONES DEL FORMULARIO
+                      Botón Resetear: Limpia todos los campos del formulario
+                      Botón Enviar: Envía el formulario al backend
+                    -->
+                    <div class="col-12 d-flex justify-content-between mt-3">
+                      <button type="reset" class="btn btn-outline-secondary">
+                        <i class="fas fa-undo me-1"></i> Resetear
+                      </button>
+                      <button type="submit" class="btn btn-success">
+                        <i class="fas fa-paper-plane me-1"></i> Guardar
+                      </button>
+                    </div>
+
+                  </form>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--Fin del modal de tarifas-->
+
+        </div>
+        <!--Fin del panel de tarifas-->
 
       </div>
       <!--Fin del tab-content-->

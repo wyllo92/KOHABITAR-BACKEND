@@ -1,7 +1,14 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
+
+// Para obtener __dirname en módulos ES
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const dbName = process.env.DB_NAME || "conjunto_residencial";
 
@@ -547,6 +554,57 @@ const sqlStatements = [
   END;`,
 ];
 
+// Función para leer y preparar los datos de prueba desde TestDatos.sql
+function getTestDataStatements() {
+  try {
+    // Ruta al archivo TestDatos.sql
+    const testDataPath = path.join(__dirname, '..', 'db', 'TestDatos.sql');
+
+    // Leer el archivo SQL
+    const sqlContent = fs.readFileSync(testDataPath, 'utf8');
+
+    // Dividir el contenido en líneas
+    const lines = sqlContent.split('\n');
+
+    // Filtrar comentarios, líneas vacías y comandos que no necesitamos
+    const statements = [];
+    let currentStatement = '';
+
+    for (let line of lines) {
+      // Ignorar comentarios y líneas vacías
+      if (line.trim().startsWith('--') || line.trim() === '') {
+        continue;
+      }
+
+      // Ignorar líneas que no queremos ejecutar en la migración
+      if (line.trim().startsWith('USE conjunto_residencial') ||
+          line.trim().startsWith('SELECT \'===') ||
+          line.trim().startsWith('SELECT \'=') ||
+          line.includes('AS \'\'')) {
+        continue;
+      }
+
+      // Acumular líneas hasta encontrar un punto y coma
+      currentStatement += line + '\n';
+
+      // Si la línea termina con punto y coma, es el final del statement
+      if (line.trim().endsWith(';')) {
+        const stmt = currentStatement.trim();
+        if (stmt) {
+          statements.push(stmt);
+        }
+        currentStatement = '';
+      }
+    }
+
+    return statements;
+  } catch (error) {
+    console.log('Advertencia: No se pudo cargar TestDatos.sql:', error.message);
+    console.log('Continuando sin datos de prueba...');
+    return [];
+  }
+}
+
 // Función principal para ejecutar la migración
 
 async function runMigration() {
@@ -573,10 +631,33 @@ async function runMigration() {
     // Empezar la transacción para operaciones atómicas
     await connection.query("START TRANSACTION");
 
+    // Ejecutar las declaraciones de creación de tablas
     for (const stmt of sqlStatements) {
       if (stmt.trim()) {
         await connection.query(stmt);
       }
+    }
+
+    console.log("Tablas creadas exitosamente");
+
+    // Cargar y ejecutar datos de prueba desde TestDatos.sql
+    const testDataStatements = getTestDataStatements();
+
+    if (testDataStatements.length > 0) {
+      console.log(`Insertando datos de prueba (${testDataStatements.length} statements)...`);
+
+      for (const stmt of testDataStatements) {
+        if (stmt.trim()) {
+          try {
+            await connection.query(stmt);
+          } catch (error) {
+            // Mostrar advertencia pero continuar con otros datos
+            console.warn('Advertencia al insertar datos:', error.message);
+          }
+        }
+      }
+
+      console.log("Datos de prueba insertados exitosamente");
     }
 
     //Hacer commit si todas las declaraciones tienen éxito

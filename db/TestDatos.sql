@@ -136,12 +136,13 @@ INSERT INTO roles (name, description, status_id) VALUES
 
 -- PASO 4: USUARIOS PRINCIPALES
 INSERT INTO users (username, password, role_id, status_id) VALUES
-('admin', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, 26),
-('propietario1', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 2, 26),
-('propietario2', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 2, 26),
-('residente1', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 3, 26),
-('residente2', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 3, 26),
-('vigilante1', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 4, 26);
+('admin', '$2b$10$vMhyTQ68/ZT8CA7vg9whbe/kwsUSYS6fDdJrXRu0Vg/zxvvPrd1N6', 1, 28),
+('propietario1', '$2b$10$vMhyTQ68/ZT8CA7vg9whbe/kwsUSYS6fDdJrXRu0Vg/zxvvPrd1N6', 2, 28),
+('propietario2', '$2b$10$vMhyTQ68/ZT8CA7vg9whbe/kwsUSYS6fDdJrXRu0Vg/zxvvPrd1N6', 2, 28),
+('residente1', '$2b$10$vMhyTQ68/ZT8CA7vg9whbe/kwsUSYS6fDdJrXRu0Vg/zxvvPrd1N6', 3, 28),
+('residente2', '$2b$10$vMhyTQ68/ZT8CA7vg9whbe/kwsUSYS6fDdJrXRu0Vg/zxvvPrd1N6', 3, 28),
+('vigilante1', '$2b$10$vMhyTQ68/ZT8CA7vg9whbe/kwsUSYS6fDdJrXRu0Vg/zxvvPrd1N6', 4, 28),
+('testuser', '$2b$10$vMhyTQ68/ZT8CA7vg9whbe/kwsUSYS6fDdJrXRu0Vg/zxvvPrd1N6', 1, 28);
 
 -- PASO 5: PERFILES DE USUARIOS
 INSERT INTO profiles (user_id, full_name, phone, email, address) VALUES

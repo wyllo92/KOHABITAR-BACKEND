@@ -70,7 +70,7 @@
             El sistema redirige a la página de autenticación cuando el usuario hace clic
           -->
           <li class="nav-item">
-            <a href="views/auth/index.html" class="btn btn-login">
+            <a href="views/auth/index.html" class="btn btn-login" onclick="return manejarClickLogin(this);">
               <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
             </a>
           </li>
@@ -342,6 +342,80 @@
       // El sistema registra la inicialización exitosa de la página
       console.info('[KOHABITAR] El sistema ha cargado la página principal correctamente');
     });
+
+    /**
+     * El sistema maneja el click en el enlace de login con control total
+     */
+    function manejarClickLogin(enlace) {
+      console.log('[KOHABITAR] Click en enlace de login detectado');
+      
+      try {
+        // El sistema obtiene la URL de destino
+        const urlDestino = enlace.getAttribute('href');
+        console.log('[KOHABITAR] URL de destino:', urlDestino);
+        
+        // El sistema cambia el texto del enlace para mostrar que está procesando
+        const textoOriginal = enlace.innerHTML;
+        enlace.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Accediendo...';
+        enlace.style.pointerEvents = 'none';
+        enlace.style.opacity = '0.7';
+        
+        console.log('[KOHABITAR] Preparando redirección...');
+        
+        // El sistema espera un momento y luego navega
+        setTimeout(() => {
+          console.log('[KOHABITAR] Ejecutando navegación a:', urlDestino);
+          window.location.href = urlDestino;
+        }, 500);
+        
+        // El sistema previene la navegación inmediata del enlace
+        return false;
+        
+      } catch (error) {
+        console.error('[KOHABITAR] Error manejando click:', error);
+        alert('Error al acceder al sistema. Intentando navegación directa...');
+        return true; // El sistema permite la navegación normal si hay error
+      }
+    }
+
+    /**
+     * El sistema maneja la redirección al login de forma directa y confiable
+     */
+    function irALogin() {
+      console.log('[KOHABITAR] Función irALogin ejecutada');
+      
+      // El sistema obtiene el botón que activó la función
+      const boton = event.target;
+      console.log('[KOHABITAR] Botón obtenido:', boton);
+      
+      const textoOriginal = boton.innerHTML;
+      console.log('[KOHABITAR] Texto original:', textoOriginal);
+      
+      // El sistema muestra feedback visual inmediato
+      boton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Accediendo...';
+      boton.disabled = true;
+      boton.style.cursor = 'not-allowed';
+      console.log('[KOHABITAR] Botón actualizado con spinner');
+      
+      console.info('[KOHABITAR] Redirigiendo a página de inicio de sesión...');
+      
+      // El sistema realiza la redirección después de un breve momento
+      setTimeout(function() {
+        console.log('[KOHABITAR] Ejecutando redirección...');
+        try {
+          const urlDestino = 'views/auth/index.html';
+          console.log('[KOHABITAR] Redirigiendo a:', urlDestino);
+          window.location.href = urlDestino;
+        } catch (error) {
+          console.error('[KOHABITAR] Error en la redirección:', error);
+          // El sistema restaura el botón si hay error
+          boton.innerHTML = textoOriginal;
+          boton.disabled = false;
+          boton.style.cursor = 'pointer';
+          alert('Error al acceder al sistema. Por favor intenta nuevamente.');
+        }
+      }, 300);
+    }
   </script>
 
 </body>

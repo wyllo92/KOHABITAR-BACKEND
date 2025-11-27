@@ -58,6 +58,9 @@ html {
   font-weight: 600;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(231, 76, 60, 0.3);
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
 }
 
 /* El sistema aplica efecto hover al botón de login */
@@ -66,6 +69,26 @@ html {
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
+  text-decoration: none;
+}
+
+/* El sistema estiliza el botón cuando está en estado deshabilitado durante la carga */
+.btn-login.disabled,
+.btn-login:disabled {
+  background-color: #95a5a6;
+  color: white;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(149, 165, 166, 0.3);
+  opacity: 0.8;
+}
+
+/* El sistema evita efectos hover en el botón deshabilitado */
+.btn-login.disabled:hover,
+.btn-login:disabled:hover {
+  background-color: #95a5a6;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(149, 165, 166, 0.3);
 }
 
 /*   HERO BANNER - SECCIÓN PRINCIPAL*/

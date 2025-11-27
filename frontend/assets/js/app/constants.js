@@ -32,7 +32,9 @@ const URL_PROFILE=HOST+"/profiles";
 const URL_PACKAGE=HOST+"/packages/";
 const URL_PARKINGASSIGNMENT=HOST+"/parking-assignments/";
 const URL_PARKINGLOTTERY=HOST+"/parking-lotteries/";
-const URL_PASSWORD_RESET=HOST+"/password-reset";
+const URL_PASSWORD_RESET=HOST+"/password-reset/request";
+const URL_PASSWORD_VALIDATE=HOST+"/password-reset/validate";
+const URL_PASSWORD_RESET_CONFIRM=HOST+"/password-reset/reset";
 
 // URLs para exportación de reportes PDF
 const URL_EXPORT_USERS=HOST+"/export/users";

@@ -56,10 +56,17 @@ const app = express();
  * - cors: Permite solicitudes de origen cruzado (CORS)
  * - express.json: Analiza las solicitudes entrantes con formato JSON
  * - express.urlencoded: Analiza las solicitudes con datos codificados en URL
+ * - express.static: Sirve archivos estáticos desde la carpeta frontend
  */
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+/**
+ * El sistema configura Express para servir archivos estáticos desde la carpeta frontend
+ * Esto permite acceder a archivos HTML, CSS, JS e imágenes directamente desde el navegador
+ */
+app.use(express.static('frontend'));
 
 // Middleware mejorado para registrar solicitudes y respuestas
 app.use((req, res, next) => {

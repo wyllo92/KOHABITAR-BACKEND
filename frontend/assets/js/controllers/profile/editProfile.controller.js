@@ -33,72 +33,121 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   /**
    * PASO 1: CARGAR DATOS ACTUALES DEL PERFIL
-   * Se hace una petición GET al endpoint /api_v1/profiles/:id
+   * El sistema hace una petición GET al endpoint /api_v1/profiles/:id
    * para obtener la información actual del perfil del usuario
    */
   try {
-    // Construir la URL del endpoint usando la constante URL_PROFILE
+    // El sistema construye la URL del endpoint usando la constante URL_PROFILE
     const profileUrl = `${URL_PROFILE}/${user_id}`;
 
-    // Hacer petición autenticada al backend
+    // El sistema registra el intento de carga del perfil
+    console.info(`[KOHABITAR] El sistema está cargando el perfil del usuario ID: ${user_id}`);
+    console.info(`[KOHABITAR] Endpoint: ${profileUrl}`);
+
+    // El sistema hace petición autenticada al backend
     const response = await getServicesAuth("", METHODS[0], profileUrl, token);
-    const data = await response.json();
 
-    console.log('Datos del perfil recibidos:', data);
+    // El sistema registra el código de estado de la respuesta
+    console.info(`[KOHABITAR] Respuesta del servidor - Status: ${response.status}`);
 
-    // Verificar si se recibieron datos exitosamente
+    // El sistema verifica el código de estado HTTP
+    if (response.status === 404) {
+      console.error('[KOHABITAR] Error 404: El perfil no existe en la base de datos');
+      alert(`No se encontró el perfil con ID ${user_id}. Es posible que el usuario no tenga un perfil creado aún.`);
+
+      // El sistema redirige al usuario al dashboard
+      window.parent.postMessage({ action: 'navigate', hash: '#profile' }, '*');
+      return;
+    }
+
+    if (response.status === 401) {
+      console.error('[KOHABITAR] Error 401: Token de autenticación inválido o expirado');
+      alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+      window.location.href = '../../index.html';
+      return;
+    }
+
+    if (!response.ok) {
+      console.error(`[KOHABITAR] Error ${response.status}: Error al cargar el perfil`);
+      alert(`Error del servidor (${response.status}). Por favor, intenta nuevamente.`);
+      return;
+    }
+
+    // El sistema intenta parsear la respuesta como JSON
+    let data;
+    try {
+      data = await response.json();
+      console.info('[KOHABITAR] Datos del perfil recibidos:', data);
+    } catch (parseError) {
+      console.error('[KOHABITAR] Error al parsear respuesta JSON:', parseError);
+      alert('Error al procesar la respuesta del servidor. Por favor, intenta nuevamente.');
+      return;
+    }
+
+    // El sistema verifica si se recibieron datos exitosamente
     if (data.data) {
       const profileData = data.data;
 
-      // Llenar el formulario con los datos actuales
+      // El sistema llena el formulario con los datos actuales
       form.profile_fullName.value = profileData.full_name || '';
       form.profile_phone.value = profileData.phone || '';
       form.profile_email.value = profileData.email || '';
       form.profile_address.value = profileData.address || '';
 
-      // Mostrar la foto de perfil actual si existe
+      // El sistema muestra la foto de perfil actual si existe
       if (profileData.profile_photo) {
         photoPreview.src = profileData.profile_photo;
         photoPreview.style.display = 'block';
       }
+
+      console.info('[KOHABITAR] El sistema ha cargado el perfil exitosamente');
     } else {
-      console.error('No se recibieron datos del perfil');
-      alert('No se pudieron cargar los datos del perfil');
+      console.error('[KOHABITAR] No se recibieron datos del perfil en la respuesta');
+      alert('No se pudieron cargar los datos del perfil. La respuesta del servidor no contiene información.');
     }
   } catch (error) {
-    console.error('Error al cargar el perfil:', error);
-    alert('Error al cargar el perfil. Por favor, intenta nuevamente.');
+    // El sistema maneja errores de red o del servidor
+    console.error('[KOHABITAR] Error al cargar el perfil:', error);
+    alert('Error de conexión al cargar el perfil. Por favor, verifica que el servidor esté ejecutándose e intenta nuevamente.');
   }
 
   /**
    * PASO 2: PREVISUALIZACIÓN DE FOTO
-   * Cuando el usuario selecciona una nueva foto, se muestra una vista previa
+   * El sistema muestra una vista previa cuando el usuario selecciona una nueva foto
    * antes de guardar los cambios
    */
   photoInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
 
     if (file) {
-      // Validar que sea una imagen
+      // El sistema valida que sea una imagen
       if (!file.type.startsWith('image/')) {
-        alert('Por favor, selecciona solo archivos de imagen');
+        console.warn('[KOHABITAR] Archivo seleccionado no es una imagen');
+        alert('Por favor, selecciona solo archivos de imagen (JPG, PNG, GIF)');
         photoInput.value = '';
         return;
       }
 
-      // Validar tamaño del archivo (máximo 5MB)
+      // El sistema valida el tamaño del archivo (máximo 5MB)
       const maxSize = 5 * 1024 * 1024; // 5MB en bytes
       if (file.size > maxSize) {
+        console.warn(`[KOHABITAR] Imagen demasiado grande: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
         alert('La imagen es demasiado grande. El tamaño máximo es 5MB');
         photoInput.value = '';
         return;
       }
 
-      // Leer el archivo y mostrar la previsualización
+      // El sistema lee el archivo y muestra la previsualización
+      console.info('[KOHABITAR] El sistema está cargando previsualización de la imagen');
       const reader = new FileReader();
       reader.onload = (ev) => {
         photoPreview.src = ev.target.result;
         photoPreview.style.display = 'block';
+        console.info('[KOHABITAR] Previsualización de imagen cargada correctamente');
+      };
+      reader.onerror = (error) => {
+        console.error('[KOHABITAR] Error al leer el archivo:', error);
+        alert('Error al cargar la imagen. Por favor, intenta con otra imagen.');
       };
       reader.readAsDataURL(file);
     }
@@ -106,16 +155,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   /**
    * PASO 3: GUARDAR CAMBIOS
-   * Cuando el usuario hace clic en "Guardar cambios", se envían los datos
-   * actualizados al backend usando autenticación JWT
+   * El sistema envía los datos actualizados al backend cuando el usuario
+   * hace clic en "Guardar cambios", usando autenticación JWT
    */
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     try {
-      // Obtener valores del formulario
+      // El sistema obtiene valores del formulario
       const formData = {
-        // Adaptar nombres de campos del frontend al formato esperado por el backend
+        // El sistema adapta nombres de campos del frontend al formato esperado por el backend
         full_name: form.profile_fullName.value.trim(),
         phone: form.profile_phone.value.trim(),
         email: form.profile_email.value.trim(),
@@ -123,53 +172,93 @@ document.addEventListener('DOMContentLoaded', async () => {
         profile_photo: null // Se maneja la foto por separado
       };
 
-      // Validaciones básicas en el frontend
+      // El sistema realiza validaciones básicas en el frontend
       if (!formData.full_name || !formData.phone || !formData.email) {
-        alert('Por favor, completa todos los campos obligatorios');
+        console.warn('[KOHABITAR] Campos obligatorios incompletos');
+        alert('Por favor, completa todos los campos obligatorios (Nombre completo, Teléfono y Email)');
         return;
       }
 
-      // Validar formato de email
+      // El sistema valida formato de email
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.email)) {
+        console.warn('[KOHABITAR] Formato de email inválido:', formData.email);
         alert('Por favor, ingresa un correo electrónico válido');
         return;
       }
 
-      // Validar formato de teléfono (básico)
+      // El sistema valida formato de teléfono (básico)
       const phoneRegex = /^[+]?[0-9\s-()]+$/;
       if (!phoneRegex.test(formData.phone)) {
+        console.warn('[KOHABITAR] Formato de teléfono inválido:', formData.phone);
         alert('Por favor, ingresa un número de teléfono válido');
         return;
       }
 
-      console.log('Datos a enviar:', formData);
+      // El sistema registra el intento de actualización
+      console.info('[KOHABITAR] El sistema está actualizando el perfil');
+      console.info('[KOHABITAR] Datos a enviar:', formData);
 
-      // Construir la URL del endpoint para actualizar
+      // El sistema construye la URL del endpoint para actualizar
       const updateUrl = `${URL_PROFILE}/${user_id}`;
+      console.info('[KOHABITAR] Endpoint:', updateUrl);
 
-      // Hacer petición PUT autenticada al backend
+      // El sistema hace petición PUT autenticada al backend
       // Se usa METHODS[2] que corresponde a PUT
       const response = await getServicesAuth(formData, METHODS[2], updateUrl, token);
-      const result = await response.json();
 
-      console.log('Respuesta del servidor:', result);
+      // El sistema registra el código de estado de la respuesta
+      console.info(`[KOHABITAR] Respuesta del servidor - Status: ${response.status}`);
 
-      // Verificar si hubo un error
+      // El sistema verifica errores HTTP específicos
+      if (response.status === 404) {
+        console.error('[KOHABITAR] Error 404: El perfil no existe');
+        alert('El perfil no existe. Por favor, contacta al administrador.');
+        return;
+      }
+
+      if (response.status === 401) {
+        console.error('[KOHABITAR] Error 401: Sesión expirada');
+        alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+        window.location.href = '../../index.html';
+        return;
+      }
+
+      if (!response.ok) {
+        console.error(`[KOHABITAR] Error ${response.status}: Error al actualizar el perfil`);
+        alert(`Error del servidor (${response.status}). Por favor, intenta nuevamente.`);
+        return;
+      }
+
+      // El sistema intenta parsear la respuesta
+      let result;
+      try {
+        result = await response.json();
+        console.info('[KOHABITAR] Respuesta del servidor:', result);
+      } catch (parseError) {
+        console.error('[KOHABITAR] Error al parsear respuesta JSON:', parseError);
+        alert('Error al procesar la respuesta del servidor.');
+        return;
+      }
+
+      // El sistema verifica si hubo un error en la respuesta
       if (result.error) {
+        console.error('[KOHABITAR] Error en la respuesta:', result.error);
         alert('Error al actualizar el perfil: ' + result.error);
         return;
       }
 
-      // Mostrar mensaje de éxito
+      // El sistema muestra mensaje de éxito
+      console.info('[KOHABITAR] Perfil actualizado correctamente');
       alert('Perfil actualizado correctamente');
 
-      // Regresar a la página anterior
+      // El sistema redirige a la página anterior
       window.history.back();
 
     } catch (error) {
-      console.error('Error al actualizar el perfil:', error);
-      alert('Error al actualizar el perfil. Por favor, verifica tu conexión e intenta nuevamente.');
+      // El sistema maneja errores de red o del servidor
+      console.error('[KOHABITAR] Error al actualizar el perfil:', error);
+      alert('Error de conexión al actualizar el perfil. Por favor, verifica que el servidor esté ejecutándose e intenta nuevamente.');
     }
   });
 });

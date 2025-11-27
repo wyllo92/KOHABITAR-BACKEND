@@ -16,6 +16,23 @@
 
   <link rel="stylesheet" href="assets/css/loading.css" />
   <link rel="stylesheet" href="assets/css/main.css" />
+
+  <!-- Script para redimensionar iframe - debe cargarse antes del iframe -->
+  <script>
+    // El sistema define la función resizeIframe globalmente para estar disponible inmediatamente
+    function resizeIframe(iframe) {
+      try {
+        // El sistema ajusta la altura del iframe automáticamente según su contenido
+        iframe.style.transition = 'height 0.15s ease';
+        iframe.style.height = iframe.contentWindow.document.documentElement.scrollHeight + 'px';
+        console.log('Iframe redimensionado correctamente');
+      } catch (error) {
+        console.warn('No se pudo redimensionar el iframe:', error.message);
+        // El sistema establece una altura mínima por defecto
+        iframe.style.height = '600px';
+      }
+    }
+  </script>
 </head>
 
 <body>
@@ -213,21 +230,6 @@
   <script src="assets/js/services/services.js"></script>
   <script src="assets/js/app/app.js"></script>
   <script src="assets/js/utils/invoiceNotifications.js"></script>
-  <script>
-    // El sistema define la función resizeIframe globalmente para estar disponible inmediatamente
-    function resizeIframe(iframe) {
-      try {
-        // El sistema ajusta la altura del iframe automáticamente según su contenido
-        iframe.style.transition = 'height 0.15s ease';
-        iframe.style.height = iframe.contentWindow.document.documentElement.scrollHeight + 'px';
-        console.log('Iframe redimensionado correctamente');
-      } catch (error) {
-        console.warn('No se pudo redimensionar el iframe:', error.message);
-        // El sistema establece una altura mínima por defecto
-        iframe.style.height = '600px';
-      }
-    }
-  </script>
   <script src="assets/js/controllers/main/main.controller.js"></script>
   <script src="assets/js/routes/routes.js"></script>
   <script>

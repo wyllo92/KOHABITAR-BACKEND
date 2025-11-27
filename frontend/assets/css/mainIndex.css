@@ -1,0 +1,417 @@
+/**
+ * Estilos para la Landing Page de KOHABITAR
+ */
+
+/*   ESTILOS GENERALES DEL BODY*/
+
+/* El sistema establece configuraciones base para toda la página */
+body {
+  font-family: 'Inter', 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #f8f9fa;
+}
+
+/* El sistema oculta el scroll horizontal para evitar problemas de diseño */
+html {
+  overflow-x: hidden;
+}
+
+/* NAVBAR PERSONALIZADO*/
+
+/* El sistema aplica el color principal #2c3e50 a la barra de navegación */
+.navbar-custom {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  padding: 1rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* El sistema estiliza el logo con borde redondeado */
+.logo-img {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* El sistema aumenta el tamaño de la marca */
+.navbar-brand {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff !important;
+  letter-spacing: 1px;
+}
+
+/* El sistema estiliza la información de contacto en el navbar */
+.contact-info {
+  font-size: 0.85rem;
+  color: #ecf0f1;
+  line-height: 1.4;
+}
+
+/* El sistema estiliza el botón de login con colores que contrastan */
+.btn-login {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(231, 76, 60, 0.3);
+}
+
+/* El sistema aplica efecto hover al botón de login */
+.btn-login:hover {
+  background-color: #c0392b;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
+}
+
+/*   HERO BANNER - SECCIÓN PRINCIPAL*/
+
+/* El sistema crea un banner atractivo con gradiente del color principal */
+.hero-banner {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+  color: white;
+  padding: 6rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* El sistema agrega un patrón de fondo sutil */
+.hero-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 35px,
+      rgba(255, 255, 255, 0.03) 35px,
+      rgba(255, 255, 255, 0.03) 70px
+    );
+  pointer-events: none;
+}
+
+/* El sistema posiciona el contenido sobre el patrón */
+.hero-banner > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* El sistema estiliza el título principal */
+.hero-banner h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 1s ease-out;
+}
+
+/* El sistema estiliza el subtítulo */
+.hero-banner .lead {
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+  opacity: 0.95;
+  animation: fadeInUp 1s ease-out 0.2s backwards;
+}
+
+/* El sistema define animación de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* El sistema aplica animación de fade-in a elementos */
+.fade-in {
+  animation: fadeInUp 1s ease-out;
+}
+
+/*   SECCIÓN DE CARACTERÍSTICAS*/
+
+/* El sistema estiliza la sección de características */
+.features-section {
+  padding: 5rem 2rem;
+  background-color: #ffffff;
+}
+
+/* El sistema estiliza el título de sección */
+.features-section h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 3rem;
+}
+
+/* El sistema estiliza las tarjetas de características */
+.feature-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  border: 2px solid transparent;
+}
+
+/* El sistema aplica efecto hover a las tarjetas */
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 24px rgba(44, 62, 80, 0.15);
+  border-color: #2c3e50;
+}
+
+/* El sistema estiliza el ícono de características */
+.feature-icon {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: white;
+  font-size: 2rem;
+  box-shadow: 0 4px 8px rgba(44, 62, 80, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* El sistema aplica rotación al ícono en hover */
+.feature-card:hover .feature-icon {
+  transform: rotate(360deg) scale(1.1);
+}
+
+/* El sistema estiliza el título de la tarjeta */
+.feature-card h4 {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+/* El sistema estiliza la descripción de la tarjeta */
+.feature-card p {
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/*   SECCIÓN DE NOTICIAS CON CARRUSEL*/
+
+/* El sistema estiliza la sección de noticias */
+.news-section {
+  padding: 5rem 2rem;
+  background-color: #f8f9fa;
+}
+
+/* El sistema estiliza el título de noticias */
+.news-section h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 3rem;
+}
+
+/* El sistema personaliza el carrusel */
+.carousel-inner {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* El sistema ajusta la altura de las imágenes del carrusel */
+.carousel-item img {
+  height: 500px;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* El sistema estiliza los subtítulos del carrusel */
+.carousel-caption {
+  background-color: rgba(44, 62, 80, 0.85);
+  padding: 1.5rem;
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+}
+
+/* El sistema estiliza el título del caption */
+.carousel-caption h5 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* El sistema estiliza el texto del caption */
+.carousel-caption p {
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* El sistema personaliza los controles del carrusel */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgba(44, 62, 80, 0.8);
+  border-radius: 50%;
+  padding: 20px;
+}
+
+/*   FOOTER - PIE DE PÁGINA*/
+
+/* El sistema estiliza el footer con el color principal */
+.footer {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: white;
+  padding: 3rem 2rem;
+  margin-top: auto;
+}
+
+/* El sistema estiliza los enlaces del footer */
+.footer a {
+  color: #ecf0f1;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+/* El sistema aplica efecto hover a los enlaces */
+.footer a:hover {
+  color: #3498db;
+  text-decoration: underline;
+}
+
+/* El sistema estiliza los iconos de redes sociales */
+.social-icons a {
+  color: white;
+  margin: 0 1rem;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+/* El sistema aplica efectos a los iconos sociales */
+.social-icons a:hover {
+  color: #3498db;
+  transform: translateY(-5px) scale(1.2);
+}
+
+/*   RESPONSIVE - DISEÑO ADAPTABLE*/
+
+/* El sistema ajusta diseño para tablets */
+@media (max-width: 768px) {
+  /* El sistema reduce el tamaño del título en móviles */
+  .hero-banner h1 {
+    font-size: 2.5rem;
+  }
+
+  /* El sistema reduce el tamaño del subtítulo */
+  .hero-banner .lead {
+    font-size: 1.1rem;
+  }
+
+  /* El sistema reduce padding en secciones */
+  .features-section,
+  .news-section {
+    padding: 3rem 1rem;
+  }
+
+  /* El sistema reduce altura del carrusel en móviles */
+  .carousel-item img {
+    height: 300px;
+  }
+
+  /* El sistema ajusta caption del carrusel */
+  .carousel-caption h5 {
+    font-size: 1.3rem;
+  }
+
+  .carousel-caption p {
+    font-size: 0.9rem;
+  }
+
+  /* El sistema reduce información de contacto */
+  .contact-info {
+    font-size: 0.75rem;
+  }
+}
+
+/* El sistema ajusta para dispositivos muy pequeños */
+@media (max-width: 576px) {
+  /* El sistema reduce aún más el título */
+  .hero-banner h1 {
+    font-size: 2rem;
+  }
+
+  /* El sistema reduce padding del navbar */
+  .navbar-custom {
+    padding: 0.5rem 0;
+  }
+
+  /* El sistema reduce margen de iconos sociales */
+  .social-icons a {
+    margin: 0 0.5rem;
+  }
+
+  /* El sistema oculta algunas características en móviles muy pequeños */
+  .feature-card {
+    margin-bottom: 1.5rem;
+  }
+}
+
+/*   ANIMACIONES ADICIONALES*/
+
+/* El sistema define animación para elementos que aparecen */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* El sistema define animación para elementos desde la derecha */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* El sistema aplica smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* El sistema mejora la selección de texto */
+::selection {
+  background-color: #2c3e50;
+  color: white;
+}
+
+/* El sistema mejora la selección en Firefox */
+::-moz-selection {
+  background-color: #2c3e50;
+  color: white;
+}

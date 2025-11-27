@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Aplicación CRUD para gestión de usuarios" />
+  <title>Menú Principal</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="assets/img/icons/icono-kohabitar.png" type="image/png" />
+
+  <!-- CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
+
+  <link rel="stylesheet" href="assets/css/loading.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+
+  <!-- Script para redimensionar iframe - debe cargarse antes del iframe -->
+  <script>
+    // El sistema define la función resizeIframe globalmente para estar disponible inmediatamente
+    function resizeIframe(iframe) {
+      try {
+        // El sistema ajusta la altura del iframe automáticamente según su contenido
+        iframe.style.transition = 'height 0.15s ease';
+        iframe.style.height = iframe.contentWindow.document.documentElement.scrollHeight + 'px';
+        console.log('Iframe redimensionado correctamente');
+      } catch (error) {
+        console.warn('No se pudo redimensionar el iframe:', error.message);
+        // El sistema establece una altura mínima por defecto
+        iframe.style.height = '600px';
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-prymary bg-white">
+      <div class="container-fluid">
+        <button class="btn btn-outline-secondary me-2" id="sidebarToggle" aria-label="Toggle sidebar">
+          <i class="bi bi-list"></i>
+        </button>
+
+        <a class="navbar-brand" href="#" aria-label="Home" style="display: inline-flex; align-items: center;"></a>
+        <img src="../frontend/assets/img/logos/Logo_luisa.png" alt="Logo" height="30">
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown">
+              <a class="btn btn-outline-secondary dropdown-toggle" href="#" id="navbarProfileDropdown" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person me-1"></i> Perfil
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarProfileDropdown">
+                <li><a class="dropdown-item" href="#profile-edit"><i class="bi bi-pencil-square me-1"></i> Editar
+                    perfil</a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item text-danger" href="#logout" id="logoutBtn"><i
+                      class="bi bi-box-arrow-right me-1"></i> Cerrar sesión</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="p-3">
+      <h5 class="text-center"></h5>
+      <hr />
+      <nav>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#dashboard">
+              <i class="bi bi-speedometer2 me-2"></i> Panel de Control
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#user">
+              <i class="bi bi-people me-2"></i> Usuarios
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#profile">
+              <i class="bi bi-person-vcard me-2"></i> Perfiles
+            </a>
+          </li>
+      <!--
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#status">
+              <i class="bi bi-person-gear me-2"></i> Estado de Usuario
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#role">
+              <i class="bi bi-people-fill me-2"></i> Roles
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#module">
+              <i class="bi bi-grid me-2"></i> Módulos
+            </a>
+          </li>
+           !-->
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#property">
+              <i class="bi bi-house me-2"></i> Propiedades
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#vehicle">
+              <i class="bi bi-truck me-2"></i> Vehículos
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#parkingslot">
+              <i class="bi bi-p-square me-2"></i> Espacios de Parqueo
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#parkingzone">
+              <i class="bi bi-map me-2"></i> Zonas de Parqueo
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#visitor">
+              <i class="bi bi-door-open-fill me-2"></i> Visitantes
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#amenity">
+              <i class="bi bi-tree-fill me-2"></i> Zonas Comunes
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#reservation">
+              <i class="bi bi-calendar-check-fill me-2"></i> Reservas Zonas Comunes
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#invoice">
+              <i class="bi bi-receipt me-2"></i> Facturas
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#payment">
+              <i class="bi bi-cash me-2"></i> Pagos
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#cpcg">
+              <i class="bi bi-card-list me-2"></i> PQRS
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#notification">
+              <i class="bi bi-bell me-2"></i> Notificaciones
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#package">
+              <i class="bi bi-box-seam me-2"></i> Paquetes
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#report">
+              <i class="bi bi-file-earmark-text me-2"></i> Reportes
+            </a>
+          </li>
+          <!--
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#dashboard">
+              <i class="bi bi-graph-up me-2"></i> Estadísticas
+            </a>
+          </li>-->
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#help">
+              <i class="bi bi-question-circle me-2"></i> Ayuda
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content p-4">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-body">
+          <iframe id="contentFrame" class="w-100" src="views/errors/404.html" title="Contenido principal"
+            onload="resizeIframe(this)">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-white text-center p-3" style="background-color: #2c3e50;">
+    <p class="mb-0">© 2025 Kohabitar. Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen" role="status" aria-live="polite">
+    <div class="spinner-border text-light spinner" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-3">Cargando datos, por favor espere...</p>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/app/constants.js"></script>
+  <script src="assets/js/storage/appStorage.js"></script>
+  <script src="assets/js/services/services.js"></script>
+  <script src="assets/js/app/app.js"></script>
+  <script src="assets/js/utils/invoiceNotifications.js"></script>
+  <script src="assets/js/controllers/main/main.controller.js"></script>
+  <script src="assets/js/routes/routes.js"></script>
+  <script>
+    // Mapeo de rutas de módulos a vistas
+    const routeToView = {
+      '#dashboard': 'views/dashboard/index.html',
+      '#user': 'views/user/index.html',
+      '#visitor': 'views/visitor/index.html',
+      '#invoice': 'views/invoice/index.html',
+      '#payment': 'views/payment/index.html',
+      '#cpcg': 'views/cpcg/index.html',
+      '#status': 'views/status/index.html',
+      '#role': 'views/role/index.html',
+      '#module': 'views/module/index.html',
+      '#property': 'views/property/index.html',
+      '#vehicle': 'views/vehicle/index.html',
+      '#parkingslot': 'views/parkingslot/index.html',
+      '#parkingzone': 'views/parkingzone/index.html',
+      '#amenity': 'views/amenity/index.html',
+      '#reservation': 'views/reservation/index.html',
+      '#notification': 'views/notification/index.html',
+      '#profile': 'views/profile/index.html',
+      '#package': 'views/package/index.html',
+      '#report': 'views/report/index.html',
+      '#help': 'views/errors/help.html',
+    };
+
+    // Permitir que el dashboard cambie la vista del iframe
+    window.changeIframeView = function (module) {
+      const iframe = document.getElementById('contentFrame');
+      if (!iframe) return;
+      // Buscar la ruta por nombre de módulo
+      let hash = `#${module}`;
+      if (routeToView[hash]) {
+        iframe.src = routeToView[hash];
+      } else {
+        iframe.src = 'views/errors/404.html';
+      }
+    };
+
+    function fillProfileFormInIframe() {
+      const iframe = document.getElementById('contentFrame');
+      if (!iframe) return;
+      const user_id = localStorage.getItem('user_id') || sessionStorage.getItem('user_id');
+      if (!user_id) return;
+      fetch(`/api_v1/profile/${user_id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.data) {
+            const p = data.data;
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+            if (!doc) return;
+            if (doc.getElementById('profile_fullName')) doc.getElementById('profile_fullName').value = p.profile_fullName || '';
+            if (doc.getElementById('profile_phone')) doc.getElementById('profile_phone').value = p.profile_phone || '';
+            if (doc.getElementById('profile_email')) doc.getElementById('profile_email').value = p.profile_email || '';
+            if (doc.getElementById('profile_address')) doc.getElementById('profile_address').value = p.profile_address || '';
+            if (p.profile_photo && doc.getElementById('profilePhotoPreview')) {
+              const photoPreview = doc.getElementById('profilePhotoPreview');
+              photoPreview.src = p.profile_photo;
+              photoPreview.style.display = 'block';
+            }
+          }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Mostrar dashboard por defecto
+      const iframe = document.getElementById('contentFrame');
+      if (iframe) {
+        iframe.src = 'views/dashboard/index.html';
+      }
+      // Delegación de eventos para navegación
+      document.body.addEventListener('click', function (e) {
+        // Navegación por sidebar y dashboard
+        const link = e.target.closest('a[href^="#"]');
+        if (link) {
+          const hash = link.getAttribute('href');
+          if (routeToView[hash]) {
+            e.preventDefault();
+            const iframe = document.getElementById('contentFrame');
+            if (iframe) {
+              iframe.src = routeToView[hash];
+              // Si es editar perfil, espera a cargar y llena el formulario
+              if (hash === '#profile-edit') {
+                iframe.onload = function () {
+                  fillProfileFormInIframe();
+                };
+              }
+            }
+            return;
+          }
+        }
+        // Editar perfil (caso especial)
+        const editProfile = e.target.closest('a[href="#profile-edit"]');
+        if (editProfile) {
+          e.preventDefault();
+          const iframe = document.getElementById('contentFrame');
+          if (iframe) {
+            iframe.src = 'views/profile/edit.html';
+          }
+          return;
+        }
+        // Cerrar sesión
+        const logoutTarget = e.target.closest('#logoutBtn');
+        if (logoutTarget) {
+          e.preventDefault();
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = 'index.html';
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

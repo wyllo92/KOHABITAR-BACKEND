@@ -89,12 +89,12 @@ myForm.addEventListener('submit', async (e) => {
           localStorage.setItem('user_id', data.user.id);
         }
         console.log("Login Success");
-        // El sistema detecta si está en Live Server o servidor normal
+        // El sistema redirige al dashboard después del login exitoso
         const isLiveServer = window.location.href.includes('127.0.0.1:5500') || window.location.href.includes('localhost:5500');
         if (isLiveServer) {
-          window.location.href = '/frontend/';
+          window.location.href = '/frontend/dashboard.html';
         } else {
-          window.location.href = '../../';
+          window.location.href = '../../dashboard.html';
         }
       } else {
         showError('Error en la respuesta del servidor. Por favor, contacta al administrador del sistema.');
@@ -118,11 +118,12 @@ myForm.addEventListener('submit', async (e) => {
               localStorage.setItem('user_id', apiUserData.user.id);
             }
             console.log("Login Success");
+            // El sistema redirige al dashboard después del login exitoso
             const isLiveServer = window.location.href.includes('127.0.0.1:5500') || window.location.href.includes('localhost:5500');
             if (isLiveServer) {
-              window.location.href = '/frontend/';
+              window.location.href = '/frontend/dashboard.html';
             } else {
-              window.location.href = '../../';
+              window.location.href = '../../dashboard.html';
             }
           } else {
             if (apiUserData.error === 'Invalid password') {

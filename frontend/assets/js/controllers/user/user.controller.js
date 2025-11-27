@@ -194,9 +194,9 @@ function createTable(data) {
     const row = getData[i];
     console.log((i+1) + ': El sistema procesa el usuario numero', (i + 1), 'con datos:', row);
 
-    // El sistema extrae los campos del usuario
+    // El sistema extrae los campos del usuario 
     const userId = row.user_id || row.id || 'N/A';
-    const userName = row.user_name || row.username || 'undefined';
+    const userName = row.username || 'Sin nombre';
     const roleName = row.role_name || 'N/A';
     const statusName = row.status_name || 'N/A';
 

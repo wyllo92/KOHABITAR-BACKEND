@@ -42,10 +42,10 @@ class Form {
         }
       },
       password: {
-        messageError: "La contraseña debe tener: 8-20 caracteres, minúscula, mayúscula, número y carácter especial",
-        regExp: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/,
+        messageError: "La contraseña debe tener al menos 8 caracteres",
+        regExp: /^.{8,}$/,
         validate: (value) => {
-          return this.VALIDATIONS.password.regExp.test(value);
+          return value.length >= 8;
         }
       },
       tel: {
@@ -497,15 +497,14 @@ class Form {
 
     for (let i = 0; i < elementInput.length; i++) {
       if (elementInput[i].classList.contains(this.classEdit)) {
-        elementInput[i].disabled = true;
+        elementInput[i].disabled = false;
       } else {
         elementInput[i].disabled = false;
       }
     }
     for (let j = 0; j < elementTextarea.length; j++) {
-      elementTextarea[j].disabled = false;
       if (elementTextarea[j].classList.contains(this.classEdit)) {
-        elementTextarea[j].disabled = true;
+        elementTextarea[j].disabled = false;
       } else {
         elementTextarea[j].disabled = false;
       }

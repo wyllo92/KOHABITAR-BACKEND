@@ -5,8 +5,6 @@ document.addEventListener('DOMContentLoaded', async ()=> {
   await checkAuth();
   console.log('user controller has been loaded');
   fadeInElement(document.querySelector('body'), 1000);
-  // Initialize the loading screen
-    
 });
 
 const objForm = new Form('userForm', 'edit-input');
@@ -15,7 +13,6 @@ const objTableBody = document.getElementById('app-table-body');
 const objSelectStatus = document.getElementById('status_id');
 const objSelectRole = document.getElementById('role_id');
 const myForm = objForm.getForm();
-const textConfirm = "Press a button!\nEither OK or Cancel.";
 const appTable = "#app-table";
 
 let insertUpdate = true;
@@ -24,13 +21,24 @@ let documentData = "";
 let httpMethod = "";
 let endpointUrl = "";
 
+// Función para mostrar alertas de éxito
+function showSuccessAlert(title, message) {
+  alert(`✓ ${title}\n${message}`);
+}
+
+// Función para mostrar alertas de error
+function showErrorAlert(title, message) {
+  alert(`✗ ${title}\n${message}`);
+}
+
 myForm.addEventListener('submit', (e) => {
   e.preventDefault();
   if (!objForm.validateForm()) {
-    console.log("Error");
+    showErrorAlert('Error de validación', 'Por favor, complete todos los campos requeridos correctamente.');
     return;
   }
   toggleLoading(true);
+  
   if (insertUpdate) {
     console.log("Insert");
     httpMethod = METHODS[1]; // POST method
@@ -40,18 +48,30 @@ myForm.addEventListener('submit', (e) => {
     httpMethod = METHODS[2]; // PUT method
     endpointUrl = URL_USER + keyId;
   }
+  
   documentData = objForm.getDataForm();
-  //console.log(documentData);
 
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
   resultServices.then(response => {
+    if (!response.ok) {
+      throw new Error('Error en la operación');
+    }
     return response.json();
   }).then(data => {
-    //console.log(data);
+    // Mostrar alerta de éxito según la operación
+    if (insertUpdate) {
+      showSuccessAlert('¡Éxito!', 'El usuario ha sido creado exitosamente.');
+    } else {
+      showSuccessAlert('¡Éxito!', 'El usuario ha sido actualizado exitosamente.');
+    }
   }).catch(error => {
     console.log(error);
+    if (insertUpdate) {
+      showErrorAlert('Error al crear', 'No se pudo crear el usuario. Por favor, intente nuevamente.');
+    } else {
+      showErrorAlert('Error al actualizar', 'No se pudo actualizar el usuario. Por favor, intente nuevamente.');
+    }
   }).finally(() => {
-    //console.log("finally");
     loadView();
     showHiddenModal(false);
   });
@@ -86,26 +106,49 @@ function edit(id) {
 }
 
 function delete_(id) {
+  console.log('[DEBUG] delete_ function called with id:', id);
   objForm.resetForm();
   objForm.enabledForm();
   objForm.enabledButton();
-  if (confirm(textConfirm)) {
+  
+  // Mostrar confirmación nativa del navegador
+  console.log('[DEBUG] Showing browser confirmation');
+  const confirmed = confirm('¿Estás seguro? Esta acción no se puede deshacer. El usuario será eliminado permanentemente.');
+  
+  console.log('[DEBUG] Confirmation result:', confirmed);
+  
+  if (confirmed) {
+    console.log('[DEBUG] User confirmed deletion');
+    toggleLoading(true);
     documentData = "";
     httpMethod = METHODS[3]; // DELETE method
     endpointUrl = URL_USER + id;
+    
+    console.log('[DEBUG] Making DELETE request to:', endpointUrl);
+    console.log('[DEBUG] HTTP Method:', httpMethod);
+    
     const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
     resultServices.then(response => {
+      console.log('[DEBUG] Response received:', response);
+      console.log('[DEBUG] Response status:', response.status);
+      console.log('[DEBUG] Response ok:', response.ok);
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
       return response.json();
     }).then(data => {
-      //console.log(data);
-    }).catch(error => {
-      console.log(error);
-    }).finally(() => {
-      //console.log("finally");
+      console.log('[DEBUG] Data received:', data);
+      showSuccessAlert('¡Éxito!', 'El usuario ha sido eliminado exitosamente.');
       loadView();
+      toggleLoading(false);
+    }).catch(error => {
+      console.error('[ERROR] Error in deletion:', error);
+      console.error('[ERROR] Error message:', error.message);
+      showErrorAlert('Error al eliminar', 'No se pudo eliminar el usuario. Por favor, intente nuevamente.');
+      toggleLoading(false);
     });
   } else {
-    console.log("cancel");
+    console.log("[DEBUG] Eliminación cancelada");
   }
 }
 
@@ -121,8 +164,8 @@ function getDataId(id) {
     objForm.setDataFormJson(getData);
   }).catch(error => {
     console.log(error);
+    showErrorAlert('Error al cargar', 'No se pudo cargar la información del usuario.');
   }).finally(() => {
-    //console.log("finally");
     showHiddenModal(true);
   });
 }
@@ -135,22 +178,20 @@ function getData() {
   resultServices.then(response => {
     return response.json();
   }).then(data => {
-    //Create table 
-    //console.log(data['data']);
     createTable(data);
   }).catch(error => {
     console.log(error);
+    showErrorAlert('Error al cargar datos', 'No se pudo cargar la lista de usuarios.');
   }).finally(() => {
-    //console.log("finally");
     new DataTable(appTable);
     toggleLoading(false);
   });
 }
 
 function createTable(data) {
-  objTableBody.innerHTML = ""; // Clear previous table data
+  objTableBody.innerHTML = "";
   let getData = data['data'];
-  if (getData.length === 0) return;//Validate if the data is empty
+  if (getData.length === 0) return;
   let rowLong = getData.length;
   for (let i = 0; i < rowLong; i++) {
     let row = getData[i];
@@ -162,7 +203,9 @@ function createTable(data) {
 <td>
 <button type="button" title="Button Show"class="btn btn-success" onclick="showId(${row.user_id})"><i class='fas fa-eye'></i></button>
 <button type="button"title="Button Edit" class="btn btn-primary" onclick="edit(${row.user_id})"><i class='fas fa-edit' ></i></button>
-<button type="button" title="Button Delete" class="btn btn-danger" onclick="delete_(${row.user_id})"><i class='fas fa-trash' ></i></button> `;
+<button type="button" title="Button Delete" class="btn btn-danger" onclick="delete_(${row.user_id})"><i class='fas fa-trash' ></i></button>
+</td>
+</tr>`;
     objTableBody.innerHTML += dataRow;
   }
 }
@@ -192,7 +235,7 @@ function createSelectRole(data) {
   objSelectRole.innerHTML = "<option value='' selected disabled>Seleccione un rol</option>";
 
   let getData = data['data'];
-  if (getData.length === 0) return;//Validate if the data is empty
+  if (getData.length === 0) return;
   let rowLong = getData.length;
   for (let i = 0; i < rowLong; i++) {
     let row = getData[i];
@@ -218,7 +261,7 @@ function getDataStatus() {
   toggleLoading(true);
   documentData = "";
   httpMethod = METHODS[0]; // GET method
-  endpointUrl = URL_STATUS;  // Remove entity filter for now to see all statuses
+  endpointUrl = URL_STATUS;
 
   console.log('Fetching statuses from:', endpointUrl);
   
@@ -249,7 +292,6 @@ function getDataStatus() {
   });
 }
 
-
 function getDataRole() {
   documentData = "";
   httpMethod = METHODS[0]; // GET method
@@ -258,13 +300,10 @@ function getDataRole() {
   resultServices.then(response => {
     return response.json();
   }).then(data => {
-    //Create table 
-    //console.log(data['data']);
     createSelectRole(data);
   }).catch(error => {
     console.log(error);
   }).finally(() => {
-    //console.log("finally");
     toggleLoading(false);
   });
 }
@@ -274,4 +313,3 @@ window.addEventListener('load', () => {
   getDataStatus();
   getDataRole();
 });
-

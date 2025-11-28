@@ -69,7 +69,11 @@ myForm.addEventListener('submit', (e) => {
     if (d.error) {
       alert('Error: ' + d.error);
     } else {
-      alert(d.message || 'Operación exitosa');
+      if (insertUpdate) {
+        alert('✓ Pago creado exitosamente');
+      } else {
+        alert('✓ Pago actualizado exitosamente');
+      }
       if (d.payment_photo) {
         console.log('Foto guardada en:', d.payment_photo);
       }
@@ -118,7 +122,7 @@ function delete_(id) {
     if (d.error) {
       alert('Error: ' + d.error);
     } else {
-      alert(d.message || 'Pago eliminado exitosamente');
+      alert('✓ Pago eliminado exitosamente');
     }
   }).catch(err => {
     console.error(err);

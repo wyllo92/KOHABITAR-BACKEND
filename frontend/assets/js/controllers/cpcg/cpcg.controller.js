@@ -40,7 +40,15 @@ myForm.addEventListener('submit', (e) => {
   const resultServices = getDataServices(documentData, httpMethod, endpointUrl);
   resultServices.then(response => response.json())
     .then(data => {
-      if (data.error) alert('Error: ' + data.error);
+      if (data.error) {
+        alert('Error: ' + data.error);
+      } else {
+        if (insertUpdate) {
+          alert('✓ PQRS creado exitosamente');
+        } else {
+          alert('✓ PQRS actualizado exitosamente');
+        }
+      }
     }).catch(error => {
       console.log(error);
       alert('Network error');
@@ -82,7 +90,13 @@ function delete_(id) {
   if (confirm(textConfirm)) {
     const resultServices = getDataServices("", METHODS[3], URL_PQRS + id);
     resultServices.then(response => response.json())
-    .then(data => {})
+    .then(data => {
+      if (data.error) {
+        alert('Error: ' + data.error);
+      } else {
+        alert('✓ PQRS eliminado exitosamente');
+      }
+    })
     .catch(error => console.log(error))
     .finally(() => loadView());
   }
